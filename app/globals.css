@@ -69,6 +69,42 @@ body::after {
   filter: blur(18px);
 }
 
+.quiz-table-felt {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(62, 173, 126, 0.34), transparent 28%),
+    radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.06), transparent 38%),
+    linear-gradient(180deg, rgba(17, 81, 59, 0.94), rgba(6, 39, 29, 0.98));
+}
+
+.quiz-table-felt::before,
+.quiz-table-felt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.quiz-table-felt::before {
+  background:
+    radial-gradient(circle at center, transparent 54%, rgba(215, 185, 119, 0.12) 55%, transparent 57%),
+    radial-gradient(circle at center, transparent 67%, rgba(215, 185, 119, 0.08) 68%, transparent 70%);
+  opacity: 0.7;
+}
+
+.quiz-table-felt::after {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.03), transparent 20%, transparent 80%, rgba(255, 255, 255, 0.02)),
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.02) 0,
+      rgba(255, 255, 255, 0.02) 2px,
+      transparent 2px,
+      transparent 10px
+    );
+  mix-blend-mode: soft-light;
+  opacity: 0.45;
+}
+
 ::selection {
   background: rgba(215, 185, 119, 0.28);
 }

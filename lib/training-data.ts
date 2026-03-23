@@ -1,3 +1,5 @@
+import type { CardCode, HoleCards } from "./holdem/cards";
+
 export type TrainingCategory = "preflop" | "postflop" | "odds";
 export type AppTrainingCategory = TrainingCategory | "liveTips";
 export type DecisionChoice = "fold" | "call" | "raise";
@@ -22,6 +24,7 @@ type QuestionBase = {
 export type PreflopQuestion = QuestionBase & {
   category: "preflop";
   hand: string;
+  holeCards: HoleCards;
   position: string;
   table: string;
   stack: string;
@@ -31,8 +34,8 @@ export type PreflopQuestion = QuestionBase & {
 
 export type PostflopQuestion = QuestionBase & {
   category: "postflop";
-  holeCards: string[];
-  board: string[];
+  holeCards: HoleCards;
+  board: CardCode[];
   pot: string;
   villainBet: string;
   actionBefore: string;
@@ -42,8 +45,8 @@ export type PostflopQuestion = QuestionBase & {
 
 export type OddsQuestion = QuestionBase & {
   category: "odds";
-  holeCards?: string[];
-  board?: string[];
+  holeCards?: HoleCards;
+  board?: CardCode[];
   pot: string;
   villainBet: string;
   actionBefore: string;
@@ -107,13 +110,14 @@ export const questionBank: HoldemQuestion[] = [
     id: "pre-001",
     category: "preflop",
     difficulty: "기초",
-    title: "UTG에서 AJo",
-    prompt: "라이브 9인 테이블, 앞선 액션이 없을 때 UTG의 AJo는 너무 자주 문제를 만듭니다.",
+    title: "UTG 첫 오픈 결정",
+    prompt: "라이브 9인 테이블, 앞선 액션이 없을 때 UTG에서 너무 넓게 여는 습관은 자주 문제를 만듭니다.",
     explanation:
       "초반 포지션에서는 뒤에서 더 강한 A와 브로드웨이에 지배당하기 쉽습니다. 초보 기준으로는 접고 더 좋은 오픈을 기다리는 편이 안정적입니다.",
     pitfall: "오프수트 브로드웨이를 초반 포지션에서 과대평가하는 실수",
     tags: ["초반 포지션", "오프수트 브로드웨이"],
     hand: "AJo",
+    holeCards: ["Ah", "Jc"],
     position: "UTG",
     table: "9-handed / 100bb",
     stack: "100bb 유효 스택",
@@ -124,13 +128,14 @@ export const questionBank: HoldemQuestion[] = [
     id: "pre-002",
     category: "preflop",
     difficulty: "기초",
-    title: "버튼에서 76s",
+    title: "버튼 스틸 기회",
     prompt: "모두 폴드로 넘어온 버튼은 스틸하기 좋은 자리입니다.",
     explanation:
       "버튼에서 수딧 커넥터는 포지션 이점이 커서 오픈하기 좋습니다. 라이브 저스테이크에서는 블라인드가 많이 포기해 바로 팟을 가져가는 경우도 잦습니다.",
     pitfall: "플레이 가능 핸드를 너무 소극적으로 콜만 하거나 버리는 실수",
     tags: ["버튼 스틸", "수딧 커넥터"],
     hand: "76s",
+    holeCards: ["7s", "6s"],
     position: "BTN",
     table: "9-handed / 120bb",
     stack: "120bb 유효 스택",
@@ -141,13 +146,14 @@ export const questionBank: HoldemQuestion[] = [
     id: "pre-003",
     category: "preflop",
     difficulty: "기초",
-    title: "SB에서 KTo vs HJ 오픈",
+    title: "SB vs HJ 오픈",
     prompt: "스몰블라인드에서 포지션 없이 애매한 오프수트 브로드웨이를 방어하면 이후 스트리트가 어렵습니다.",
     explanation:
       "HJ 오픈에 대해 KTo는 지배당하기 쉽고, 스몰블라인드라서 이후에도 계속 불리합니다. 초보 기준으로는 과감히 폴드가 더 낫습니다.",
     pitfall: "스몰블라인드에서 너무 넓게 콜해 힘든 스팟을 만드는 실수",
     tags: ["SB 디펜스", "오프수트 브로드웨이"],
     hand: "KTo",
+    holeCards: ["Kc", "Td"],
     position: "SB",
     table: "9-handed / 100bb",
     stack: "100bb 유효 스택",
@@ -158,13 +164,14 @@ export const questionBank: HoldemQuestion[] = [
     id: "pre-004",
     category: "preflop",
     difficulty: "기초",
-    title: "CO에서 AQo",
-    prompt: "컷오프에서 AQo는 명확한 밸류 오픈입니다.",
+    title: "컷오프 밸류 오픈",
+    prompt: "컷오프에서 강한 브로드웨이는 명확한 밸류 오픈입니다.",
     explanation:
       "뒤에 남은 플레이어가 적고 핸드 강도도 충분합니다. 이런 핸드까지 머뭇거리면 좋은 포지션 수익을 놓치게 됩니다.",
     pitfall: "괜찮은 강도의 브로드웨이를 과도하게 소극적으로 운영하는 실수",
     tags: ["컷오프 오픈", "강한 브로드웨이"],
     hand: "AQo",
+    holeCards: ["Ac", "Qd"],
     position: "CO",
     table: "9-handed / 100bb",
     stack: "100bb 유효 스택",
@@ -175,13 +182,14 @@ export const questionBank: HoldemQuestion[] = [
     id: "pre-005",
     category: "preflop",
     difficulty: "실전",
-    title: "BB에서 55 vs 버튼 민레이즈",
+    title: "BB vs 버튼 민레이즈",
     prompt: "빅블라인드에서 작은 페어는 적절한 가격이면 세트 마이닝과 쇼다운 가치가 있습니다.",
     explanation:
       "버튼 민레이즈에 55는 좋은 가격으로 콜할 수 있습니다. 지나치게 3베팅을 섞기보다 기본은 콜 쪽이 안정적입니다.",
     pitfall: "빅블라인드 방어 핸드를 필요 이상으로 공격적으로 바꾸는 실수",
     tags: ["BB 디펜스", "작은 페어"],
     hand: "55",
+    holeCards: ["5c", "5d"],
     position: "BB",
     table: "9-handed / 100bb",
     stack: "100bb 유효 스택",
@@ -192,13 +200,14 @@ export const questionBank: HoldemQuestion[] = [
     id: "pre-006",
     category: "preflop",
     difficulty: "실전",
-    title: "MP에서 A5s",
-    prompt: "A5s는 수딧 에이스와 휠 포텐셜 덕분에 오픈 가치가 있습니다.",
+    title: "MP 수딧 에이스 오픈",
+    prompt: "수딧 에이스는 휠 포텐셜 덕분에 오픈 가치가 있습니다.",
     explanation:
       "미들 포지션에서 A5s는 플러시와 스트레이트 가능성이 있어 충분히 오픈 가능한 핸드입니다. 라이브 게임에서 블라인드 폴드도 자주 얻습니다.",
     pitfall: "수딧 에이스를 너무 타이트하게 접어 좋은 스팟을 놓치는 실수",
     tags: ["수딧 에이스", "미들 포지션"],
     hand: "A5s",
+    holeCards: ["As", "5s"],
     position: "MP",
     table: "9-handed / 100bb",
     stack: "100bb 유효 스택",
@@ -209,13 +218,14 @@ export const questionBank: HoldemQuestion[] = [
     id: "pre-007",
     category: "preflop",
     difficulty: "기초",
-    title: "UTG에서 KJo",
-    prompt: "KJo는 초반 포지션에서 지배 문제가 더 심합니다.",
+    title: "UTG 오프수트 브로드웨이",
+    prompt: "초반 포지션의 약한 오프수트 브로드웨이는 지배 문제가 더 심합니다.",
     explanation:
       "KJo는 KQ, AK, AJ 등에 자주 끌려다닙니다. 특히 라이브 풀링에서는 뒤에서 강한 콜 범위를 맞기 쉬워 초보 기준으로는 폴드가 편합니다.",
     pitfall: "KJ 계열을 초반 포지션에서 과신하는 실수",
     tags: ["초반 포지션", "지배당하는 핸드"],
     hand: "KJo",
+    holeCards: ["Kd", "Jh"],
     position: "UTG",
     table: "9-handed / 100bb",
     stack: "100bb 유효 스택",
@@ -226,13 +236,14 @@ export const questionBank: HoldemQuestion[] = [
     id: "pre-008",
     category: "preflop",
     difficulty: "실전",
-    title: "버튼에서 A9o vs 림프 두 명",
+    title: "버튼 아이솔레이트 스팟",
     prompt: "라이브 저스테이크에서는 버튼에서 림프를 아이솔레이트하는 가치가 큽니다.",
     explanation:
       "포지션이 있고 A9o는 림퍼 상대로 충분한 우위를 가질 수 있습니다. 콜만 하면 블라인드까지 얽혀 어려운 멀티웨이가 됩니다.",
     pitfall: "좋은 아이솔레이트 기회를 콜로 흘려 보내는 실수",
     tags: ["버튼 스틸", "림퍼 아이솔레이트"],
     hand: "A9o",
+    holeCards: ["Ah", "9c"],
     position: "BTN",
     table: "9-handed / 110bb",
     stack: "110bb 유효 스택",
@@ -243,13 +254,14 @@ export const questionBank: HoldemQuestion[] = [
     id: "pre-009",
     category: "preflop",
     difficulty: "실전",
-    title: "BB에서 QJs vs CO 오픈 + BTN 콜",
+    title: "BB 멀티웨이 디펜스",
     prompt: "빅블라인드에서 수딧 브로드웨이는 멀티웨이로도 플레이 가능성이 남아 있습니다.",
     explanation:
       "QJs는 플러시와 스트레이트 가능성이 있고, 이미 팟에 돈이 많이 들어가 콜 가격도 괜찮습니다. 과도한 3베팅보다는 콜이 무난합니다.",
     pitfall: "좋은 멀티웨이 핸드를 지나치게 공격적으로 바꾸거나 너무 쉽게 버리는 실수",
     tags: ["BB 디펜스", "수딧 브로드웨이"],
     hand: "QJs",
+    holeCards: ["Qs", "Js"],
     position: "BB",
     table: "9-handed / 100bb",
     stack: "100bb 유효 스택",
@@ -260,13 +272,14 @@ export const questionBank: HoldemQuestion[] = [
     id: "pre-010",
     category: "preflop",
     difficulty: "실전",
-    title: "SB에서 Q9s 폴드 투 유",
+    title: "SB 폴드 투 유",
     prompt: "폴드로 돌아온 스몰블라인드에서는 빅블라인드 한 명만 남아 있어 공격적으로 열 수 있습니다.",
     explanation:
       "Q9s는 완벽한 프리미엄은 아니지만 헤즈업 포지션 불리함을 감수할 만큼 오픈 가치가 있습니다. 지나치게 타이트하면 블라인드를 너무 쉽게 넘겨줍니다.",
     pitfall: "폴드 투 유 스팟에서 스몰블라인드를 지나치게 타이트하게 운영하는 실수",
     tags: ["SB 스틸", "폴드 투 유"],
     hand: "Q9s",
+    holeCards: ["Qh", "9h"],
     position: "SB",
     table: "9-handed / 100bb",
     stack: "100bb 유효 스택",

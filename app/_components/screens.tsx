@@ -8,6 +8,7 @@ import {
   type TrainingCategory,
 } from "@/lib/training-data";
 import { ACTIONS, TIP_TOTAL } from "@/lib/holdem/constants";
+import type { CardCode } from "@/lib/holdem/cards";
 import { QUESTIONS_BY_ID } from "@/lib/holdem/questions";
 import { getChoiceLabel } from "@/lib/holdem/selectors";
 import type {
@@ -584,6 +585,159 @@ export function LiveTipsScreen({
   );
 }
 
+const BOARD_SLOT_COUNT = 5;
+
+type TableSceneTone = "gold" | "emerald" | "rose" | "sky";
+type TableSceneDetail = {
+  label: string;
+  value: string;
+  tone: TableSceneTone;
+};
+
+function TableSceneStat({ label, value, tone }: TableSceneDetail) {
+  const toneClass =
+    tone === "emerald"
+      ? "border-[#69c193]/20 bg-[#0f2e22] text-[#e2f6ea]"
+      : tone === "rose"
+        ? "border-[#d98989]/18 bg-[#2a171b] text-[#ffe7e7]"
+        : tone === "sky"
+          ? "border-[#8ecdf7]/18 bg-[#0d2531] text-[#e3f4ff]"
+          : "border-[#d7b977]/18 bg-[#231d0e] text-[#fff2d4]";
+
+  return (
+    <div
+      className={cn(
+        "rounded-[16px] border px-3 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
+        toneClass,
+      )}
+    >
+      <p className="text-[9px] uppercase tracking-[0.2em] text-[#d7b977]/90">{label}</p>
+      <p className="mt-1 break-words text-[11px] font-medium leading-4">{value}</p>
+    </div>
+  );
+}
+
+function getHeroCards(question: HoldemQuestion): CardCode[] {
+  if (question.category === "odds") {
+    return question.holeCards ? [...question.holeCards] : [];
+  }
+
+  return [...question.holeCards];
+}
+
+function getBoardCards(question: HoldemQuestion): CardCode[] {
+  if (question.category === "preflop") {
+    return [];
+  }
+
+  return question.board ? [...question.board] : [];
+}
+
+function getTableSceneDetails(question: HoldemQuestion): TableSceneDetail[] {
+  if (question.category === "preflop") {
+    return [
+      { label: "Position", value: question.position, tone: "gold" },
+      { label: "Stack", value: question.stack, tone: "emerald" },
+      { label: "Table", value: question.table, tone: "sky" },
+      { label: "Action", value: question.actionBefore, tone: "rose" },
+    ];
+  }
+
+  if (question.category === "postflop") {
+    return [
+      { label: "Pot", value: question.pot, tone: "gold" },
+      { label: "Villain", value: question.villainBet, tone: "rose" },
+      { label: "Line", value: question.actionBefore, tone: "sky" },
+      { label: "Stack", value: question.stack, tone: "emerald" },
+    ];
+  }
+
+  return [
+    { label: "Focus", value: question.mathFocus, tone: "sky" },
+    { label: "Pot", value: question.pot, tone: "gold" },
+    { label: "Villain", value: question.villainBet, tone: "rose" },
+    { label: "Spot", value: question.actionBefore, tone: "emerald" },
+  ];
+}
+
+function TableScene({ question }: { question: HoldemQuestion }) {
+  const heroCards = getHeroCards(question);
+  const boardCards = getBoardCards(question);
+  const sceneDetails = getTableSceneDetails(question);
+  const boardSlots = Array.from({ length: BOARD_SLOT_COUNT }, (_, index) => boardCards[index] ?? null);
+  const showBackCards = question.category === "odds" && !heroCards.length;
+  const heroLabel = showBackCards ? "Hero Cards Hidden" : "Hero Hand";
+  const heroHint =
+    question.category === "preflop"
+      ? "프리플랍, 보드는 아직 없습니다."
+      : showBackCards
+        ? "핸드 없이 팟 오즈만 훈련합니다."
+        : "보드와 히어로 핸드를 함께 읽으세요.";
+
+  return (
+    <div className="mt-3 flex min-h-0 flex-1 rounded-[28px] border border-[#d7b977]/20 bg-[#03130f] p-2 shadow-[0_18px_60px_rgba(0,0,0,0.34)]">
+      <div className="quiz-table-felt relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[24px] px-3 pb-3 pt-3">
+        <div className="pointer-events-none absolute inset-x-[6%] top-[13%] h-[38%] rounded-[999px] border border-[#d7b977]/12 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.07),transparent_70%)]" />
+        <div className="pointer-events-none absolute inset-x-3 bottom-0 h-20 bg-[linear-gradient(180deg,rgba(4,23,17,0),rgba(4,23,17,0.78))]" />
+        <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-between">
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <span className="rounded-full border border-[#d7b977]/18 bg-black/18 px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-[#d7b977]">
+              {categoryMeta[question.category].shortLabel}
+            </span>
+            <span className="rounded-full border border-white/8 bg-white/6 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-[#f6efe0]">
+              {question.difficulty}
+            </span>
+          </div>
+
+          <div className="mt-4 text-center">
+            <p className="text-[10px] uppercase tracking-[0.24em] text-[#d7b977]">
+              {question.category === "preflop" ? "Board Opens After The Deal" : "Board"}
+            </p>
+            <div className="mt-2.5 flex flex-wrap justify-center gap-1.5 sm:gap-2">
+              {boardSlots.map((card, index) => (
+                <PlayingCard
+                  key={`${question.id}-board-${index}`}
+                  card={card ?? undefined}
+                  side={card ? "face" : "slot"}
+                  size="sm"
+                  priority={Boolean(card && index < 3)}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-3 grid w-full gap-2 sm:grid-cols-2">
+            {sceneDetails.map((detail) => (
+              <TableSceneStat
+                key={`${question.id}-${detail.label}`}
+                label={detail.label}
+                value={detail.value}
+                tone={detail.tone}
+              />
+            ))}
+          </div>
+
+          <div className="mt-4 text-center">
+            <p className="text-[10px] uppercase tracking-[0.24em] text-[#d7b977]">{heroLabel}</p>
+            <div className="mt-2.5 flex justify-center gap-2.5">
+              {(heroCards.length ? heroCards : [null, null]).map((card, index) => (
+                <PlayingCard
+                  key={`${question.id}-hero-${index}`}
+                  card={card ?? undefined}
+                  side={card ? "face" : showBackCards ? "back" : "slot"}
+                  size="md"
+                  priority={Boolean(card)}
+                />
+              ))}
+            </div>
+            <p className="mt-2 text-[11px] leading-4 text-[#efe2be]/70">{heroHint}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function QuizScreen({
   session,
   summary,
@@ -607,14 +761,17 @@ export function QuizScreen({
   onOpenHome: () => void;
   onOpenRecords: () => void;
 }) {
+  const answerOptions = currentQuestion?.category === "odds" ? currentQuestion.options : ACTIONS;
+  const visibleTags = currentQuestion ? currentQuestion.tags.slice(0, 2) : [];
+
   return (
-    <section className="pb-40">
-      <header className="sticky top-3 z-20 mb-4 rounded-[26px] border border-[#d7b977]/18 bg-[#061d16]/90 px-4 py-4 shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+    <section className="flex min-h-[100svh] flex-col overflow-hidden px-3 pb-3 pt-3">
+      <header className="z-20 mb-2 shrink-0 rounded-[22px] border border-[#d7b977]/18 bg-[#061d16]/90 px-3 py-3 shadow-[0_14px_40px_rgba(0,0,0,0.28)] backdrop-blur-xl">
         <div className="flex items-center justify-between gap-3">
           <button
             type="button"
             onClick={onExit}
-            className="flex items-center gap-2 rounded-full border border-[#d7b977]/18 bg-white/6 px-3 py-2 text-sm text-[#efe2be]"
+            className="flex items-center gap-2 rounded-full border border-[#d7b977]/18 bg-white/6 px-3 py-2 text-xs text-[#efe2be]"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current stroke-[1.8]">
               <path d="m14 6-6 6 6 6" />
@@ -630,7 +787,7 @@ export function QuizScreen({
                   ? categoryMeta[currentQuestion.category].shortLabel
                   : "Holdem Ready"}
             </p>
-            <p className="mt-1 text-sm text-[#f6efe0]">
+            <p className="mt-1 text-xs text-[#f6efe0]">
               {summary
                 ? session.label
                 : `문제 ${feedback ? feedback.questionNumber : session.index + 1} / ${session.questionIds.length}`}
@@ -656,101 +813,35 @@ export function QuizScreen({
           </div>
         </Surface>
       ) : currentQuestion ? (
-        <>
-          <Surface>
+        <div className="flex min-h-0 flex-1 flex-col animate-rise">
+          <div className="flex min-h-0 flex-1 flex-col rounded-[28px] border border-[#d7b977]/20 bg-[linear-gradient(180deg,rgba(10,34,27,0.96),rgba(4,23,17,0.98))] p-4 shadow-[0_18px_60px_rgba(0,0,0,0.34)]">
             <CardEyebrow>{currentQuestion.title}</CardEyebrow>
-            <h2 className="mt-2 font-serif text-[2rem] leading-tight text-[#f8f1de]">
+            <h2 className="mt-1.5 font-serif text-[1.35rem] leading-snug text-[#f8f1de] sm:text-[1.55rem]">
               {currentQuestion.prompt}
             </h2>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Chip>{currentQuestion.difficulty}</Chip>
+            <div className="mt-2 flex flex-wrap gap-1.5">
               <Chip>{categoryMeta[currentQuestion.category].shortLabel}</Chip>
-              {currentQuestion.tags.map((tag) => (
+              {visibleTags.map((tag) => (
                 <Chip key={tag}>{tag}</Chip>
               ))}
             </div>
-            {currentQuestion.category === "preflop" && (
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                <Metric label="포지션" value={currentQuestion.position} />
-                <Metric label="핸드" value={currentQuestion.hand} />
-                <Metric label="테이블" value={currentQuestion.table} />
-                <Metric label="스택" value={currentQuestion.stack} />
-                <div className="sm:col-span-2">
-                  <Metric label="앞선 액션" value={currentQuestion.actionBefore} />
+            <TableScene question={currentQuestion} />
+            {!feedback && (
+              <div className="mt-3 shrink-0 rounded-[24px] border border-[#d7b977]/20 bg-[#071d16]/96 p-2.5 shadow-[0_16px_44px_rgba(0,0,0,0.28)] backdrop-blur-xl">
+                <div className="flex items-center justify-between gap-3 px-1">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-[#d7b977]">Choose Action</p>
+                  <p className="text-[10px] text-[#efe2be]/64">
+                    {currentQuestion.category === "odds" ? "Math Decision" : "Live Table Action"}
+                  </p>
                 </div>
-              </div>
-            )}
-            {currentQuestion.category === "postflop" && (
-              <div className="mt-5 space-y-4">
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.22em] text-[#d7b977]">Hero Hand</p>
-                  <div className="mt-2 flex gap-2">
-                    {currentQuestion.holeCards.map((card) => (
-                      <PlayingCard key={card} card={card} />
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.22em] text-[#d7b977]">Board</p>
-                  <div className="mt-2 flex gap-2">
-                    {currentQuestion.board.map((card) => (
-                      <PlayingCard key={card} card={card} />
-                    ))}
-                  </div>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <Metric label="팟" value={currentQuestion.pot} />
-                  <Metric label="상대 액션" value={currentQuestion.villainBet} />
-                  <Metric label="라인" value={currentQuestion.actionBefore} />
-                  <Metric label="남은 스택" value={currentQuestion.stack} />
-                </div>
-              </div>
-            )}
-            {currentQuestion.category === "odds" && (
-              <div className="mt-5 space-y-4">
-                {currentQuestion.holeCards && (
-                  <div>
-                    <p className="text-[11px] uppercase tracking-[0.22em] text-[#d7b977]">Hero Hand</p>
-                    <div className="mt-2 flex gap-2">
-                      {currentQuestion.holeCards.map((card) => (
-                        <PlayingCard key={card} card={card} />
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {currentQuestion.board && (
-                  <div>
-                    <p className="text-[11px] uppercase tracking-[0.22em] text-[#d7b977]">Board</p>
-                    <div className="mt-2 flex gap-2">
-                      {currentQuestion.board.map((card) => (
-                        <PlayingCard key={card} card={card} />
-                      ))}
-                    </div>
-                  </div>
-                )}
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <Metric label="포커스" value={currentQuestion.mathFocus} />
-                  <Metric label="팟" value={currentQuestion.pot} />
-                  <Metric label="상대 베팅" value={currentQuestion.villainBet} />
-                  <Metric label="상황" value={currentQuestion.actionBefore} />
-                </div>
-              </div>
-            )}
-          </Surface>
-          {!feedback && (
-            <div className="fixed inset-x-0 bottom-0 z-30 mx-auto w-full max-w-[520px] px-4 pb-4 sm:px-5">
-              <div className="rounded-[28px] border border-[#d7b977]/20 bg-[#061d16]/96 p-3 shadow-[0_20px_80px_rgba(0,0,0,0.42)] backdrop-blur-xl">
-                <p className="px-2 text-[11px] uppercase tracking-[0.22em] text-[#d7b977]">
-                  Choose Action
-                </p>
-                <div className="mt-3 grid gap-2">
-                  {(currentQuestion.category === "odds" ? currentQuestion.options : ACTIONS).map((option) => (
+                <div className="mt-2 grid grid-cols-3 gap-2">
+                  {answerOptions.map((option) => (
                     <button
                       key={option.value}
                       type="button"
                       onClick={() => onAnswer(option.value)}
                       className={cn(
-                        "w-full rounded-[22px] border px-4 py-4 text-left transition hover:translate-y-[-1px]",
+                        "min-h-[72px] rounded-[20px] border px-2 py-3 text-center transition hover:translate-y-[-1px]",
                         currentQuestion.category === "odds"
                           ? "border-[#86c7ff]/18 bg-[#0d2430] text-[#e2f2ff]"
                           : option.value === "fold"
@@ -760,21 +851,24 @@ export function QuizScreen({
                               : "border-[#d7b977]/18 bg-[#2a2210] text-[#fff4dc]",
                       )}
                     >
-                      <span className="block text-base font-semibold">{option.label}</span>
-                      <span className="mt-1 block text-xs uppercase tracking-[0.18em] opacity-70">
-                        {currentQuestion.category === "odds" ? "Math Choice" : "Table Action"}
+                      <span className="block text-sm font-semibold">{option.label}</span>
+                      <span className="mt-1.5 block text-[9px] uppercase tracking-[0.18em] opacity-70">
+                        {currentQuestion.category === "odds" ? "Math" : "Action"}
                       </span>
                     </button>
                   ))}
                 </div>
               </div>
-            </div>
+            )}
+          </div>
+          {!feedback && (
+            <div className="h-0" />
           )}
           {feedback && (
-            <div className="fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[520px] px-4 pb-4 sm:px-5">
+            <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[520px] px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
               <div
                 className={cn(
-                  "rounded-[30px] border p-4 shadow-[0_20px_90px_rgba(0,0,0,0.48)] backdrop-blur-xl",
+                  "pointer-events-auto max-h-[40svh] overflow-y-auto rounded-[28px] border p-4 shadow-[0_20px_90px_rgba(0,0,0,0.48)] backdrop-blur-xl scrollbar-thin",
                   feedback.correct
                     ? "border-[#2f9f6b]/45 bg-[#0d2b20]/96"
                     : "border-[#d56262]/36 bg-[#2a1618]/96",
@@ -783,9 +877,9 @@ export function QuizScreen({
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-[11px] uppercase tracking-[0.22em] text-[#d7b977]">
-                      {feedback.correct ? "Correct" : "Not This Time"}
+                      {feedback.correct ? "Correct Read" : "Leak Found"}
                     </p>
-                    <h3 className="mt-2 font-serif text-2xl text-[#f8f1de]">
+                    <h3 className="mt-2 font-serif text-[1.7rem] leading-tight text-[#f8f1de]">
                       추천 액션은 {getChoiceLabel(currentQuestion, currentQuestion.correct)}
                     </h3>
                   </div>
@@ -809,18 +903,21 @@ export function QuizScreen({
                   <p className="text-[11px] uppercase tracking-[0.22em] text-[#d7b977]">Beginner Leak</p>
                   <p className="mt-2 text-sm leading-6 text-[#efe2be]/78">{currentQuestion.pitfall}</p>
                 </div>
-                <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-                  <Secondary onClick={() => onStartWeakness(currentQuestion.tags[0])}>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <Secondary
+                    onClick={() => onStartWeakness(currentQuestion.tags[0])}
+                    className="w-full justify-center"
+                  >
                     비슷한 문제 더 풀기
                   </Secondary>
-                  <Primary onClick={onNext}>
+                  <Primary onClick={onNext} className="w-full justify-center">
                     {session.index >= session.questionIds.length ? "세션 결과 보기" : "다음 문제"}
                   </Primary>
                 </div>
               </div>
             </div>
           )}
-        </>
+        </div>
       ) : null}
     </section>
   );

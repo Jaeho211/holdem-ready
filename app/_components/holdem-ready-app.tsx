@@ -40,6 +40,7 @@ import type {
   WrongFilter,
 } from "@/lib/holdem/types";
 import { registerServiceWorker, triggerFeedback } from "./browser";
+import { cn } from "./ui";
 import {
   AppHeader,
   BottomNav,
@@ -257,9 +258,16 @@ export function HoldemReadyApp() {
   }
 
   return (
-    <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-[520px] flex-col px-4 pb-28 pt-4 sm:px-5">
+    <main
+      className={cn(
+        "relative z-10 mx-auto flex w-full max-w-[520px] flex-col",
+        view === "quiz"
+          ? "min-h-[100svh] overflow-hidden px-0 pb-0 pt-0"
+          : "min-h-screen px-4 pb-28 pt-4 sm:px-5",
+      )}
+    >
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-64 rounded-b-[48px] bg-[radial-gradient(circle_at_top,rgba(214,186,122,0.18),transparent_68%)]" />
-      <div className="flex-1">
+      <div className={cn("flex-1", view === "quiz" && "min-h-0")}>
         {view !== "quiz" && <AppHeader view={view} onOpenSettings={() => setSettingsOpen(true)} />}
 
         {view === "home" && (
