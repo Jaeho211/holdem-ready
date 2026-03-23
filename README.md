@@ -59,6 +59,9 @@
 ### 퀴즈 진행
 
 - 카테고리별 문제 카드
+- 보드 5칸과 히어로 핸드 2장을 테이블 형태로 표시
+- 앞면 카드는 컴포넌트에서 직접 그린 인덱스/수트 스타일 사용
+- 히어로 핸드가 없는 확률 문제는 카드 뒷면으로 숨김 표시
 - 선택 직후 정답 여부, 해설, 초보자 실수 포인트 제공
 - 세션 완료 후 결과 요약
 
@@ -106,18 +109,28 @@ npm run lint
 
 ```text
 app/
+  _components/
+    holdem-ready-app.tsx  클라이언트 상태와 화면 전환
+    screens.tsx           화면별 UI 구성
+    ui.tsx                공용 UI와 카드 컴포넌트
   globals.css        전역 스타일
   layout.tsx         메타데이터와 루트 레이아웃
   manifest.ts        PWA 매니페스트
-  page.tsx           메인 앱 UI와 상태 로직
+  page.tsx           앱 엔트리 포인트
 lib/
+  holdem/
+    cards.ts         카드 코드, 라벨, 에셋 경로 유틸
+    selectors.ts     통계/오답/약점 계산
+    sessions.ts      세션 생성과 진행 로직
+    store.ts         localStorage 입출력
   training-data.ts   문제 은행, 카테고리 메타, 라이브 팁 데이터
 public/
+  cards/             카드 뒷면 SVG와 카드 관련 정적 에셋
   icon.svg           앱 아이콘
   sw.js              서비스 워커
 ```
 
-현재 구현은 대부분 `app/page.tsx` 한 파일에 모여 있습니다. UI 컴포넌트와 상태 흐름을 분리하는 리팩터링 여지는 남아 있습니다.
+현재 구현은 App Router 엔트리에서 `HoldemReadyApp`을 불러오고, 상태 로직과 화면 UI가 `app/_components/` 아래로 분리돼 있습니다.
 
 ## 문서
 

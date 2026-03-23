@@ -17,7 +17,7 @@
 - 로컬 저장 기반 MVP
 - 모바일 화면 폭에 맞춘 단일 페이지 앱
 
-메인 UI와 상태 로직은 대부분 [`app/page.tsx`](../app/page.tsx)에 들어 있습니다.
+앱 엔트리는 [`app/page.tsx`](../app/page.tsx)이고, 실제 상태 로직은 [`app/_components/holdem-ready-app.tsx`](../app/_components/holdem-ready-app.tsx), 화면 구성은 [`app/_components/screens.tsx`](../app/_components/screens.tsx), 공용 UI는 [`app/_components/ui.tsx`](../app/_components/ui.tsx)에 나뉘어 있습니다.
 
 ## 주요 뷰
 
@@ -95,10 +95,14 @@
 퀴즈 화면은 세션 진행 화면입니다.
 
 - 문제 본문과 상황 정보 표시
+- 보드 5칸과 히어로 핸드를 포커 테이블 형태로 표시
+- 확률 카테고리 중 히어로 카드가 없는 문제는 카드 뒷면으로 숨김 표시
 - 선택지 버튼 표시
 - 정답 여부 피드백
 - 해설과 초보자 실수 포인트 제공
 - 다음 문제 또는 세션 결과 보기
+
+카드 UI는 작은 모바일 화면에서도 읽기 쉽게 앞면 인덱스와 중앙 수트 심볼을 직접 렌더링합니다.
 
 ## 데이터 구성
 
@@ -186,13 +190,16 @@
 - 모바일 우선
 - 최대 폭 `520px`
 - 포커 테이블 느낌의 녹색 / 금색 톤
-- 카드형 레이아웃
+- 카드형 레이아웃과 타원형 테이블 씬
+- 앞면 카드는 컴포넌트에서 직접 그린 인덱스/수트 기반 디자인
+- 카드 뒷면은 정적 SVG 에셋 사용
 - 정답/오답에 따른 진동과 사운드 피드백 옵션
 
 ## 현재 구조상 특징
 
 - 구현 속도를 우선한 단일 페이지 구조입니다.
-- 화면 로직, 상태 관리, UI 헬퍼 컴포넌트가 [`app/page.tsx`](../app/page.tsx)에 집중돼 있습니다.
+- App Router 엔트리는 얇고, 클라이언트 상태 관리와 화면 UI는 `app/_components/` 아래로 분리돼 있습니다.
+- 카드 렌더링은 [`app/_components/ui.tsx`](../app/_components/ui.tsx)와 [`lib/holdem/cards.ts`](../lib/holdem/cards.ts)를 중심으로 관리합니다.
 - 서버 연동 없이도 바로 실행 가능한 데모 성격이 강합니다.
 
 ## 다음에 문서화하거나 개선할 만한 항목
