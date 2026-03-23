@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Holdem Ready",
     short_name: "Holdem Ready",
     description:
-      "?쇱뒪踰좉????쇱씠釉???ㅼ쓣 ?꾪븳 紐⑤컮???숈뒿 ?뱀빋. ?꾨━?뚮엻, ?ъ뒪?명뵆?? ?뺣쪧, ?쇱씠釉??곸쓣 吏㏐쾶 諛섎났 ?숈뒿?⑸땲??",
+      "라스베가스 라이브 홀덤을 준비하는 사람을 위한 모바일 우선 학습 앱",
     start_url: "/",
     display: "standalone",
     background_color: "#041711",
@@ -22,4 +22,3 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
   };
 }
-
