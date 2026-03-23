@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# Holdem Ready
 
-## Getting Started
+모바일 중심의 홀덤 학습 앱입니다. 짧은 상황 문제를 반복해서 풀고, 오답과 약점을 다시 훈련하면서 라이브 포커 감각을 올리는 것을 목표로 합니다.
 
-First, run the development server:
+상세 구조는 [docs/app-overview.md](docs/app-overview.md)에서 볼 수 있습니다.
+
+## 현재 구현 범위
+
+- 오늘의 10문제 세션
+- 카테고리별 훈련
+- 오답노트와 오답 재도전
+- 약점 태그 기반 5문제 드릴
+- 최근 기록, 정답률, 연속 학습, 7일 추이
+- 라이브 카지노 팁 체크리스트
+- 설정: 진동, 사운드, 하루 목표 문제 수, 데이터 초기화
+- PWA 메타데이터와 서비스 워커 기반 기본 오프라인 캐시
+
+## 문제 구성
+
+- 프리플랍 10문제
+- 포스트플랍 8문제
+- 확률 6문제
+- 라이브 팁 5개 섹션 / 15개 체크 항목
+
+총 24개의 퀴즈 문제와 15개의 현장 체크 항목이 들어 있습니다.
+
+## 화면 구성
+
+### 홈
+
+- 오늘 목표 진행률
+- 오늘의 10문제 시작 또는 이어풀기
+- 현재 약점 태그 표시
+- 약한 영역 드릴 진입
+- 라이브 팁 진행도
+- 카테고리별 빠른 시작
+
+### 훈련
+
+- 프리플랍, 포스트플랍, 확률 훈련 시작
+- 카테고리별 이어풀기 / 새로 시작
+- 라이브 카지노 팁 체크리스트 진입
+
+### 오답노트
+
+- 전체 / 카테고리별 오답 필터
+- 최근 틀린 문제 재도전
+- 문제별 내 선택, 정답, 약점 태그 확인
+
+### 기록
+
+- 전체 정답률
+- 연속 학습 일수
+- 누적 풀이 수
+- 카테고리별 정확도
+- 최근 7일 학습 빈도
+- 현재 약점 3개 추천
+
+### 퀴즈 진행
+
+- 카테고리별 문제 카드
+- 선택 직후 정답 여부, 해설, 초보자 실수 포인트 제공
+- 세션 완료 후 결과 요약
+
+### 라이브 팁
+
+- 테이블 앉기
+- 바잉과 칩 관리
+- 액션 순서
+- 베팅 규칙
+- 초보자 실수
+
+## 기술 스택
+
+- Next.js 16.2.1
+- React 19.2.4
+- Tailwind CSS 4
+- TypeScript
+
+## 실행 방법
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+브라우저에서 `http://localhost:3000`을 열면 됩니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+빌드와 린트:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run lint
+```
 
-## Learn More
+## 데이터 저장 방식
 
-To learn more about Next.js, take a look at the following resources:
+- 서버나 DB 없이 클라이언트 단독으로 동작합니다.
+- 학습 기록, 세션 진행 상태, 라이브 팁 체크 상태, 설정은 `localStorage`에 저장됩니다.
+- 저장 키는 `holdem-ready:v1`입니다.
+- 서비스 워커가 `/`, 매니페스트, 아이콘을 기본 캐시합니다.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+즉, 현재 앱은 개인 학습용 MVP에 가깝고, 로그인이나 동기화 기능은 없습니다.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 프로젝트 구조
 
-## Deploy on Vercel
+```text
+app/
+  globals.css        전역 스타일
+  layout.tsx         메타데이터와 루트 레이아웃
+  manifest.ts        PWA 매니페스트
+  page.tsx           메인 앱 UI와 상태 로직
+lib/
+  training-data.ts   문제 은행, 카테고리 메타, 라이브 팁 데이터
+public/
+  icon.svg           앱 아이콘
+  sw.js              서비스 워커
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+현재 구현은 대부분 `app/page.tsx` 한 파일에 모여 있습니다. UI 컴포넌트와 상태 흐름을 분리하는 리팩터링 여지는 남아 있습니다.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 문서
+
+- [앱 개요 문서](docs/app-overview.md)

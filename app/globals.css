@@ -1,26 +1,122 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --felt-deep: #041711;
+  --felt: #0b3b2e;
+  --felt-soft: #135540;
+  --felt-line: rgba(212, 186, 123, 0.22);
+  --ivory: #f6efe0;
+  --cream: #ece0bd;
+  --gold: #d7b977;
+  --gold-bright: #f0d28f;
+  --ink: #152018;
+  --mist: rgba(246, 239, 224, 0.8);
+  --danger: #d56262;
+  --success: #2f9f6b;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-mono: "Consolas", "SFMono-Regular", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  background:
+    radial-gradient(circle at top, rgba(38, 110, 84, 0.4), transparent 34%),
+    linear-gradient(180deg, #0b2a21 0%, #041711 62%);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(215, 185, 119, 0.08), transparent 24%),
+    radial-gradient(circle at 85% 0%, rgba(80, 180, 139, 0.1), transparent 22%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 20%);
+  font-family: var(--font-sans);
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::before {
+  top: -12rem;
+  right: -7rem;
+  width: 20rem;
+  height: 20rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(215, 185, 119, 0.18), transparent 70%);
+  filter: blur(14px);
+}
+
+body::after {
+  bottom: -10rem;
+  left: -8rem;
+  width: 18rem;
+  height: 18rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(24, 124, 93, 0.34), transparent 72%);
+  filter: blur(18px);
+}
+
+::selection {
+  background: rgba(215, 185, 119, 0.28);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+@keyframes rise-fade {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise-fade 560ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(215, 185, 119, 0.35) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(215, 185, 119, 0.28);
+  border-radius: 9999px;
 }
