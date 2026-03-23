@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="336" viewBox="0 0 240 336" role="img" aria-label="Face-down playing card">
+  <defs>
+    <linearGradient id="back-base" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#163e30" />
+      <stop offset="100%" stop-color="#071d16" />
+    </linearGradient>
+    <linearGradient id="back-core" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#245740" />
+      <stop offset="100%" stop-color="#0b2c21" />
+    </linearGradient>
+    <pattern id="diamond-grid" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="20" height="20" fill="none" />
+      <path d="M0 10H20" stroke="#d7b977" stroke-opacity="0.12" stroke-width="4" />
+      <path d="M10 0V20" stroke="#d7b977" stroke-opacity="0.08" stroke-width="2" />
+    </pattern>
+  </defs>
+  <rect x="8" y="8" width="224" height="320" rx="24" fill="#ffffff" fill-opacity="0.12" />
+  <rect x="12" y="12" width="216" height="312" rx="22" fill="url(#back-base)" stroke="#f2dfb4" stroke-opacity="0.55" stroke-width="2" />
+  <rect x="24" y="24" width="192" height="288" rx="18" fill="url(#back-core)" stroke="#d7b977" stroke-opacity="0.45" stroke-width="2" />
+  <rect x="32" y="32" width="176" height="272" rx="14" fill="url(#diamond-grid)" />
+  <ellipse cx="120" cy="168" rx="62" ry="84" fill="#082019" stroke="#d7b977" stroke-opacity="0.35" stroke-width="2" />
+  <ellipse cx="120" cy="168" rx="42" ry="58" fill="#0f3328" stroke="#d7b977" stroke-opacity="0.5" stroke-width="1.5" />
+  <text x="120" y="176" text-anchor="middle" fill="#f0d28f" font-size="44" font-weight="700" font-family="Trebuchet MS, Segoe UI, sans-serif">HR</text>
+  <text x="120" y="206" text-anchor="middle" fill="#f8edd1" fill-opacity="0.82" font-size="14" letter-spacing="4" font-family="Trebuchet MS, Segoe UI, sans-serif">HOLDEM READY</text>
+</svg>
