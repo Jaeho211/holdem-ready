@@ -96,6 +96,26 @@ npm run build
 npm run lint
 ```
 
+정적 결과물은 `npm run build` 후 `out/` 디렉터리에 생성됩니다.
+
+## Netlify 배포
+
+이 프로젝트는 현재 서버나 DB 없이 동작하므로 정적 사이트로 배포할 수 있습니다.
+
+이미 저장소에 Netlify용 설정이 포함돼 있습니다.
+
+- Build command: `npm run build`
+- Publish directory: `out`
+
+배포 방법:
+
+1. GitHub의 이 저장소를 Netlify에 Import합니다.
+2. 빌드 설정이 보이면 기본값 대신 `npm run build`와 `out`을 확인합니다.
+3. Deploy를 실행하면 공개 URL이 생성됩니다.
+4. 이후에는 `main` 브랜치에 푸시할 때마다 자동 재배포됩니다.
+
+PR 기반 미리보기 URL이 필요하면 Netlify Deploy Preview를 켜면 됩니다.
+
 ## 데이터 저장 방식
 
 - 서버나 DB 없이 클라이언트 단독으로 동작합니다.
