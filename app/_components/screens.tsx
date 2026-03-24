@@ -160,25 +160,25 @@ export function HomeScreen({
   todayCount,
   dailyGoal,
   hasActiveDailySession,
+  hasWeaknessHistory,
   weakTags,
   streakDays,
   wrongsAvailable,
   tipCheckedCount,
   onStartDaily,
   onStartWrongs,
-  onStartWeakness,
   onStartCategory,
 }: {
   todayCount: number;
   dailyGoal: Settings["dailyGoal"];
   hasActiveDailySession: boolean;
+  hasWeaknessHistory: boolean;
   weakTags: string[];
   streakDays: number;
   wrongsAvailable: boolean;
   tipCheckedCount: number;
   onStartDaily: () => void;
   onStartWrongs: () => void;
-  onStartWeakness: (tag: string) => void;
   onStartCategory: (category: AppTrainingCategory) => void;
 }) {
   return (
@@ -207,15 +207,16 @@ export function HomeScreen({
               {hasActiveDailySession ? "오늘 세션 이어서 가기" : "오늘의 10문제로 시작"}
             </h2>
             <p className="mt-2 text-sm leading-6 text-[#efe2be]/80">
-              {weakTags[0]}
-              {weakTags[1] ? `, ${weakTags[1]}` : ""} 쪽에서 가장 많이 미끄러집니다.
+              {hasWeaknessHistory
+                ? `${weakTags[0]}${weakTags[1] ? `, ${weakTags[1]}` : ""} 약점을 반영해 오늘 문제를 골랐습니다.`
+                : "첫 세션은 Preflop, 포스트플랍, 확률을 고르게 섞어 준비합니다."}
             </p>
             <div className="mt-3 flex flex-wrap gap-2 text-xs text-[#efe2be]">
               <span className="rounded-full border border-[#d7b977]/16 bg-[#09231b] px-3 py-2">
                 연속 {streakDays}일
               </span>
               <span className="rounded-full border border-[#d7b977]/16 bg-[#09231b] px-3 py-2">
-                약점 {weakTags[0]}
+                {hasWeaknessHistory ? `세션 반영 ${weakTags[0]}` : "균형 세션"}
               </span>
             </div>
           </div>
@@ -229,40 +230,22 @@ export function HomeScreen({
           </Secondary>
         </div>
       </Surface>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Surface>
-          <CardEyebrow>약점 추적</CardEyebrow>
-          <h3 className="mt-2 font-serif text-2xl text-[#f6efe0]">약한 영역 drill</h3>
-          <p className="mt-2 text-sm leading-6 text-[#efe2be]/80">
-            지금 가장 흔들리는 영역을 5문제로 끊어 바로 복습합니다.
-          </p>
-          <div className="mt-4 flex items-end justify-between gap-3">
-            <div>
-              <p className="text-lg font-medium text-[#f8f1de]">{weakTags[0]}</p>
-              <p className="mt-1 text-xs uppercase tracking-[0.18em] text-[#d7b977]">
-                Weakest Now
-              </p>
-            </div>
-            <Secondary onClick={() => onStartWeakness(weakTags[0])}>5문제 시작</Secondary>
+      <Surface>
+        <CardEyebrow>빠른 메모</CardEyebrow>
+        <h3 className="mt-2 font-serif text-2xl text-[#f6efe0]">라이브 팁 진행도</h3>
+        <p className="mt-2 text-sm leading-6 text-[#efe2be]/80">
+          체크리스트형으로 현장 적응 포인트를 관리합니다.
+        </p>
+        <div className="mt-4 flex items-end justify-between gap-3">
+          <div>
+            <p className="text-3xl font-semibold text-[#f8f1de]">
+              {tipCheckedCount}/{TIP_TOTAL}
+            </p>
+            <p className="text-xs uppercase tracking-[0.18em] text-[#d7b977]">Live Tips</p>
           </div>
-        </Surface>
-        <Surface>
-          <CardEyebrow>빠른 메모</CardEyebrow>
-          <h3 className="mt-2 font-serif text-2xl text-[#f6efe0]">라이브 팁 진행도</h3>
-          <p className="mt-2 text-sm leading-6 text-[#efe2be]/80">
-            체크리스트형으로 현장 적응 포인트를 관리합니다.
-          </p>
-          <div className="mt-4 flex items-end justify-between gap-3">
-            <div>
-              <p className="text-3xl font-semibold text-[#f8f1de]">
-                {tipCheckedCount}/{TIP_TOTAL}
-              </p>
-              <p className="text-xs uppercase tracking-[0.18em] text-[#d7b977]">Live Tips</p>
-            </div>
-            <Secondary onClick={() => onStartCategory("liveTips")}>팁 열기</Secondary>
-          </div>
-        </Surface>
-      </div>
+          <Secondary onClick={() => onStartCategory("liveTips")}>팁 열기</Secondary>
+        </div>
+      </Surface>
       <Surface>
         <div className="flex items-center justify-between gap-3">
           <div>

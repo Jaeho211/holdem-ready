@@ -3,10 +3,12 @@ import { createDefaultStore } from "./constants";
 import {
   answerSessionQuestion,
   buildCategorySession,
+  buildDailySession,
   buildWeaknessSession,
   createSession,
 } from "./sessions";
 import { questionBank } from "../training-data";
+import { shuffleItems } from "./utils";
 
 describe("session helpers", () => {
   it("deduplicates question ids when creating a session", () => {
@@ -27,6 +29,38 @@ describe("session helpers", () => {
     expect(session.questionIds).toHaveLength(8);
     expect(new Set(session.questionIds).size).toBe(8);
     expect(session.questionIds.every((questionId) => questionId.startsWith("pre-"))).toBe(true);
+  });
+
+  it("prioritizes weakness-tagged questions in daily sessions", () => {
+    const session = buildDailySession(
+      [
+        {
+          questionId: "pre-003",
+          category: "preflop",
+          choice: "call",
+          correct: false,
+          correctChoice: "fold",
+          answeredAt: "2026-03-23T12:00:00+09:00",
+          tags: ["SB 디펜스", "오프수트 브로드웨이"],
+        },
+      ],
+      () => 0,
+    );
+
+    expect(session.questionIds).toHaveLength(10);
+    expect(new Set(session.questionIds).size).toBe(10);
+    expect(session.questionIds).toContain("pre-003");
+  });
+
+  it("falls back to a shuffled bank when there is no weakness history", () => {
+    const session = buildDailySession([], () => 0);
+
+    expect(session.questionIds).toEqual(
+      shuffleItems(
+        questionBank.map((question) => question.id),
+        () => 0,
+      ).slice(0, 10),
+    );
   });
 
   it("falls back to the full bank when a weakness tag has no direct matches", () => {

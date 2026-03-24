@@ -12,7 +12,7 @@ import {
   WEAKNESS_SESSION_SIZE,
   WRONGS_SESSION_SIZE,
 } from "./constants";
-import { getWrongEntries } from "./selectors";
+import { getWeaknesses, getWrongEntries } from "./selectors";
 import type { Feedback, ResponseEntry, Session, Store } from "./types";
 import { dayKey, shuffleItems } from "./utils";
 
@@ -32,12 +32,55 @@ export const createSession = (
   results: [],
 });
 
-export const buildDailySession = (random: () => number = Math.random) =>
-  createSession(
+const getDailyFocusIds = (
+  responses: ResponseEntry[],
+  random: () => number,
+) => {
+  const focusIds: string[] = [];
+  const seen = new Set<string>();
+
+  for (const tag of getWeaknesses(responses, { includeFallback: false })) {
+    const matchingIds = shuffleItems(
+      questionBank
+        .filter((question) => question.tags.includes(tag))
+        .map((question) => question.id),
+      random,
+    );
+
+    for (const questionId of matchingIds) {
+      if (seen.has(questionId)) continue;
+
+      seen.add(questionId);
+      focusIds.push(questionId);
+
+      if (focusIds.length >= WEAKNESS_SESSION_SIZE) {
+        return focusIds;
+      }
+    }
+  }
+
+  return focusIds;
+};
+
+export const buildDailySession = (
+  responses: ResponseEntry[] = [],
+  random: () => number = Math.random,
+) => {
+  const focusIds = getDailyFocusIds(responses, random);
+  const focusSet = new Set(focusIds);
+
+  return createSession(
     getDailySessionKey(),
     "오늘의 10문제",
-    shuffleItems(allQuestionIds, random).slice(0, DAILY_SESSION_SIZE),
+    [
+      ...focusIds,
+      ...shuffleItems(
+        allQuestionIds.filter((questionId) => !focusSet.has(questionId)),
+        random,
+      ),
+    ].slice(0, DAILY_SESSION_SIZE),
   );
+};
 
 export const buildCategorySession = (
   category: TrainingCategory,

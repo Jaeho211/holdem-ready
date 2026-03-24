@@ -92,6 +92,7 @@ export function HoldemReadyApp() {
   const dailySession = store.sessions[dailySessionKey];
   const todayCount = getTodayCount(store.responses);
   const weakTags = getWeaknesses(store.responses);
+  const hasWeaknessHistory = store.responses.some((entry) => !entry.correct);
   const missed = getWrongEntries(store.responses, wrongFilter);
   const currentQuestion = feedback
     ? QUESTIONS_BY_ID[feedback.questionId]
@@ -152,7 +153,7 @@ export function HoldemReadyApp() {
       return;
     }
 
-    beginSession(buildDailySession());
+    beginSession(buildDailySession(store.responses));
   };
 
   const startCategory = (category: AppTrainingCategory, useExisting = false) => {
@@ -275,13 +276,13 @@ export function HoldemReadyApp() {
             todayCount={todayCount}
             dailyGoal={store.settings.dailyGoal}
             hasActiveDailySession={Boolean(dailySession && dailySession.index < dailySession.questionIds.length)}
+            hasWeaknessHistory={hasWeaknessHistory}
             weakTags={weakTags}
             streakDays={getStreak(store.responses)}
             wrongsAvailable={Boolean(getWrongEntries(store.responses, "all").length)}
             tipCheckedCount={tipCheckedCount}
             onStartDaily={startDaily}
             onStartWrongs={() => startWrongs()}
-            onStartWeakness={startWeakness}
             onStartCategory={startCategory}
           />
         )}

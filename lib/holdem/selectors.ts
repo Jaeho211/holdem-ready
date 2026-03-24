@@ -31,7 +31,11 @@ export const getCategoryAccuracy = (
     : null;
 };
 
-export const getWeaknesses = (responses: ResponseEntry[]) => {
+export const getWeaknesses = (
+  responses: ResponseEntry[],
+  options: { includeFallback?: boolean } = {},
+) => {
+  const { includeFallback = true } = options;
   const counts = new Map<string, number>();
 
   for (const entry of responses.filter((item) => !item.correct).slice(0, 40)) {
@@ -45,7 +49,7 @@ export const getWeaknesses = (responses: ResponseEntry[]) => {
     .slice(0, 3)
     .map(([tag]) => tag);
 
-  return tags.length ? tags : FALLBACK_WEAKNESSES;
+  return tags.length ? tags : includeFallback ? FALLBACK_WEAKNESSES : [];
 };
 
 export const getWrongEntries = (
