@@ -9,6 +9,7 @@ import {
 } from "@/lib/training-data";
 import { ACTIONS, TIP_TOTAL } from "@/lib/holdem/constants";
 import type { CardCode } from "@/lib/holdem/cards";
+import { PokerTableVisual } from "./poker-table";
 import { QUESTIONS_BY_ID } from "@/lib/holdem/questions";
 import { getChoiceLabel } from "@/lib/holdem/selectors";
 import type {
@@ -706,16 +707,20 @@ function TableScene({ question }: { question: HoldemQuestion }) {
             </div>
           </div>
 
-          <div className="mt-3 grid w-full gap-2 sm:grid-cols-2">
-            {sceneDetails.map((detail) => (
-              <TableSceneStat
-                key={`${question.id}-${detail.label}`}
-                label={detail.label}
-                value={detail.value}
-                tone={detail.tone}
-              />
-            ))}
-          </div>
+          {question.category === "preflop" ? (
+            <PokerTableVisual question={question} />
+          ) : (
+            <div className="mt-3 grid w-full gap-2 sm:grid-cols-2">
+              {sceneDetails.map((detail) => (
+                <TableSceneStat
+                  key={`${question.id}-${detail.label}`}
+                  label={detail.label}
+                  value={detail.value}
+                  tone={detail.tone}
+                />
+              ))}
+            </div>
+          )}
 
           <div className="mt-4 text-center">
             <p className="text-[10px] uppercase tracking-[0.24em] text-[#d7b977]">{heroLabel}</p>
