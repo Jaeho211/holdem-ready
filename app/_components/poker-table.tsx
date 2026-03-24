@@ -14,8 +14,8 @@ import { cn } from "./ui";
 /* ── Seat positions around the ellipse (top%, left%) ── */
 
 const SEAT_POSITIONS: Record<SeatName, { top: string; left: string }> = {
-  SB:      { top: "2%",  left: "32%" },
-  BB:      { top: "2%",  left: "68%" },
+  SB:      { top: "10%", left: "32%" },
+  BB:      { top: "10%", left: "68%" },
   UTG:     { top: "24%", left: "93%" },
   "UTG+1": { top: "55%", left: "96%" },
   MP:      { top: "82%", left: "84%" },
