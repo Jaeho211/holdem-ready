@@ -39,7 +39,7 @@ describe("session helpers", () => {
   it("records answers and advances the active session", () => {
     const question = questionBank[0];
     const store = createDefaultStore();
-    const session = createSession("category:preflop", "프리플랍", [question.id]);
+    const session = createSession("category:preflop", "Preflop", [question.id]);
     const { nextStore, nextSession, feedback } = answerSessionQuestion({
       store,
       session,

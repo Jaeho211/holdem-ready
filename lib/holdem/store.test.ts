@@ -46,7 +46,7 @@ describe("store normalization", () => {
       sessions: {
         "category:preflop": {
           key: "category:preflop",
-          label: "프리플랍",
+          label: "Preflop",
           questionIds: [validQuestion.id, "missing-question", nextQuestion.id, validQuestion.id],
           index: 8,
           results: [

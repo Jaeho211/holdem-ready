@@ -9,6 +9,11 @@ import {
 } from "@/lib/training-data";
 import { ACTIONS, TIP_TOTAL } from "@/lib/holdem/constants";
 import type { CardCode } from "@/lib/holdem/cards";
+import {
+  GLOSSARY_TERMS,
+  getQuestionGlossaryTerms,
+  type GlossaryTermKey,
+} from "@/lib/holdem/glossary";
 import { PokerTableVisual } from "./poker-table";
 import { QUESTIONS_BY_ID } from "@/lib/holdem/questions";
 import { getChoiceLabel } from "@/lib/holdem/selectors";
@@ -25,7 +30,6 @@ import type {
 } from "@/lib/holdem/types";
 import {
   CardEyebrow,
-  Chip,
   Metric,
   PlayingCard,
   Primary,
@@ -47,7 +51,7 @@ const VIEW_COPY: Record<
   },
   training: {
     title: "훈련 선택",
-    description: "프리플랍, 포스트플랍, 확률, 현장 적응을 모바일 흐름에 맞게 반복하세요.",
+    description: "Preflop, 포스트플랍, 확률, 현장 적응을 모바일 흐름에 맞게 반복하세요.",
   },
   wrongs: {
     title: "오답노트",
@@ -65,7 +69,7 @@ const VIEW_COPY: Record<
 
 const WRONG_FILTERS: ReadonlyArray<{ key: WrongFilter; label: string }> = [
   { key: "all", label: "전체" },
-  { key: "preflop", label: "프리플랍" },
+  { key: "preflop", label: "Preflop" },
   { key: "postflop", label: "포스트플랍" },
   { key: "odds", label: "확률" },
   { key: "liveTips", label: "라이브 팁" },
@@ -77,65 +81,6 @@ const NAV_ITEMS: ReadonlyArray<{ id: AppTab; label: string }> = [
   { id: "wrongs", label: "오답" },
   { id: "records", label: "기록" },
 ];
-
-type GlossaryTermKey = "gutshot" | "turnToRiver" | "outs" | "potOdds";
-
-const GLOSSARY_TERMS: Record<
-  GlossaryTermKey,
-  { label: string; short: string; details: string[] }
-> = {
-  gutshot: {
-    label: "Gutshot",
-    short: "Inside straight draw needing one specific rank.",
-    details: ["Usually 4 outs.", "Example: 5-6-8-9 needs a 7."],
-  },
-  turnToRiver: {
-    label: "Turn to River",
-    short: "Only one card remains (river).",
-    details: ["Use one-card probability.", "4 outs: 4/46 ≈ 8.7% (~9%)."],
-  },
-  outs: {
-    label: "Outs",
-    short: "Number of unseen cards that improve your hand.",
-    details: ["Count only clean outs that really help."],
-  },
-  potOdds: {
-    label: "Pot Odds",
-    short: "Call / (Pot + Call). Compare this with equity.",
-    details: ["Example: pot 100, call 50 -> 50/200 = 25%."],
-  },
-};
-
-function getGlossaryTerms(question: HoldemQuestion): GlossaryTermKey[] {
-  if (question.category !== "odds") {
-    return [];
-  }
-
-  const terms = new Set<GlossaryTermKey>();
-  const focus = `${question.mathFocus} ${question.title}`.toLowerCase();
-
-  if (focus.includes("gutshot") || focus.includes("거트샷")) {
-    terms.add("gutshot");
-  }
-
-  if (focus.includes("outs") || focus.includes("아웃")) {
-    terms.add("outs");
-  }
-
-  if (focus.includes("turn to river") || focus.includes("턴 to 리버")) {
-    terms.add("turnToRiver");
-  }
-
-  if (focus.includes("pot odds") || focus.includes("포트 오즈") || focus.includes("팟 오즈")) {
-    terms.add("potOdds");
-  }
-
-  if (!terms.size && !question.holeCards) {
-    terms.add("potOdds");
-  }
-
-  return [...terms];
-}
 
 function GlossaryChip({
   term,
@@ -327,7 +272,7 @@ export function HomeScreen({
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <Quick
-            title="프리플랍"
+            title="Preflop"
             subtitle="핸드와 포지션"
             tone="emerald"
             onClick={() => onStartCategory("preflop")}
@@ -461,7 +406,7 @@ export function WrongsScreen({
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-[11px] uppercase tracking-[0.2em] text-[#d7b977]">
-                    {categoryMeta[question.category].shortLabel}
+                    {categoryMeta[question.category].label}
                   </p>
                   <h3 className="mt-2 font-serif text-xl text-[#f6efe0]">{question.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-[#efe2be]/78">{question.pitfall}</p>
@@ -548,7 +493,7 @@ export function RecordsScreen({
           {(["preflop", "postflop", "odds"] as TrainingCategory[]).map((category) => (
             <Metric
               key={category}
-              label={categoryMeta[category].shortLabel}
+              label={categoryMeta[category].label}
               value={
                 categoryAccuracies[category] !== null ? `${categoryAccuracies[category]}%` : "--"
               }
@@ -789,10 +734,8 @@ function PotOddsVisual({
 
 function TableScene({
   question,
-  onOpenTerm,
 }: {
   question: HoldemQuestion;
-  onOpenTerm: (term: GlossaryTermKey) => void;
 }) {
   const heroCards = getHeroCards(question);
   const boardCards = getBoardCards(question);
@@ -802,10 +745,10 @@ function TableScene({
   const heroLabel = showBackCards ? "Hero Cards Hidden" : "Hero Hand";
   const heroHint =
     question.category === "preflop"
-      ? "프리플랍, 보드는 아직 없습니다."
+      ? "Preflop, the Board is not dealt yet."
       : showBackCards
         ? "핸드 없이 팟 오즈만 훈련합니다."
-        : "보드와 히어로 핸드를 함께 읽으세요.";
+        : "Read the Board and Hero Hand together.";
 
   return (
     <div className="mt-3 flex min-h-0 flex-1 rounded-[28px] border border-[#d7b977]/20 bg-[#03130f] p-2 shadow-[0_18px_60px_rgba(0,0,0,0.34)]">
@@ -814,9 +757,6 @@ function TableScene({
         <div className="pointer-events-none absolute inset-x-3 bottom-0 h-20 bg-[linear-gradient(180deg,rgba(4,23,17,0),rgba(4,23,17,0.78))]" />
         <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-between">
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <span className="rounded-full border border-[#d7b977]/18 bg-black/18 px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-[#d7b977]">
-              {categoryMeta[question.category].shortLabel}
-            </span>
             <span className="rounded-full border border-white/8 bg-white/6 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-[#f6efe0]">
               {question.difficulty}
             </span>
@@ -878,11 +818,9 @@ function TableScene({
             ) : question.mathFocus.includes("아웃") || question.mathFocus.toLowerCase().includes("outs") ? (
               <div className="mt-3 w-full text-center">
                 <p className="text-[10px] uppercase tracking-[0.22em] text-[#8ecdf7]">{question.mathFocus}</p>
-                <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5">
-                  {getGlossaryTerms(question).map((term) => (
-                    <GlossaryChip key={`${question.id}-${term}`} term={term} onClick={onOpenTerm} />
-                  ))}
-                </div>
+                <p className="mt-2 text-[11px] leading-4 text-[#d9ecfa]/68">
+                  필요한 용어는 문제 제목 아래 칩에서 바로 확인할 수 있습니다.
+                </p>
               </div>
             ) : (
               <PotOddsVisual
@@ -939,10 +877,9 @@ export function QuizScreen({
   onOpenRecords: () => void;
 }) {
   const answerOptions = currentQuestion?.category === "odds" ? currentQuestion.options : ACTIONS;
-  const visibleTags = currentQuestion ? currentQuestion.tags.slice(0, 2) : [];
   const [activeTerm, setActiveTerm] = useState<GlossaryTermKey | null>(null);
-  const glossaryTerms = useMemo(
-    () => (currentQuestion ? getGlossaryTerms(currentQuestion) : []),
+  const questionTerms = useMemo(
+    () => (currentQuestion ? getQuestionGlossaryTerms(currentQuestion) : []),
     [currentQuestion],
   );
 
@@ -966,7 +903,7 @@ export function QuizScreen({
               {summary
                 ? "Session Complete"
                 : currentQuestion
-                  ? categoryMeta[currentQuestion.category].shortLabel
+                  ? categoryMeta[currentQuestion.category].label
                   : "Holdem Ready"}
             </p>
             <p className="mt-1 text-xs text-[#f6efe0]">
@@ -999,19 +936,15 @@ export function QuizScreen({
           <div className="flex min-h-0 flex-1 flex-col rounded-[28px] border border-[#d7b977]/20 bg-[linear-gradient(180deg,rgba(10,34,27,0.96),rgba(4,23,17,0.98))] p-4 shadow-[0_18px_60px_rgba(0,0,0,0.34)]">
             <CardEyebrow>{currentQuestion.title}</CardEyebrow>
             <div className="mt-2 flex flex-wrap gap-1.5">
-              <Chip>{categoryMeta[currentQuestion.category].shortLabel}</Chip>
-              {visibleTags.map((tag) => (
-                <Chip key={tag}>{tag}</Chip>
+              {questionTerms.map((term) => (
+                <GlossaryChip
+                  key={`${currentQuestion.id}-header-${term}`}
+                  term={term}
+                  onClick={setActiveTerm}
+                />
               ))}
             </div>
-            {currentQuestion.category === "odds" && glossaryTerms.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {glossaryTerms.map((term) => (
-                  <GlossaryChip key={`${currentQuestion.id}-header-${term}`} term={term} onClick={setActiveTerm} />
-                ))}
-              </div>
-            )}
-            <TableScene question={currentQuestion} onOpenTerm={setActiveTerm} />
+            <TableScene question={currentQuestion} />
             {!feedback && (
               <div className="mt-3 shrink-0 rounded-[24px] border border-[#d7b977]/20 bg-[#071d16]/96 p-2.5 shadow-[0_16px_44px_rgba(0,0,0,0.28)] backdrop-blur-xl">
                 <div className="flex items-center justify-between gap-3 px-1">
