@@ -2,7 +2,6 @@ import { useMemo, useState, type ChangeEvent } from "react";
 import {
   categoryMeta,
   liveTipSections,
-  type AppTrainingCategory,
   type AnswerChoice,
   type HoldemQuestion,
   type TrainingCategory,
@@ -33,7 +32,6 @@ import {
   Metric,
   PlayingCard,
   Primary,
-  Quick,
   Secondary,
   SettingRow,
   Surface,
@@ -49,10 +47,6 @@ const VIEW_COPY: Record<
     title: "라스베가스 대비",
     description: "짧은 실전 문제와 오답 보정으로 라이브 감각을 올립니다.",
   },
-  training: {
-    title: "훈련 선택",
-    description: "Preflop, 포스트플랍, 확률, 현장 적응을 모바일 흐름에 맞게 반복하세요.",
-  },
   wrongs: {
     title: "오답노트",
     description: "최근에 틀린 문제를 다시 모아 약한 결정만 빠르게 복습합니다.",
@@ -62,7 +56,7 @@ const VIEW_COPY: Record<
     description: "정답률, 약점, 최근 학습 흐름을 한 번에 봅니다.",
   },
   liveTips: {
-    title: "라이브 카지노 팁",
+    title: "Live Tips",
     description: "테이블 적응을 체크리스트형 카드로 정리합니다.",
   },
 };
@@ -70,14 +64,13 @@ const VIEW_COPY: Record<
 const WRONG_FILTERS: ReadonlyArray<{ key: WrongFilter; label: string }> = [
   { key: "all", label: "전체" },
   { key: "preflop", label: "Preflop" },
-  { key: "postflop", label: "포스트플랍" },
-  { key: "odds", label: "확률" },
-  { key: "liveTips", label: "라이브 팁" },
+  { key: "postflop", label: "Postflop" },
+  { key: "odds", label: "Odds" },
+  { key: "liveTips", label: "Live Tips" },
 ];
 
 const NAV_ITEMS: ReadonlyArray<{ id: AppTab; label: string }> = [
   { id: "home", label: "홈" },
-  { id: "training", label: "훈련" },
   { id: "wrongs", label: "오답" },
   { id: "records", label: "기록" },
 ];
@@ -101,14 +94,6 @@ function GlossaryChip({
     </button>
   );
 }
-
-export type TrainingCardViewModel = {
-  category: TrainingCategory;
-  questionCount: number;
-  accuracy: number | null;
-  progress: string;
-  hasActiveSession: boolean;
-};
 
 export function LoadingScreen() {
   return (
@@ -167,7 +152,7 @@ export function HomeScreen({
   tipCheckedCount,
   onStartDaily,
   onStartWrongs,
-  onStartCategory,
+  onOpenLiveTips,
 }: {
   todayCount: number;
   dailyGoal: Settings["dailyGoal"];
@@ -179,7 +164,7 @@ export function HomeScreen({
   tipCheckedCount: number;
   onStartDaily: () => void;
   onStartWrongs: () => void;
-  onStartCategory: (category: AppTrainingCategory) => void;
+  onOpenLiveTips: () => void;
 }) {
   return (
     <section className="space-y-4">
@@ -209,7 +194,7 @@ export function HomeScreen({
             <p className="mt-2 text-sm leading-6 text-[#efe2be]/80">
               {hasWeaknessHistory
                 ? `${weakTags[0]}${weakTags[1] ? `, ${weakTags[1]}` : ""} 약점을 반영해 오늘 문제를 골랐습니다.`
-                : "첫 세션은 Preflop, 포스트플랍, 확률을 고르게 섞어 준비합니다."}
+                : "첫 세션은 Preflop, Postflop, Odds를 고르게 섞어 준비합니다."}
             </p>
             <div className="mt-3 flex flex-wrap gap-2 text-xs text-[#efe2be]">
               <span className="rounded-full border border-[#d7b977]/16 bg-[#09231b] px-3 py-2">
@@ -232,7 +217,7 @@ export function HomeScreen({
       </Surface>
       <Surface>
         <CardEyebrow>빠른 메모</CardEyebrow>
-        <h3 className="mt-2 font-serif text-2xl text-[#f6efe0]">라이브 팁 진행도</h3>
+        <h3 className="mt-2 font-serif text-2xl text-[#f6efe0]">Live Tips Progress</h3>
         <p className="mt-2 text-sm leading-6 text-[#efe2be]/80">
           체크리스트형으로 현장 적응 포인트를 관리합니다.
         </p>
@@ -243,94 +228,7 @@ export function HomeScreen({
             </p>
             <p className="text-xs uppercase tracking-[0.18em] text-[#d7b977]">Live Tips</p>
           </div>
-          <Secondary onClick={() => onStartCategory("liveTips")}>팁 열기</Secondary>
-        </div>
-      </Surface>
-      <Surface>
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <CardEyebrow>빠른 진입</CardEyebrow>
-            <h3 className="mt-2 font-serif text-2xl text-[#f6efe0]">바로 훈련 들어가기</h3>
-          </div>
-        </div>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <Quick
-            title="Preflop"
-            subtitle="핸드와 포지션"
-            tone="emerald"
-            onClick={() => onStartCategory("preflop")}
-          />
-          <Quick
-            title="포스트플랍"
-            subtitle="탑페어와 드로우"
-            tone="amber"
-            onClick={() => onStartCategory("postflop")}
-          />
-          <Quick
-            title="확률"
-            subtitle="아웃과 포트 오즈"
-            tone="sky"
-            onClick={() => onStartCategory("odds")}
-          />
-          <Quick
-            title="라이브 팁"
-            subtitle="테이블 매너"
-            tone="rose"
-            onClick={() => onStartCategory("liveTips")}
-          />
-        </div>
-      </Surface>
-    </section>
-  );
-}
-
-export function TrainingScreen({
-  cards,
-  onStartCategory,
-}: {
-  cards: TrainingCardViewModel[];
-  onStartCategory: (category: AppTrainingCategory, useExisting?: boolean) => void;
-}) {
-  return (
-    <section className="space-y-4">
-      {cards.map((card) => (
-        <Surface key={card.category}>
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <CardEyebrow>{categoryMeta[card.category].difficulty}</CardEyebrow>
-              <h2 className="mt-2 font-serif text-[1.85rem] text-[#fbf5e6]">
-                {categoryMeta[card.category].label}
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-[#efe2be]/80">
-                {categoryMeta[card.category].description}
-              </p>
-            </div>
-            <span className="rounded-full border border-[#d7b977]/20 bg-[#091f18] px-3 py-2 text-xs uppercase tracking-[0.18em] text-[#d7b977]">
-              {categoryMeta[card.category].emphasis}
-            </span>
-          </div>
-          <div className="mt-5 grid grid-cols-3 gap-3 text-center">
-            <Metric label="문제 수" value={`${card.questionCount}`} />
-            <Metric label="최근 정답률" value={card.accuracy !== null ? `${card.accuracy}%` : "--"} />
-            <Metric label="이어풀기" value={card.progress} />
-          </div>
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-            <Primary onClick={() => onStartCategory(card.category, true)}>
-              {card.hasActiveSession ? "이어풀기" : "빠른 시작"}
-            </Primary>
-            <Secondary onClick={() => onStartCategory(card.category)}>새로 시작</Secondary>
-          </div>
-        </Surface>
-      ))}
-      <Surface>
-        <CardEyebrow>현장 적응</CardEyebrow>
-        <h2 className="mt-2 font-serif text-[1.85rem] text-[#fbf5e6]">라이브 카지노 팁</h2>
-        <p className="mt-2 text-sm leading-6 text-[#efe2be]/80">
-          테이블 앉기, 바잉, 액션 순서, 베팅 선언 같은 현장 포인트를 체크리스트로 훑습니다.
-        </p>
-        <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-          <Primary onClick={() => onStartCategory("liveTips")}>체크리스트 열기</Primary>
-          <Secondary onClick={() => onStartCategory("liveTips")}>처음부터 보기</Secondary>
+          <Secondary onClick={onOpenLiveTips}>Open Live Tips</Secondary>
         </div>
       </Surface>
     </section>
@@ -420,11 +318,11 @@ export function WrongsScreen({
       ) : (
         <Surface>
           <h3 className="font-serif text-2xl text-[#f6efe0]">
-            {wrongFilter === "liveTips" ? "라이브 팁은 체크리스트형입니다" : "아직 오답이 없습니다"}
+            {wrongFilter === "liveTips" ? "Live Tips는 체크리스트형입니다" : "아직 오답이 없습니다"}
           </h3>
           <p className="mt-3 text-sm leading-6 text-[#efe2be]/78">
             {wrongFilter === "liveTips"
-              ? "현장 적응은 훈련 탭의 라이브 팁에서 체크리스트로 관리합니다."
+              ? "현장 적응은 홈의 Live Tips에서 체크리스트로 관리합니다."
               : "문제를 풀기 시작하면 틀린 문제와 약한 태그가 이곳에 쌓입니다."}
           </p>
         </Surface>
@@ -538,7 +436,7 @@ export function LiveTipsScreen({
         <div className="flex items-center justify-between gap-3">
           <div>
             <CardEyebrow>체크리스트</CardEyebrow>
-            <h2 className="mt-2 font-serif text-2xl text-[#f6efe0]">라스베가스 라이브 적응 포인트</h2>
+            <h2 className="mt-2 font-serif text-2xl text-[#f6efe0]">Live Tips Checklist</h2>
           </div>
           <div className="rounded-full border border-[#d7b977]/20 bg-[#091f18] px-3 py-2 text-sm text-[#efe2be]">
             {checkedCount}/{TIP_TOTAL}
@@ -548,7 +446,7 @@ export function LiveTipsScreen({
           긴 글 대신 카드 형태로 읽고 바로 체크해 두세요. 현장에서는 전략보다 어색함을 줄이는 것이 체감 효용이 큽니다.
         </p>
         <div className="mt-4">
-          <Secondary onClick={onBack}>훈련 탭으로</Secondary>
+          <Secondary onClick={onBack}>홈으로</Secondary>
         </div>
       </Surface>
       {liveTipSections.map((section) => (
@@ -1077,7 +975,7 @@ export function BottomNav({
 }) {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-[520px] px-4 pb-4 sm:px-5">
-      <div className="grid grid-cols-4 gap-2 rounded-[30px] border border-[#d7b977]/18 bg-[#061d16]/94 p-2 shadow-[0_18px_80px_rgba(0,0,0,0.46)] backdrop-blur-xl">
+      <div className="grid grid-cols-3 gap-2 rounded-[30px] border border-[#d7b977]/18 bg-[#061d16]/94 p-2 shadow-[0_18px_80px_rgba(0,0,0,0.46)] backdrop-blur-xl">
         {NAV_ITEMS.map((item) => (
           <button
             key={item.id}

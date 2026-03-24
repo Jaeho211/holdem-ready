@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  questionBank,
-  type AppTrainingCategory,
   type AnswerChoice,
   type TrainingCategory,
 } from "@/lib/training-data";
@@ -20,7 +18,6 @@ import {
 } from "@/lib/holdem/selectors";
 import {
   answerSessionQuestion,
-  buildCategorySession,
   buildDailySession,
   buildWeaknessSession,
   buildWrongsSession,
@@ -50,16 +47,8 @@ import {
   QuizScreen,
   RecordsScreen,
   SettingsModal,
-  TrainingScreen,
-  type TrainingCardViewModel,
   WrongsScreen,
 } from "./screens";
-
-const TRAINING_CATEGORIES: ReadonlyArray<TrainingCategory> = [
-  "preflop",
-  "postflop",
-  "odds",
-];
 
 export function HoldemReadyApp() {
   const [ready, setReady] = useState(false);
@@ -101,21 +90,6 @@ export function HoldemReadyApp() {
       : null;
   const tipCheckedCount = Object.values(store.tipChecks).filter(Boolean).length;
 
-  const trainingCards: TrainingCardViewModel[] = TRAINING_CATEGORIES.map((category) => {
-    const active = store.sessions[`category:${category}`];
-
-    return {
-      category,
-      questionCount: questionBank.filter((question) => question.category === category).length,
-      accuracy: getCategoryAccuracy(store.responses, category),
-      progress:
-        active && active.index < active.questionIds.length
-          ? `${active.index}/${active.questionIds.length}`
-          : "--",
-      hasActiveSession: Boolean(active && active.index < active.questionIds.length),
-    };
-  });
-
   const categoryAccuracies = {
     preflop: getCategoryAccuracy(store.responses, "preflop"),
     postflop: getCategoryAccuracy(store.responses, "postflop"),
@@ -156,26 +130,12 @@ export function HoldemReadyApp() {
     beginSession(buildDailySession(store.responses));
   };
 
-  const startCategory = (category: AppTrainingCategory, useExisting = false) => {
-    if (category === "liveTips") {
-      setTab("training");
-      setSession(null);
-      setFeedback(null);
-      setSummary(null);
-      setView("liveTips");
-      return;
-    }
-
-    const existing = store.sessions[`category:${category}`];
-    if (useExisting && existing && existing.index < existing.questionIds.length) {
-      setSession(existing);
-      setFeedback(null);
-      setSummary(null);
-      setView("quiz");
-      return;
-    }
-
-    beginSession(buildCategorySession(category));
+  const openLiveTips = () => {
+    setTab("home");
+    setSession(null);
+    setFeedback(null);
+    setSummary(null);
+    setView("liveTips");
   };
 
   const startWrongs = (category?: TrainingCategory) => {
@@ -283,12 +243,8 @@ export function HoldemReadyApp() {
             tipCheckedCount={tipCheckedCount}
             onStartDaily={startDaily}
             onStartWrongs={() => startWrongs()}
-            onStartCategory={startCategory}
+            onOpenLiveTips={openLiveTips}
           />
-        )}
-
-        {view === "training" && (
-          <TrainingScreen cards={trainingCards} onStartCategory={startCategory} />
         )}
 
         {view === "wrongs" && (
@@ -317,7 +273,7 @@ export function HoldemReadyApp() {
           <LiveTipsScreen
             tipChecks={store.tipChecks}
             onToggleTip={toggleTip}
-            onBack={() => openTab("training")}
+            onBack={() => openTab("home")}
           />
         )}
 

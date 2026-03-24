@@ -1,7 +1,7 @@
 import type { AnswerChoice, TrainingCategory } from "../training-data";
 
-export type AppView = "home" | "training" | "wrongs" | "records" | "liveTips" | "quiz";
-export type AppTab = "home" | "training" | "wrongs" | "records";
+export type AppView = "home" | "wrongs" | "records" | "liveTips" | "quiz";
+export type AppTab = "home" | "wrongs" | "records";
 export type WrongFilter = "all" | TrainingCategory | "liveTips";
 
 export type Settings = {
