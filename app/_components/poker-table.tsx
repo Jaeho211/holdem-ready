@@ -1,22 +1,15 @@
 "use client";
 
+import {
+  SEAT_ORDER,
+  parsePostflopSpotlight,
+  parsePreflopActions,
+  type SeatAction,
+  type SeatName,
+  type SeatSpotlight,
+  type SeatState,
+} from "@/lib/holdem/table";
 import { cn } from "./ui";
-
-/* ── 9-handed seat order (preflop action order) ── */
-
-const SEAT_ORDER = [
-  "UTG",
-  "UTG+1",
-  "MP",
-  "LJ",
-  "HJ",
-  "CO",
-  "BTN",
-  "SB",
-  "BB",
-] as const;
-
-type SeatName = (typeof SEAT_ORDER)[number];
 
 /* ── Seat positions around the ellipse (top%, left%) ── */
 
@@ -32,15 +25,6 @@ const SEAT_POSITIONS: Record<SeatName, { top: string; left: string }> = {
   BTN:     { top: "24%", left: "7%" },
 };
 
-/* ── Action types ── */
-
-type SeatAction = "fold" | "open" | "call" | "limp" | "hero" | "waiting";
-
-type SeatState = {
-  action: SeatAction;
-  betSize?: string;
-};
-
 const ACTION_A11Y_LABEL: Record<SeatAction, string> = {
   fold: "Fold",
   open: "Open raise",
@@ -49,78 +33,6 @@ const ACTION_A11Y_LABEL: Record<SeatAction, string> = {
   hero: "Hero",
   waiting: "Waiting",
 };
-
-/* ── Action keyword mapping ── */
-
-const ACTION_KEYWORDS: Record<string, SeatAction> = {
-  오픈: "open",
-  폴드: "fold",
-  콜: "call",
-  림프: "limp",
-};
-
-const POSITION_PATTERN =
-  /^(UTG\+1|UTG|MP|LJ|HJ|CO|BTN|SB|BB)\s+(?:(\d+bb)\s+)?(오픈|폴드|콜|림프)/;
-
-/* ── Parser ── */
-
-function isBefore(seatIdx: number, heroIdx: number): boolean {
-  return seatIdx < heroIdx;
-}
-
-export function parsePreflopActions(
-  heroPosition: string,
-  actionBefore: string,
-): Map<string, SeatState> {
-  const result = new Map<string, SeatState>();
-  const heroIdx = SEAT_ORDER.indexOf(heroPosition as SeatName);
-
-  result.set(heroPosition, { action: "hero" });
-
-  if (actionBefore === "모두 폴드") {
-    for (let i = 0; i < SEAT_ORDER.length; i++) {
-      const seat = SEAT_ORDER[i];
-      if (seat === heroPosition) continue;
-      result.set(seat, { action: isBefore(i, heroIdx) ? "fold" : "waiting" });
-    }
-    return result;
-  }
-
-  const clauses = actionBefore.split(", ");
-  for (const clause of clauses) {
-    if (clause === "나머지 폴드") {
-      for (const seat of SEAT_ORDER) {
-        if (result.has(seat)) continue;
-        const idx = SEAT_ORDER.indexOf(seat);
-        result.set(seat, {
-          action: isBefore(idx, heroIdx) ? "fold" : "waiting",
-        });
-      }
-      continue;
-    }
-
-    const match = clause.match(POSITION_PATTERN);
-    if (match) {
-      const [, pos, betSize, keyword] = match;
-      result.set(pos, {
-        action: ACTION_KEYWORDS[keyword],
-        betSize,
-      });
-    }
-  }
-
-  // Fill remaining seats
-  for (const seat of SEAT_ORDER) {
-    if (!result.has(seat)) {
-      const idx = SEAT_ORDER.indexOf(seat);
-      result.set(seat, {
-        action: isBefore(idx, heroIdx) ? "fold" : "waiting",
-      });
-    }
-  }
-
-  return result;
-}
 
 /* ── Seat display labels (shorter for tight layout) ── */
 
@@ -173,11 +85,17 @@ function getActionBadge(action: SeatAction) {
   }
 }
 
-function getSeatAriaLabel(seat: SeatName, state: SeatState, isHero: boolean) {
+function getSeatAriaLabel(
+  seat: SeatName,
+  state: SeatState,
+  isHero: boolean,
+  spotlight?: SeatSpotlight,
+) {
   const seatLabel = isHero ? `${seat} (You)` : seat;
   const actionLabel = ACTION_A11Y_LABEL[state.action];
   const betLabel = state.betSize ? `, ${state.betSize}` : "";
-  return `Seat ${seatLabel}, ${actionLabel}${betLabel}`;
+  const spotlightLabel = spotlight ? `. Current action: ${spotlight.ariaLabel}` : "";
+  return `Seat ${seatLabel}, ${actionLabel}${betLabel}${spotlightLabel}`;
 }
 
 /* ── SeatMarker ── */
@@ -186,16 +104,19 @@ function SeatMarker({
   seat,
   state,
   isHero,
+  spotlight,
 }: {
   seat: SeatName;
   state: SeatState;
   isHero: boolean;
+  spotlight?: SeatSpotlight;
 }) {
   const pos = SEAT_POSITIONS[seat];
   const style = getSeatStyle(state.action, isHero);
   const label = SEAT_LABELS[seat];
   const badge = getActionBadge(state.action);
-  const seatAriaLabel = getSeatAriaLabel(seat, state, isHero);
+  const seatAriaLabel = getSeatAriaLabel(seat, state, isHero, spotlight);
+  const spotlightCopy = spotlight ? [spotlight.label, spotlight.betSize].filter(Boolean).join(" ") : null;
 
   return (
     <div
@@ -208,6 +129,7 @@ function SeatMarker({
         className={cn(
           "flex items-center justify-center rounded-full border px-1.5 py-0.5 text-[11px] font-semibold leading-none tracking-wide transition-colors min-w-[32px]",
           style,
+          spotlight && "shadow-[0_0_0_1px_rgba(255,231,231,0.18),0_0_18px_rgba(217,137,137,0.24)]",
         )}
       >
         {isHero ? "YOU" : label}
@@ -233,6 +155,11 @@ function SeatMarker({
       {state.action === "waiting" && !isHero && (
         <span className="text-[10px] leading-none text-[#d8e0ef]/85">waiting</span>
       )}
+      {spotlightCopy && (
+        <span className="rounded-full border border-[#d98989]/36 bg-[#3a1b22]/88 px-1.5 py-0.5 text-[9px] font-semibold leading-none tracking-[0.14em] text-[#ffe7e7] shadow-[0_8px_18px_rgba(0,0,0,0.24)]">
+          {spotlightCopy}
+        </span>
+      )}
       <span className="sr-only">{seatAriaLabel}</span>
     </div>
   );
@@ -245,13 +172,18 @@ export function PokerTableVisual({
   actionBefore,
   stack,
   table,
+  postflopAction,
+  currentBet,
 }: {
   position: string;
   actionBefore: string;
   stack?: string;
   table?: string;
+  postflopAction?: string;
+  currentBet?: string;
 }) {
   const seatStates = parsePreflopActions(position, actionBefore);
+  const spotlight = postflopAction ? parsePostflopSpotlight(postflopAction, currentBet) : null;
 
   return (
     <div className="mt-3 flex w-full flex-col items-center gap-2">
@@ -281,6 +213,7 @@ export function PokerTableVisual({
               seat={seat}
               state={state}
               isHero={state.action === "hero"}
+              spotlight={spotlight?.seat === seat ? spotlight : undefined}
             />
           );
         })}

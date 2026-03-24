@@ -13,6 +13,7 @@ import {
   getQuestionGlossaryTerms,
   type GlossaryTermKey,
 } from "@/lib/holdem/glossary";
+import { parsePostflopSpotlight } from "@/lib/holdem/table";
 import { PokerTableVisual } from "./poker-table";
 import { QUESTIONS_BY_ID } from "@/lib/holdem/questions";
 import { getChoiceLabel } from "@/lib/holdem/selectors";
@@ -550,15 +551,21 @@ function getTableSceneDetails(question: HoldemQuestion): TableSceneDetail[] {
   }
 
   if (question.category === "postflop") {
+    const spotlight = parsePostflopSpotlight(question.actionBefore, question.villainBet);
+
     return [
       { label: "Pot", value: question.pot, tone: "gold" },
-      { label: "Villain", value: question.villainBet, tone: "rose" },
+      {
+        label: "Action",
+        value: spotlight?.summary ?? question.villainBet,
+        tone: "rose",
+      },
     ];
   }
 
   return [
     { label: "Pot", value: question.pot, tone: "gold" },
-    { label: "Villain", value: question.villainBet, tone: "rose" },
+    { label: "Bet", value: question.villainBet, tone: "rose" },
   ];
 }
 
@@ -672,6 +679,8 @@ function TableScene({
               <PokerTableVisual
                 position={question.position}
                 actionBefore={question.preflopAction}
+                postflopAction={question.actionBefore}
+                currentBet={question.villainBet}
               />
               <div className="mt-2 grid w-full grid-cols-2 gap-2">
                 {sceneDetails.map((detail) => (
