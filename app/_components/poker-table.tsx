@@ -1,6 +1,5 @@
 "use client";
 
-import type { PreflopQuestion } from "@/lib/training-data";
 import { cn } from "./ui";
 
 /* ── 9-handed seat order (preflop action order) ── */
@@ -198,11 +197,17 @@ function SeatMarker({
 /* ── PokerTableVisual ── */
 
 export function PokerTableVisual({
-  question,
+  position,
+  actionBefore,
+  stack,
+  table,
 }: {
-  question: PreflopQuestion;
+  position: string;
+  actionBefore: string;
+  stack?: string;
+  table?: string;
 }) {
-  const seatStates = parsePreflopActions(question.position, question.actionBefore);
+  const seatStates = parsePreflopActions(position, actionBefore);
 
   return (
     <div className="mt-3 flex w-full flex-col items-center gap-2">
@@ -234,9 +239,11 @@ export function PokerTableVisual({
       </div>
 
       {/* Stack & table info */}
-      <p className="text-[10px] leading-none text-[#efe2be]/50">
-        {question.stack} · {question.table}
-      </p>
+      {(stack || table) && (
+        <p className="text-[10px] leading-none text-[#efe2be]/50">
+          {[stack, table].filter(Boolean).join(" · ")}
+        </p>
+      )}
     </div>
   );
 }

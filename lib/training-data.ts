@@ -34,6 +34,8 @@ export type PreflopQuestion = QuestionBase & {
 
 export type PostflopQuestion = QuestionBase & {
   category: "postflop";
+  position: string;
+  preflopAction: string;
   holeCards: HoleCards;
   board: CardCode[];
   pot: string;
@@ -296,6 +298,8 @@ export const questionBank: HoldemQuestion[] = [
       "상대의 절반 팟 컨티뉴에이션 베팅에 QJ의 탑페어는 충분히 콜 가치가 있습니다. 이 보드에서 바로 레이즈하면 약한 블러프를 많이 접게 만듭니다.",
     pitfall: "탑페어를 잡자마자 과도하게 팟을 키우는 실수",
     tags: ["탑페어 운영", "플랍 콜다운"],
+    position: "BB",
+    preflopAction: "BTN 오픈, 나머지 폴드",
     holeCards: ["Qs", "Js"],
     board: ["Qh", "7d", "2s"],
     pot: "6.5bb",
@@ -314,6 +318,8 @@ export const questionBank: HoldemQuestion[] = [
       "보드가 스페이드 투톤이라 드로우가 많습니다. 셋은 체크레이즈에 다시 레이즈해 돈을 넣기 좋은 핸드입니다.",
     pitfall: "아주 강한 핸드로도 지나치게 느리게 플레이해 드로우에 공짜 카드를 주는 실수",
     tags: ["강한 메이드 핸드", "젖은 보드"],
+    position: "CO",
+    preflopAction: "BB 콜, 나머지 폴드",
     holeCards: ["Ah", "Ad"],
     board: ["As", "8s", "3d"],
     pot: "10bb",
@@ -332,6 +338,8 @@ export const questionBank: HoldemQuestion[] = [
       "거트샷 4아웃으로는 턴 대형 베팅을 따라갈 가격이 잘 나오지 않습니다. 라이브 초보가 가장 자주 하는 실수가 여기서 희망콜을 하는 것입니다.",
     pitfall: "거트샷만 보고 턴 큰 베팅을 계속 콜하는 실수",
     tags: ["약한 드로우", "턴 폴드"],
+    position: "BTN",
+    preflopAction: "BB 콜, 나머지 폴드",
     holeCards: ["Jh", "Th"],
     board: ["Ks", "8d", "3c", "2h"],
     pot: "18bb",
@@ -350,6 +358,8 @@ export const questionBank: HoldemQuestion[] = [
       "넛 플러시 드로우와 두 오버카드는 충분한 에퀴티를 줍니다. 반 팟 정도 베팅에는 콜이 기본이며, 초보 기준으로 단순한 콜이 실수도 적습니다.",
     pitfall: "강한 드로우를 매번 즉시 레이즈해 과도한 변동성을 만드는 실수",
     tags: ["강한 드로우", "플랍 콜다운"],
+    position: "BTN",
+    preflopAction: "CO 오픈, 나머지 폴드",
     holeCards: ["Ah", "Jh"],
     board: ["Kh", "9h", "2c"],
     pot: "12bb",
@@ -368,6 +378,8 @@ export const questionBank: HoldemQuestion[] = [
       "T9 보드에 T7으로 투페어를 만들었다면 드로우가 많은 상황입니다. 작은 돈크벳에는 레이즈로 밸류와 보호를 동시에 챙기는 편이 좋습니다.",
     pitfall: "강한 핸드인데도 드로우 보드에서 수동적으로 따라가기만 하는 실수",
     tags: ["강한 메이드 핸드", "젖은 보드"],
+    position: "BTN",
+    preflopAction: "BB 콜, 나머지 폴드",
     holeCards: ["Ts", "7s"],
     board: ["Td", "7h", "8h"],
     pot: "11bb",
@@ -386,6 +398,8 @@ export const questionBank: HoldemQuestion[] = [
       "보드가 아주 젖지 않았고 상대의 미니 체크레이즈 범위엔 블러프와 약한 메이드가 섞일 수 있습니다. 일단 콜로 넓게 남겨두는 편이 좋습니다.",
     pitfall: "오버페어를 들고 플랍에서 무조건 스택을 넣으려는 실수",
     tags: ["오버페어 운영", "플랍 콜다운"],
+    position: "HJ",
+    preflopAction: "BB 콜, 나머지 폴드",
     holeCards: ["Kd", "Kc"],
     board: ["9s", "6d", "2c"],
     pot: "9bb",
@@ -404,6 +418,8 @@ export const questionBank: HoldemQuestion[] = [
       "탑페어 탑키커라도 멀티웨이 턴 오버벳은 많이 강합니다. 특히 드로우가 막힌 보드에서 상대 둘 중 하나가 강하게 밀면 과감히 접는 훈련이 필요합니다.",
     pitfall: "TPTK라서 절대 못 접겠다고 버티는 실수",
     tags: ["탑페어 운영", "멀티웨이"],
+    position: "CO",
+    preflopAction: "BTN 콜, BB 콜, 나머지 폴드",
     holeCards: ["Ac", "Qd"],
     board: ["Qh", "9c", "5s", "4d"],
     pot: "26bb",
@@ -422,6 +438,8 @@ export const questionBank: HoldemQuestion[] = [
       "98로 T76 보드라면 오픈엔디드 스트레이트 드로우와 페어를 동시에 가지고 있습니다. 작은 베팅에는 무난하게 콜이 좋습니다.",
     pitfall: "드로우 핸드를 매번 레이즈로만 해결하려는 실수",
     tags: ["강한 드로우", "플랍 콜다운"],
+    position: "BB",
+    preflopAction: "BTN 오픈, 나머지 폴드",
     holeCards: ["9s", "8s"],
     board: ["Td", "7c", "6h"],
     pot: "8bb",

@@ -648,17 +648,60 @@ function getTableSceneDetails(question: HoldemQuestion): TableSceneDetail[] {
     return [
       { label: "Pot", value: question.pot, tone: "gold" },
       { label: "Villain", value: question.villainBet, tone: "rose" },
-      { label: "Line", value: question.actionBefore, tone: "sky" },
-      { label: "Stack", value: question.stack, tone: "emerald" },
     ];
   }
 
   return [
-    { label: "Focus", value: question.mathFocus, tone: "sky" },
     { label: "Pot", value: question.pot, tone: "gold" },
     { label: "Villain", value: question.villainBet, tone: "rose" },
-    { label: "Spot", value: question.actionBefore, tone: "emerald" },
   ];
+}
+
+function PotOddsVisual({
+  pot,
+  call,
+  mathFocus,
+}: {
+  pot: string;
+  call: string;
+  mathFocus: string;
+}) {
+  const potVal = parseFloat(pot);
+  const callVal = parseFloat(call);
+  const total = potVal + callVal;
+  const potPct = Math.round((potVal / total) * 100);
+  const callPct = 100 - potPct;
+  const requiredPct = Math.round((callVal / total) * 100);
+
+  return (
+    <div className="mt-3 w-full">
+      <p className="text-center text-[10px] uppercase tracking-[0.22em] text-[#8ecdf7]">
+        {mathFocus}
+      </p>
+      <div className="mt-3 overflow-hidden rounded-[12px]" style={{ height: "36px", display: "flex" }}>
+        <div
+          className="flex items-center justify-center text-[9px] font-semibold text-[#fff2d4]"
+          style={{ width: `${potPct}%`, background: "#231d0e", borderRight: "1px solid rgba(215,185,119,0.15)" }}
+        >
+          {pot}
+        </div>
+        <div
+          className="flex items-center justify-center text-[9px] font-semibold text-[#ffe7e7]"
+          style={{ width: `${callPct}%`, background: "#2a171b" }}
+        >
+          {call}
+        </div>
+      </div>
+      <div className="mt-1 flex justify-between text-[9px] text-[#efe2be]/40">
+        <span>팟</span>
+        <span>콜</span>
+      </div>
+      <div className="mt-3 rounded-[12px] border border-[#8ecdf7]/18 bg-[#0d2531] px-3 py-2 text-center">
+        <p className="text-[9px] uppercase tracking-[0.2em] text-[#8ecdf7]/80">필요 승률</p>
+        <p className="mt-1 text-[22px] font-bold leading-none text-[#e3f4ff]">{requiredPct}%</p>
+      </div>
+    </div>
+  );
 }
 
 function TableScene({ question }: { question: HoldemQuestion }) {
@@ -708,18 +751,48 @@ function TableScene({ question }: { question: HoldemQuestion }) {
           </div>
 
           {question.category === "preflop" ? (
-            <PokerTableVisual question={question} />
+            <PokerTableVisual
+              position={question.position}
+              actionBefore={question.actionBefore}
+              stack={question.stack}
+              table={question.table}
+            />
+          ) : question.category === "postflop" ? (
+            <>
+              <PokerTableVisual
+                position={question.position}
+                actionBefore={question.preflopAction}
+              />
+              <div className="mt-2 grid w-full grid-cols-2 gap-2">
+                {sceneDetails.map((detail) => (
+                  <TableSceneStat
+                    key={`${question.id}-${detail.label}`}
+                    label={detail.label}
+                    value={detail.value}
+                    tone={detail.tone}
+                  />
+                ))}
+              </div>
+            </>
           ) : (
-            <div className="mt-3 grid w-full gap-2 sm:grid-cols-2">
-              {sceneDetails.map((detail) => (
-                <TableSceneStat
-                  key={`${question.id}-${detail.label}`}
-                  label={detail.label}
-                  value={detail.value}
-                  tone={detail.tone}
-                />
-              ))}
-            </div>
+            question.holeCards ? (
+              <div className="mt-3 grid w-full grid-cols-2 gap-2">
+                {sceneDetails.map((detail) => (
+                  <TableSceneStat
+                    key={`${question.id}-${detail.label}`}
+                    label={detail.label}
+                    value={detail.value}
+                    tone={detail.tone}
+                  />
+                ))}
+              </div>
+            ) : (
+              <PotOddsVisual
+                pot={question.pot}
+                call={question.villainBet}
+                mathFocus={question.mathFocus}
+              />
+            )
           )}
 
           <div className="mt-4 text-center">
@@ -821,9 +894,6 @@ export function QuizScreen({
         <div className="flex min-h-0 flex-1 flex-col animate-rise">
           <div className="flex min-h-0 flex-1 flex-col rounded-[28px] border border-[#d7b977]/20 bg-[linear-gradient(180deg,rgba(10,34,27,0.96),rgba(4,23,17,0.98))] p-4 shadow-[0_18px_60px_rgba(0,0,0,0.34)]">
             <CardEyebrow>{currentQuestion.title}</CardEyebrow>
-            <h2 className="mt-1.5 font-serif text-[1.35rem] leading-snug text-[#f8f1de] sm:text-[1.55rem]">
-              {currentQuestion.prompt}
-            </h2>
             <div className="mt-2 flex flex-wrap gap-1.5">
               <Chip>{categoryMeta[currentQuestion.category].shortLabel}</Chip>
               {visibleTags.map((tag) => (
@@ -903,7 +973,8 @@ export function QuizScreen({
                   <Metric label="내 선택" value={getChoiceLabel(currentQuestion, feedback.choice)} />
                   <Metric label="정답" value={getChoiceLabel(currentQuestion, currentQuestion.correct)} />
                 </div>
-                <p className="mt-4 text-sm leading-6 text-[#efe2be]/82">{currentQuestion.explanation}</p>
+                <p className="mt-4 text-[11px] italic leading-5 text-[#d7b977]/70">{currentQuestion.prompt}</p>
+                <p className="mt-2 text-sm leading-6 text-[#efe2be]/82">{currentQuestion.explanation}</p>
                 <div className="mt-3 rounded-[20px] border border-[#d7b977]/18 bg-black/15 px-4 py-3">
                   <p className="text-[11px] uppercase tracking-[0.22em] text-[#d7b977]">Beginner Leak</p>
                   <p className="mt-2 text-sm leading-6 text-[#efe2be]/78">{currentQuestion.pitfall}</p>
