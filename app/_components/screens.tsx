@@ -661,10 +661,12 @@ function PotOddsVisual({
   pot,
   call,
   mathFocus,
+  hideResult,
 }: {
   pot: string;
   call: string;
   mathFocus: string;
+  hideResult?: boolean;
 }) {
   const potVal = parseFloat(pot);
   const callVal = parseFloat(call);
@@ -696,10 +698,12 @@ function PotOddsVisual({
         <span>팟</span>
         <span>콜</span>
       </div>
-      <div className="mt-3 rounded-[12px] border border-[#8ecdf7]/18 bg-[#0d2531] px-3 py-2 text-center">
-        <p className="text-[9px] uppercase tracking-[0.2em] text-[#8ecdf7]/80">필요 승률</p>
-        <p className="mt-1 text-[22px] font-bold leading-none text-[#e3f4ff]">{requiredPct}%</p>
-      </div>
+      {!hideResult && (
+        <div className="mt-3 rounded-[12px] border border-[#8ecdf7]/18 bg-[#0d2531] px-3 py-2 text-center">
+          <p className="text-[9px] uppercase tracking-[0.2em] text-[#8ecdf7]/80">필요 승률</p>
+          <p className="mt-1 text-[22px] font-bold leading-none text-[#e3f4ff]">{requiredPct}%</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -786,11 +790,16 @@ function TableScene({ question }: { question: HoldemQuestion }) {
                   />
                 ))}
               </div>
+            ) : question.mathFocus.includes("아웃") ? (
+              <div className="mt-3 w-full text-center">
+                <p className="text-[10px] uppercase tracking-[0.22em] text-[#8ecdf7]">{question.mathFocus}</p>
+              </div>
             ) : (
               <PotOddsVisual
                 pot={question.pot}
                 call={question.villainBet}
                 mathFocus={question.mathFocus}
+                hideResult
               />
             )
           )}
@@ -904,9 +913,15 @@ export function QuizScreen({
             {!feedback && (
               <div className="mt-3 shrink-0 rounded-[24px] border border-[#d7b977]/20 bg-[#071d16]/96 p-2.5 shadow-[0_16px_44px_rgba(0,0,0,0.28)] backdrop-blur-xl">
                 <div className="flex items-center justify-between gap-3 px-1">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-[#d7b977]">Choose Action</p>
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-[#d7b977]">
+                    {currentQuestion.category === "odds"
+                      ? currentQuestion.mathFocus.includes("아웃")
+                        ? "이 드로우의 승률은?"
+                        : "콜에 필요한 승률은?"
+                      : "Choose Action"}
+                  </p>
                   <p className="text-[10px] text-[#efe2be]/64">
-                    {currentQuestion.category === "odds" ? "Math Decision" : "Live Table Action"}
+                    {currentQuestion.category === "odds" ? currentQuestion.mathFocus : "Live Table Action"}
                   </p>
                 </div>
                 <div className="mt-2 grid grid-cols-3 gap-2">
@@ -928,7 +943,7 @@ export function QuizScreen({
                     >
                       <span className="block text-sm font-semibold">{option.label}</span>
                       <span className="mt-1.5 block text-[9px] uppercase tracking-[0.18em] opacity-70">
-                        {currentQuestion.category === "odds" ? "Math" : "Action"}
+                        {currentQuestion.category === "odds" ? "승률" : "Action"}
                       </span>
                     </button>
                   ))}
