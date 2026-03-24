@@ -59,8 +59,12 @@ export const GLOSSARY_TERMS = {
   },
   limp: {
     label: "Limp",
-    short: "Entering the pot by just calling the big blind preflop.",
-    details: ["Limpers are common iso-raise targets in live low stakes."],
+    short: "A preflop call with no raise in front, usually just completing the big blind.",
+    details: [
+      "A limp is a specific kind of preflop call. Calling after a raise is not a limp.",
+      "A limper is the player who entered the pot that way.",
+      "Limpers are common iso-raise targets in live low stakes.",
+    ],
   },
   blindDefense: {
     label: "Blind Defense",
@@ -253,9 +257,9 @@ const TERM_PRIORITY: Record<GlossaryTermKey, number> = {
   sb: 10,
   bb: 10,
   open: 6,
-  steal: 9,
+  steal: 8,
   isoRaise: 9,
-  limp: 7,
+  limp: 9,
   blindDefense: 8,
   foldToYou: 8,
   offsuitBroadway: 8,
