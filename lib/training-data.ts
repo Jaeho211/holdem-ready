@@ -527,7 +527,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["포트 오즈", "필요 승률"],
     pot: "60bb",
     villainBet: "20bb",
-    actionBefore: "리버가 아닌 플랍/턴 일반 상황 가정",
+    actionBefore: "기존 팟 40bb에 상대가 20bb(하프 팟) 베팅해 현재 팟이 60bb인 상황",
     mathFocus: "Half Pot Bet",
     options: [
       { value: "25", label: "약 25%" },
