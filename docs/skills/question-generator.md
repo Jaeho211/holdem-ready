@@ -352,6 +352,15 @@ correct: "33"
 추가 후 아래 검증을 수행하세요:
 
 1. `npx tsc --noEmit` — 타입 에러 없는지 확인
-2. `npx vitest run lib/holdem/question-bank.test.ts` — 기존 카드 검증 테스트 통과 확인
+2. `npx vitest run lib/holdem/question-bank.test.ts` — 자동 검증 테스트 통과 확인
 
-> **자동화된 테스트**: `lib/holdem/question-bank.test.ts`에 기존 문제의 카드/드로우/팟오즈 정합성을 검증하는 테스트가 있습니다. 새 postflop/odds 문제를 추가할 때 이 테스트에도 검증 케이스를 추가하는 것을 권장합니다.
+> **자동 검증 범위**: `question-bank.test.ts`는 **모든 문제를 자동 순회**하며 아래 항목을 검증합니다. 새 문제를 추가할 때 별도 테스트 코드를 작성할 필요 없이, 위 명령어 한 번이면 충분합니다.
+>
+> | 검증 그룹 | 주요 항목 |
+> |-----------|-----------|
+> | **8-A 공통** | ID 유일성, `접두사-NNN` 형식, pitfall `~실수` 패턴, tags 2개, correct 유효성, holeCards CardCode 유효성 |
+> | **8-B Postflop** | 카드 중복 없음, 모든 카드 유효 CardCode, board 3~5장 |
+> | **8-C Odds** | correct ∈ options, options 3개, 카드 중복 없음, 포트 오즈 수학 자동 검산 |
+>
+> **개별 핸드-보드 검증 테스트**: 특정 문제의 핸드 강도(탑페어, 투페어, OESD 등)를 검증하는 테스트는 별도 `describe("question bank review guards")` 블록에서 관리합니다. 새 postflop 문제의 핸드 강도를 정밀 검증하려면 해당 블록에 케이스를 추가하세요.
+
