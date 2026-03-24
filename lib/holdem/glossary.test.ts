@@ -34,4 +34,13 @@ describe("question glossary terms", () => {
     expect(terms.length).toBeGreaterThanOrEqual(2);
     expect(terms).toEqual(["potOdds", "requiredEquity"]);
   });
+
+  it("keeps limp visible on limper isolation spots", () => {
+    const question = questionBank.find((entry) => entry.id === "pre-008");
+    expect(question).toBeDefined();
+
+    const terms = getQuestionGlossaryTerms(question!);
+
+    expect(terms).toEqual(["button", "isoRaise", "limp"]);
+  });
 });

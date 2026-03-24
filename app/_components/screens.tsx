@@ -569,6 +569,15 @@ function getTableSceneDetails(question: HoldemQuestion): TableSceneDetail[] {
   ];
 }
 
+function formatBbValue(value: number) {
+  if (!Number.isFinite(value)) {
+    return "0bb";
+  }
+
+  const normalized = Number.isInteger(value) ? `${value}` : value.toFixed(1).replace(/\.0$/, "");
+  return `${normalized}bb`;
+}
+
 function PotOddsVisual({
   pot,
   call,
@@ -583,32 +592,30 @@ function PotOddsVisual({
   const potVal = parseFloat(pot);
   const callVal = parseFloat(call);
   const total = potVal + callVal;
-  const potPct = Math.round((potVal / total) * 100);
-  const callPct = 100 - potPct;
-  const requiredPct = Math.round((callVal / total) * 100);
+  const existingPot = Math.max(potVal - callVal, 0);
+  const requiredPct = total > 0 ? Math.round((callVal / total) * 100) : 0;
+  const existingPotText = formatBbValue(existingPot);
+  const totalAfterCallText = formatBbValue(total);
 
   return (
     <div className="mt-3 w-full">
       <p className="text-center text-[10px] uppercase tracking-[0.22em] text-[#8ecdf7]">
         {mathFocus}
       </p>
-      <div className="mt-3 overflow-hidden rounded-[12px]" style={{ height: "36px", display: "flex" }}>
-        <div
-          className="flex items-center justify-center text-[9px] font-semibold text-[#fff2d4]"
-          style={{ width: `${potPct}%`, background: "#231d0e", borderRight: "1px solid rgba(215,185,119,0.15)" }}
-        >
-          {pot}
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        <div className="rounded-[14px] border border-[#d7b977]/16 bg-[#231d0e] px-2 py-2 text-center">
+          <p className="text-[9px] uppercase tracking-[0.18em] text-[#d7b977]/70">기존 팟</p>
+          <p className="mt-1 text-[12px] font-semibold text-[#fff2d4]">{existingPotText}</p>
         </div>
-        <div
-          className="flex items-center justify-center text-[9px] font-semibold text-[#ffe7e7]"
-          style={{ width: `${callPct}%`, background: "#2a171b" }}
-        >
-          {call}
+        <div className="rounded-[14px] border border-[#d56262]/16 bg-[#2a171b] px-2 py-2 text-center">
+          <p className="text-[9px] uppercase tracking-[0.18em] text-[#d88989]/76">상대 베팅</p>
+          <p className="mt-1 text-[12px] font-semibold text-[#ffe7e7]">{call}</p>
         </div>
       </div>
-      <div className="mt-1 flex justify-between text-[9px] text-[#efe2be]/40">
-        <span>팟</span>
-        <span>콜</span>
+      <div className="mt-3 rounded-[12px] border border-[#8ecdf7]/14 bg-[#081a22] px-3 py-2 text-center">
+        <p className="text-[10px] leading-4 text-[#d9ecfa]/72">
+          {call}을 콜하면 총 {totalAfterCallText} 팟을 놓고 싸웁니다.
+        </p>
       </div>
       {!hideResult && (
         <div className="mt-3 rounded-[12px] border border-[#8ecdf7]/18 bg-[#0d2531] px-3 py-2 text-center">
