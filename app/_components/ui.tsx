@@ -211,7 +211,6 @@ function PlayingCardFace({
             color: palette.color,
             fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: layout.centerSuitSize,
-            textShadow: `0 5px 16px ${palette.shadow}`,
           }}
         >
           {palette.symbol}
