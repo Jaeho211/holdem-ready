@@ -1,4 +1,4 @@
-import type { ChangeEvent } from "react";
+import { useMemo, useState, type ChangeEvent } from "react";
 import {
   categoryMeta,
   liveTipSections,
@@ -77,6 +77,85 @@ const NAV_ITEMS: ReadonlyArray<{ id: AppTab; label: string }> = [
   { id: "wrongs", label: "오답" },
   { id: "records", label: "기록" },
 ];
+
+type GlossaryTermKey = "gutshot" | "turnToRiver" | "outs" | "potOdds";
+
+const GLOSSARY_TERMS: Record<
+  GlossaryTermKey,
+  { label: string; short: string; details: string[] }
+> = {
+  gutshot: {
+    label: "Gutshot",
+    short: "Inside straight draw needing one specific rank.",
+    details: ["Usually 4 outs.", "Example: 5-6-8-9 needs a 7."],
+  },
+  turnToRiver: {
+    label: "Turn to River",
+    short: "Only one card remains (river).",
+    details: ["Use one-card probability.", "4 outs: 4/46 ≈ 8.7% (~9%)."],
+  },
+  outs: {
+    label: "Outs",
+    short: "Number of unseen cards that improve your hand.",
+    details: ["Count only clean outs that really help."],
+  },
+  potOdds: {
+    label: "Pot Odds",
+    short: "Call / (Pot + Call). Compare this with equity.",
+    details: ["Example: pot 100, call 50 -> 50/200 = 25%."],
+  },
+};
+
+function getGlossaryTerms(question: HoldemQuestion): GlossaryTermKey[] {
+  if (question.category !== "odds") {
+    return [];
+  }
+
+  const terms = new Set<GlossaryTermKey>();
+  const focus = `${question.mathFocus} ${question.title}`.toLowerCase();
+
+  if (focus.includes("gutshot") || focus.includes("거트샷")) {
+    terms.add("gutshot");
+  }
+
+  if (focus.includes("outs") || focus.includes("아웃")) {
+    terms.add("outs");
+  }
+
+  if (focus.includes("turn to river") || focus.includes("턴 to 리버")) {
+    terms.add("turnToRiver");
+  }
+
+  if (focus.includes("pot odds") || focus.includes("포트 오즈") || focus.includes("팟 오즈")) {
+    terms.add("potOdds");
+  }
+
+  if (!terms.size && !question.holeCards) {
+    terms.add("potOdds");
+  }
+
+  return [...terms];
+}
+
+function GlossaryChip({
+  term,
+  onClick,
+}: {
+  term: GlossaryTermKey;
+  onClick: (term: GlossaryTermKey) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onClick(term)}
+      className="inline-flex items-center gap-1 rounded-full border border-[#8ecdf7]/26 bg-[#0d2531]/80 px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-[#b9e2ff]"
+      aria-label={`Explain ${GLOSSARY_TERMS[term].label}`}
+    >
+      {GLOSSARY_TERMS[term].label}
+      <span className="rounded-full border border-[#8ecdf7]/30 px-1.5 py-0.5 text-[9px] leading-none">i</span>
+    </button>
+  );
+}
 
 export type TrainingCardViewModel = {
   category: TrainingCategory;
@@ -708,7 +787,13 @@ function PotOddsVisual({
   );
 }
 
-function TableScene({ question }: { question: HoldemQuestion }) {
+function TableScene({
+  question,
+  onOpenTerm,
+}: {
+  question: HoldemQuestion;
+  onOpenTerm: (term: GlossaryTermKey) => void;
+}) {
   const heroCards = getHeroCards(question);
   const boardCards = getBoardCards(question);
   const sceneDetails = getTableSceneDetails(question);
@@ -790,9 +875,14 @@ function TableScene({ question }: { question: HoldemQuestion }) {
                   />
                 ))}
               </div>
-            ) : question.mathFocus.includes("아웃") ? (
+            ) : question.mathFocus.includes("아웃") || question.mathFocus.toLowerCase().includes("outs") ? (
               <div className="mt-3 w-full text-center">
                 <p className="text-[10px] uppercase tracking-[0.22em] text-[#8ecdf7]">{question.mathFocus}</p>
+                <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5">
+                  {getGlossaryTerms(question).map((term) => (
+                    <GlossaryChip key={`${question.id}-${term}`} term={term} onClick={onOpenTerm} />
+                  ))}
+                </div>
               </div>
             ) : (
               <PotOddsVisual
@@ -850,6 +940,11 @@ export function QuizScreen({
 }) {
   const answerOptions = currentQuestion?.category === "odds" ? currentQuestion.options : ACTIONS;
   const visibleTags = currentQuestion ? currentQuestion.tags.slice(0, 2) : [];
+  const [activeTerm, setActiveTerm] = useState<GlossaryTermKey | null>(null);
+  const glossaryTerms = useMemo(
+    () => (currentQuestion ? getGlossaryTerms(currentQuestion) : []),
+    [currentQuestion],
+  );
 
   return (
     <section className="flex min-h-[100svh] flex-col overflow-hidden px-3 pb-3 pt-3">
@@ -909,13 +1004,21 @@ export function QuizScreen({
                 <Chip key={tag}>{tag}</Chip>
               ))}
             </div>
-            <TableScene question={currentQuestion} />
+            {currentQuestion.category === "odds" && glossaryTerms.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {glossaryTerms.map((term) => (
+                  <GlossaryChip key={`${currentQuestion.id}-header-${term}`} term={term} onClick={setActiveTerm} />
+                ))}
+              </div>
+            )}
+            <TableScene question={currentQuestion} onOpenTerm={setActiveTerm} />
             {!feedback && (
               <div className="mt-3 shrink-0 rounded-[24px] border border-[#d7b977]/20 bg-[#071d16]/96 p-2.5 shadow-[0_16px_44px_rgba(0,0,0,0.28)] backdrop-blur-xl">
                 <div className="flex items-center justify-between gap-3 px-1">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-[#d7b977]">
                     {currentQuestion.category === "odds"
-                      ? currentQuestion.mathFocus.includes("아웃")
+                      ? currentQuestion.mathFocus.includes("아웃") ||
+                        currentQuestion.mathFocus.toLowerCase().includes("outs")
                         ? "이 드로우의 승률은?"
                         : "콜에 필요한 승률은?"
                       : "Choose Action"}
@@ -1010,6 +1113,41 @@ export function QuizScreen({
           )}
         </div>
       ) : null}
+      {activeTerm && (
+        <div className="fixed inset-0 z-[70] bg-[#020c09]/74 px-4 py-6 backdrop-blur-sm">
+          <div className="mx-auto mt-8 max-w-[520px] rounded-[30px] border border-[#8ecdf7]/28 bg-[#08202a]/95 p-5 shadow-[0_24px_90px_rgba(0,0,0,0.5)]">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.22em] text-[#8ecdf7]">Term Help</p>
+                <h2 className="mt-2 font-serif text-3xl text-[#e5f5ff]">{GLOSSARY_TERMS[activeTerm].label}</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveTerm(null)}
+                className="rounded-full border border-[#8ecdf7]/24 bg-white/6 p-3 text-[#e5f5ff]"
+                aria-label={`Close ${GLOSSARY_TERMS[activeTerm].label} explanation`}
+              >
+                <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current stroke-[1.8]">
+                  <path d="m6 6 12 12M18 6 6 18" />
+                </svg>
+              </button>
+            </div>
+            <p className="mt-3 text-sm leading-6 text-[#d9ecfa]/84">{GLOSSARY_TERMS[activeTerm].short}</p>
+            <ul className="mt-3 space-y-2 text-sm leading-6 text-[#d9ecfa]/78">
+              {GLOSSARY_TERMS[activeTerm].details.map((line) => (
+                <li key={`${activeTerm}-${line}`} className="rounded-[16px] border border-[#8ecdf7]/16 bg-[#0d2531]/70 px-3 py-2">
+                  {line}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-4">
+              <Primary onClick={() => setActiveTerm(null)} className="w-full justify-center">
+                Got it
+              </Primary>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

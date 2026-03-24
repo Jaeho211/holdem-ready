@@ -452,7 +452,7 @@ export const questionBank: HoldemQuestion[] = [
     id: "odds-001",
     category: "odds",
     difficulty: "기초",
-    title: "턴에서 플러시 드로우",
+    title: "Turn Flush Draw",
     prompt: "턴에서 플러시 드로우 9아웃이 있을 때 리버 한 장을 맞힐 확률 감각을 묻는 문제입니다.",
     explanation:
       "턴에서 9아웃은 대략 9 x 2 = 18% 규칙을 적용하면 충분합니다. 엄밀히는 조금 더 높지만 실전 감각상 약 19%로 기억하면 됩니다.",
@@ -462,8 +462,8 @@ export const questionBank: HoldemQuestion[] = [
     board: ["Kh", "9h", "2c", "7s"],
     pot: "24bb",
     villainBet: "12bb",
-    actionBefore: "턴에서 9아웃 플러시 드로우",
-    mathFocus: "9아웃 / 턴 to 리버",
+    actionBefore: "Turn: 9 Outs Flush Draw",
+    mathFocus: "9 Outs / Turn to River",
     options: [
       { value: "19", label: "약 19%" },
       { value: "28", label: "약 28%" },
@@ -475,7 +475,7 @@ export const questionBank: HoldemQuestion[] = [
     id: "odds-002",
     category: "odds",
     difficulty: "기초",
-    title: "플랍에서 오픈엔디드",
+    title: "Flop Open-Ended",
     prompt: "플랍에서 아웃 8개로 턴과 리버를 모두 볼 수 있을 때의 감각을 익힙니다.",
     explanation:
       "플랍에서 8아웃은 대략 8 x 4 = 32% 정도입니다. 빠르게 판단할 땐 31~32%로 외워두면 충분합니다.",
@@ -485,8 +485,8 @@ export const questionBank: HoldemQuestion[] = [
     board: ["Td", "7c", "2h"],
     pot: "9bb",
     villainBet: "4bb",
-    actionBefore: "플랍에서 오픈엔디드 스트레이트 드로우",
-    mathFocus: "8아웃 / 플랍 to 리버",
+    actionBefore: "Flop: Open-Ended Straight Draw",
+    mathFocus: "8 Outs / Flop to River",
     options: [
       { value: "17", label: "약 17%" },
       { value: "31", label: "약 31%" },
@@ -498,7 +498,7 @@ export const questionBank: HoldemQuestion[] = [
     id: "odds-003",
     category: "odds",
     difficulty: "기초",
-    title: "턴 거트샷",
+    title: "Turn Gutshot",
     prompt: "리버 한 장만 남은 거트샷은 생각보다 훨씬 약합니다.",
     explanation:
       "4아웃이 턴에서 리버 한 장 남았으면 대략 8~9% 정도입니다. 큰 베팅을 상대할 때 희망콜을 줄이는 데 중요한 숫자입니다.",
@@ -506,8 +506,8 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "턴 확률"],
     pot: "20bb",
     villainBet: "14bb",
-    actionBefore: "턴에서 4아웃 거트샷",
-    mathFocus: "4아웃 / 턴 to 리버",
+    actionBefore: "Turn: 4 Outs Gutshot",
+    mathFocus: "4 Outs / Turn to River",
     options: [
       { value: "9", label: "약 9%" },
       { value: "18", label: "약 18%" },
@@ -519,7 +519,7 @@ export const questionBank: HoldemQuestion[] = [
     id: "odds-004",
     category: "odds",
     difficulty: "실전",
-    title: "하프 팟 베팅의 필요 승률",
+    title: "Half Pot: Required Equity",
     prompt: "상대가 팟의 절반을 베팅했을 때 콜에 필요한 최소 승률을 맞히는 문제입니다.",
     explanation:
       "하프 팟 베팅엔 약 25% 정도의 승률이 필요합니다. 이 기준을 머릿속에 넣어두면 드로우 콜 판단이 빨라집니다.",
@@ -528,7 +528,7 @@ export const questionBank: HoldemQuestion[] = [
     pot: "40bb",
     villainBet: "20bb",
     actionBefore: "리버가 아닌 플랍/턴 일반 상황 가정",
-    mathFocus: "상대가 하프 팟 베팅",
+    mathFocus: "Half Pot Bet",
     options: [
       { value: "25", label: "약 25%" },
       { value: "33", label: "약 33%" },
@@ -540,7 +540,7 @@ export const questionBank: HoldemQuestion[] = [
     id: "odds-005",
     category: "odds",
     difficulty: "응용",
-    title: "콤보 드로우 15아웃",
+    title: "Combo Draw 15 Outs",
     prompt: "플러시 드로우와 양방/오버카드가 겹치는 강한 드로우는 에퀴티가 매우 큽니다.",
     explanation:
       "플랍에서 15아웃은 대략 15 x 4 = 60%에 가깝지만 중복과 보정 때문에 실전 감각상 54% 안팎으로 잡으면 됩니다.",
@@ -550,8 +550,8 @@ export const questionBank: HoldemQuestion[] = [
     board: ["Qh", "Th", "2c"],
     pot: "18bb",
     villainBet: "9bb",
-    actionBefore: "플랍에서 15아웃 콤보 드로우",
-    mathFocus: "15아웃 / 플랍 to 리버",
+    actionBefore: "Flop: 15 Outs Combo Draw",
+    mathFocus: "15 Outs / Flop to River",
     options: [
       { value: "29", label: "약 29%" },
       { value: "54", label: "약 54%" },
