@@ -1,4 +1,4 @@
-import { useMemo, useState, type ChangeEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import {
   categoryMeta,
   liveTipSections,
@@ -632,6 +632,9 @@ function TableScene({
 }: {
   question: HoldemQuestion;
 }) {
+  const boardWrapperRef = useRef<HTMLDivElement>(null);
+  const boardRowRef = useRef<HTMLDivElement>(null);
+  const [boardScale, setBoardScale] = useState(1);
   const heroCards = getHeroCards(question);
   const boardCards = getBoardCards(question);
   const sceneDetails = getTableSceneDetails(question);
@@ -645,6 +648,35 @@ function TableScene({
         ? "핸드 없이 팟 오즈만 훈련합니다."
         : "Read the Board and Hero Hand together.";
 
+  useEffect(() => {
+    const wrapper = boardWrapperRef.current;
+    const row = boardRowRef.current;
+    if (!wrapper || !row) {
+      return;
+    }
+
+    const recalculateBoardScale = () => {
+      const available = wrapper.offsetWidth;
+      const needed = row.scrollWidth;
+      if (needed === 0) {
+        setBoardScale(1);
+        return;
+      }
+      setBoardScale(Math.min(1, available / needed));
+    };
+
+    recalculateBoardScale();
+
+    const obs = new ResizeObserver(() => {
+      recalculateBoardScale();
+    });
+
+    obs.observe(wrapper);
+    obs.observe(row);
+
+    return () => obs.disconnect();
+  }, [question.id]);
+
   return (
     <div className="mt-3 flex min-h-0 flex-1 rounded-[28px] border border-[#d7b977]/20 bg-[#03130f] p-2 shadow-[0_18px_60px_rgba(0,0,0,0.34)]">
       <div className="quiz-table-felt relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[24px] px-3 pb-3 pt-3">
@@ -657,11 +689,15 @@ function TableScene({
             </span>
           </div>
 
-          <div className="mt-4 text-center">
+          <div ref={boardWrapperRef} className="mt-4 w-full text-center">
             <p className="text-[10px] uppercase tracking-[0.24em] text-[#d7b977]">
               {question.category === "preflop" ? "Board Opens After The Deal" : "Board"}
             </p>
-            <div className="mt-2.5 flex flex-wrap justify-center gap-1.5 sm:gap-2">
+            <div
+              ref={boardRowRef}
+              className="mt-2.5 flex flex-nowrap justify-center gap-1.5 sm:gap-2"
+              style={boardScale < 1 ? { zoom: boardScale } : undefined}
+            >
               {boardSlots.map((card, index) => (
                 <PlayingCard
                   key={`${question.id}-board-${index}`}
