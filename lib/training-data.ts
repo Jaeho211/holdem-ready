@@ -580,6 +580,68 @@ export const questionBank: HoldemQuestion[] = [
     ],
     correct: "20",
   },
+  {
+    id: "pre-011",
+    category: "preflop",
+    difficulty: "실전",
+    title: "HJ에서 TT vs CO 3벳",
+    prompt:
+      "하이잭에서 TT로 오픈했는데 컷오프에서 3벳이 들어왔습니다. 포켓 텐은 확실히 강하지만 3벳 상대라면 이야기가 달라집니다.",
+    explanation:
+      "TT는 좋은 핸드지만 3벳 팟에서 포지션 없이 플레이하면 오버카드가 뜰 때마다 어려워집니다. 라이브 저스테이크에서 3벳 범위는 보통 타이트하므로 콜해서 세트 마이닝하거나, 상대가 매우 루즈하지 않은 한 콜이 기본입니다.",
+    pitfall: "미들 포켓페어로 3벳에 항상 4벳을 넣으려는 실수",
+    tags: ["3벳 팟", "포켓페어 오픈"],
+    hand: "TT",
+    holeCards: ["Ts", "Td"],
+    position: "HJ",
+    table: "9-handed / 100bb",
+    stack: "100bb 유효 스택",
+    actionBefore: "HJ 3bb 오픈, CO 10bb 3벳",
+    correct: "call",
+  },
+  {
+    id: "post-009",
+    category: "postflop",
+    difficulty: "실전",
+    title: "리버 투페어 밸류벳",
+    prompt:
+      "리버에서 투페어를 만들었고, 상대가 체크를 했습니다. 강한 핸드라면 리버에서 돈을 더 넣을 기회를 놓치면 안 됩니다.",
+    explanation:
+      "K9으로 K-high Board에서 9가 리버에 떨어져 투페어가 완성된 상황입니다. 라이브 저스테이크에서 탑페어 이상을 가진 상대가 콜해줄 가능성이 높으므로 반 팟 정도의 밸류벳이 좋습니다.",
+    pitfall: "강한 완성 핸드를 체크백해서 리버 밸류를 놓치는 실수",
+    tags: ["리버 밸류벳", "강한 메이드 핸드"],
+    position: "BTN",
+    preflopAction: "BB 콜, 나머지 폴드",
+    holeCards: ["Kd", "9h"],
+    board: ["Ks", "7c", "3d", "Jh", "9d"],
+    pot: "22bb",
+    villainBet: "체크",
+    actionBefore: "BTN 오픈에 BB 콜, 플랍 체크콜, 턴 체크체크, 리버 체크",
+    stack: "78bb 남음",
+    correct: "raise",
+  },
+  {
+    id: "odds-007",
+    category: "odds",
+    difficulty: "기초",
+    title: "풀팟 베팅의 필요 승률",
+    prompt:
+      "상대가 팟 사이즈 그대로를 베팅했을 때 콜에 필요한 최소 승률을 바로 떠올리는 훈련입니다.",
+    explanation:
+      "팟 사이즈 베팅에는 약 33%의 승률이 필요합니다. 하프 팟(25%)과 함께 가장 자주 나오는 기준이므로 몸에 배게 외우면 좋습니다.",
+    pitfall: "풀팟 베팅과 하프 팟 베팅의 필요 승률을 혼동하는 실수",
+    tags: ["포트 오즈", "필요 승률"],
+    pot: "30bb",
+    villainBet: "30bb",
+    actionBefore: "상대가 팟 사이즈 베팅을 한 일반 상황",
+    mathFocus: "상대가 풀팟 베팅",
+    options: [
+      { value: "25", label: "약 25%" },
+      { value: "33", label: "약 33%" },
+      { value: "50", label: "약 50%" },
+    ],
+    correct: "33",
+  },
 ];
 
 export type LiveTipSection = {
