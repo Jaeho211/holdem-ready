@@ -41,6 +41,15 @@ type SeatState = {
   betSize?: string;
 };
 
+const ACTION_A11Y_LABEL: Record<SeatAction, string> = {
+  fold: "Fold",
+  open: "Open raise",
+  call: "Call",
+  limp: "Limp",
+  hero: "Hero",
+  waiting: "Waiting",
+};
+
 /* ── Action keyword mapping ── */
 
 const ACTION_KEYWORDS: Record<string, SeatAction> = {
@@ -135,18 +144,40 @@ function getSeatStyle(action: SeatAction, isHero: boolean) {
   }
   switch (action) {
     case "open":
-      return "border-[#d98989]/50 bg-[#2a171b] text-[#ffcece]";
+      return "border-[#d98989]/80 bg-[#2f151b] text-[#ffe2e2]";
     case "call":
-      return "border-[#69c193]/50 bg-[#0f2e22] text-[#b8f0d0]";
+      return "border-[#69c193]/80 bg-[#113326] text-[#d2ffe6]";
     case "limp":
-      return "border-[#69c193]/30 bg-[#0c2219] text-[#8fd4ae]";
+      return "border-[#71c89b]/75 bg-[#10291f] text-[#c4f0db]";
     case "fold":
-      return "border-white/8 bg-white/4 text-white/25";
+      return "border-[#858585]/70 bg-[#222222] text-[#d0d0d0]";
     case "waiting":
-      return "border-white/6 bg-white/3 text-white/18";
+      return "border-[#738096]/65 bg-[#18202e] text-[#d7e0ef]";
     default:
       return "border-white/8 bg-white/5 text-white/30";
   }
+}
+
+function getActionBadge(action: SeatAction) {
+  switch (action) {
+    case "fold":
+      return "F";
+    case "open":
+      return "O";
+    case "call":
+      return "C";
+    case "limp":
+      return "L";
+    default:
+      return null;
+  }
+}
+
+function getSeatAriaLabel(seat: SeatName, state: SeatState, isHero: boolean) {
+  const seatLabel = isHero ? `${seat} (You)` : seat;
+  const actionLabel = ACTION_A11Y_LABEL[state.action];
+  const betLabel = state.betSize ? `, ${state.betSize}` : "";
+  return `Seat ${seatLabel}, ${actionLabel}${betLabel}`;
 }
 
 /* ── SeatMarker ── */
@@ -163,33 +194,46 @@ function SeatMarker({
   const pos = SEAT_POSITIONS[seat];
   const style = getSeatStyle(state.action, isHero);
   const label = SEAT_LABELS[seat];
+  const badge = getActionBadge(state.action);
+  const seatAriaLabel = getSeatAriaLabel(seat, state, isHero);
 
   return (
     <div
       className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-0.5"
       style={{ top: pos.top, left: pos.left }}
+      role="group"
+      aria-label={seatAriaLabel}
     >
       <div
         className={cn(
-          "flex items-center justify-center rounded-full border px-1.5 py-0.5 text-[9px] font-semibold leading-none tracking-wide transition-colors min-w-[28px]",
+          "flex items-center justify-center rounded-full border px-1.5 py-0.5 text-[11px] font-semibold leading-none tracking-wide transition-colors min-w-[32px]",
           style,
         )}
       >
         {isHero ? "YOU" : label}
       </div>
+      {badge && !isHero && (
+        <span className="rounded-full border border-[#efe2be]/40 bg-[#1b1b1b]/70 px-1 text-[9px] font-semibold leading-none text-[#efe2be]/90">
+          {badge}
+        </span>
+      )}
       {state.betSize && state.action !== "hero" && (
-        <span className="text-[8px] leading-none text-[#efe2be]/60">
+        <span className="text-[10px] leading-none text-[#efe2be]/85">
           {state.betSize}
         </span>
       )}
       {state.action === "fold" && !isHero && (
-        <span className="text-[7px] leading-none text-white/20">fold</span>
+        <span className="text-[10px] leading-none text-white/80">fold</span>
       )}
       {(state.action === "open" || state.action === "call" || state.action === "limp") && !isHero && !state.betSize && (
-        <span className="text-[7px] leading-none text-[#efe2be]/40">
+        <span className="text-[10px] leading-none text-[#efe2be]/80">
           {state.action}
         </span>
       )}
+      {state.action === "waiting" && !isHero && (
+        <span className="text-[10px] leading-none text-[#d8e0ef]/85">waiting</span>
+      )}
+      <span className="sr-only">{seatAriaLabel}</span>
     </div>
   );
 }
@@ -212,7 +256,11 @@ export function PokerTableVisual({
   return (
     <div className="mt-3 flex w-full flex-col items-center gap-2">
       {/* Oval table with seats */}
-      <div className="relative w-full max-w-[300px] aspect-[1.7]">
+      <div
+        className="relative w-full max-w-[300px] aspect-[1.7]"
+        role="group"
+        aria-label="Preflop poker table seat status"
+      >
         {/* Felt oval */}
         <div className="absolute inset-[14%_6%] rounded-full border border-[#d7b977]/18 bg-[radial-gradient(ellipse,rgba(62,173,126,0.1),transparent_70%)]" />
 
