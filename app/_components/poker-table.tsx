@@ -149,7 +149,7 @@ function SeatMarker({
       )}
       {(state.action === "open" || state.action === "call" || state.action === "limp") && !isHero && !state.betSize && (
         <span className="text-[10px] leading-none text-[#efe2be]/80">
-          {state.action}
+          {state.action === "open" ? "open raise" : state.action}
         </span>
       )}
       {state.action === "waiting" && !isHero && (
