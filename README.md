@@ -94,6 +94,7 @@ npm run dev
 ```bash
 npm run build
 npm run lint
+npm test
 ```
 
 정적 결과물은 `npm run build` 후 `out/` 디렉터리에 생성됩니다.
@@ -155,3 +156,4 @@ public/
 ## 문서
 
 - [앱 개요 문서](docs/app-overview.md)
+- [테스트 가이드](docs/testing.md)

@@ -1,4 +1,5 @@
 import type { CardCode, HoleCards } from "./holdem/cards";
+import type { OddsOutsComponent, OddsOutsSpec } from "./holdem/outs";
 
 export type TrainingCategory = "preflop" | "postflop" | "odds";
 export type AppTrainingCategory = TrainingCategory | "liveTips";
@@ -49,6 +50,7 @@ export type OddsQuestion = QuestionBase & {
   category: "odds";
   holeCards?: HoleCards;
   board?: CardCode[];
+  outsSpec?: OddsOutsSpec;
   pot: string;
   villainBet: string;
   actionBefore: string;
@@ -56,6 +58,10 @@ export type OddsQuestion = QuestionBase & {
   options: ChoiceOption[];
   correct: AnswerChoice;
 };
+
+const makeOutsSpec = (...components: OddsOutsComponent[]): OddsOutsSpec => ({
+  components,
+});
 
 export type HoldemQuestion =
   | PreflopQuestion
@@ -461,6 +467,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "턴 확률"],
     holeCards: ["Ah", "Jh"],
     board: ["Kh", "9h", "2c", "7s"],
+    outsSpec: makeOutsSpec("flushDraw"),
     pot: "24bb",
     villainBet: "12bb",
     actionBefore: "Turn: 9 Outs Flush Draw",
@@ -484,6 +491,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "플랍 확률"],
     holeCards: ["9s", "8s"],
     board: ["Td", "7c", "2h"],
+    outsSpec: makeOutsSpec("straightDraw"),
     pot: "9bb",
     villainBet: "4bb",
     actionBefore: "Flop: Open-Ended Straight Draw",
@@ -507,6 +515,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "턴 확률"],
     holeCards: ["Qh", "9s"] as const,
     board: ["Kd", "Jc", "5h", "2d"] as const,
+    outsSpec: makeOutsSpec("straightDraw"),
     pot: "20bb",
     villainBet: "14bb",
     actionBefore: "Turn: Gutshot Straight Draw (4 Outs)",
@@ -551,6 +560,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "콤보 드로우"],
     holeCards: ["Ah", "Jh"],
     board: ["Qh", "Th", "2c"],
+    outsSpec: makeOutsSpec("flushDraw", "straightDraw", "overcardPair"),
     pot: "18bb",
     villainBet: "9bb",
     actionBefore: "Flop: 15 Outs Combo Draw",
@@ -658,6 +668,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "플랍 확률"],
     holeCards: ["Ac", "Jc"],
     board: ["Qc", "7c", "2d"],
+    outsSpec: makeOutsSpec("flushDraw"),
     pot: "15bb",
     villainBet: "10bb",
     actionBefore: "Flop: 9 Outs Flush Draw",
@@ -1458,6 +1469,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "플랍 확률"],
     holeCards: ["9c", "9d"],
     board: ["As", "7h", "2c"],
+    outsSpec: makeOutsSpec("pocketPairSet"),
     pot: "12bb",
     villainBet: "6bb",
     actionBefore: "Flop: 언더페어가 셋으로 좋아질 2아웃",
@@ -1481,6 +1493,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "턴 확률"],
     holeCards: ["8s", "8d"],
     board: ["Kc", "Jh", "4s", "2d"],
+    outsSpec: makeOutsSpec("pocketPairSet"),
     pot: "18bb",
     villainBet: "10bb",
     actionBefore: "Turn: 포켓페어가 셋으로 좋아질 2아웃",
@@ -1504,6 +1517,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "플랍 확률"],
     holeCards: ["Ah", "Kc"],
     board: ["Qd", "8s", "3h"],
+    outsSpec: makeOutsSpec("overcardPair"),
     pot: "10bb",
     villainBet: "5bb",
     actionBefore: "Flop: 두 오버카드 = 6아웃",
@@ -1527,6 +1541,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "턴 확률"],
     holeCards: ["9s", "8s"],
     board: ["Td", "7c", "2h", "Kc"],
+    outsSpec: makeOutsSpec("straightDraw"),
     pot: "22bb",
     villainBet: "12bb",
     actionBefore: "Turn: Open-Ended Straight Draw",
@@ -1550,6 +1565,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "플랍 확률"],
     holeCards: ["Ah", "Jh"] as const,
     board: ["Kh", "Th", "4d"] as const,
+    outsSpec: makeOutsSpec("flushDraw", "straightDraw"),
     pot: "18bb",
     villainBet: "9bb",
     actionBefore: "Flop: Flush Draw + Gutshot (12 Outs)",
@@ -1573,6 +1589,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "턴 확률"],
     holeCards: ["9h", "8h"] as const,
     board: ["Th", "7h", "2c", "Ks"] as const,
+    outsSpec: makeOutsSpec("flushDraw", "straightDraw"),
     pot: "30bb",
     villainBet: "20bb",
     actionBefore: "Turn: Flush Draw + OESD (15 Outs)",
@@ -1723,6 +1740,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "턴 확률"],
     holeCards: ["Jh", "Tc"] as const,
     board: ["Js", "8d", "5h", "2c"] as const,
+    outsSpec: makeOutsSpec("holePairImprove"),
     pot: "24bb",
     villainBet: "16bb",
     actionBefore: "Turn: Top Pair can improve to Two Pair/Trips (5 Outs)",
@@ -1738,24 +1756,26 @@ export const questionBank: HoldemQuestion[] = [
     id: "odds-022",
     category: "odds",
     difficulty: "기초",
-    title: "Turn 6 Outs",
-    prompt: "턴에서 AKo가 QJ72 보드를 보고 있어, 리버 A나 K로만 원페어를 만들 수 있습니다.",
+    title: "Turn 10 Outs",
+    prompt:
+      "턴에서 AKo가 QJ72 보드를 보고 있어, 리버 A나 K로 원페어를 만들거나 T로 브로드웨이 스트레이트를 완성할 수 있습니다.",
     explanation:
-      "턴 6아웃은 약 13%입니다. 플랍에서의 24%와 다르기 때문에 카드가 한 장만 남았다는 사실을 늘 먼저 떠올려야 합니다.",
-    pitfall: "플랍 6아웃 확률을 그대로 턴에도 적용하는 실수",
+      "남은 A 3장, K 3장, T 4장으로 총 10아웃입니다. 턴 10아웃은 10/46으로 약 22%라서, 두 오버카드 6아웃으로만 줄여 잡으면 실제보다 너무 타이트하게 계산하게 됩니다.",
+    pitfall: "브로드웨이를 완성하는 T 4장을 빼고 두 오버카드 6아웃으로만 계산하는 실수",
     tags: ["아웃 계산", "턴 확률"],
     holeCards: ["Ah", "Kd"] as const,
     board: ["Qc", "Js", "7h", "2d"] as const,
+    outsSpec: makeOutsSpec("overcardPair", "straightDraw"),
     pot: "20bb",
     villainBet: "12bb",
-    actionBefore: "Turn: Two Overcards Draw (6 Outs)",
-    mathFocus: "6 Outs / Turn to River",
+    actionBefore: "Turn: Two Overcards + Gutshot (10 Outs)",
+    mathFocus: "10 Outs / Turn to River",
     options: [
-      { value: "9", label: "약 9%" },
       { value: "13", label: "약 13%" },
-      { value: "20", label: "약 20%" },
+      { value: "22", label: "약 22%" },
+      { value: "31", label: "약 31%" },
     ],
-    correct: "13",
+    correct: "22",
   },
   {
     id: "odds-023",
@@ -1769,6 +1789,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "턴 확률"],
     holeCards: ["Ah", "Jh"] as const,
     board: ["Kh", "Th", "5s", "2c"] as const,
+    outsSpec: makeOutsSpec("flushDraw", "straightDraw"),
     pot: "28bb",
     villainBet: "18bb",
     actionBefore: "Turn: Flush Draw + Gutshot (12 Outs)",
@@ -1792,6 +1813,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "플랍 확률"],
     holeCards: ["9h", "8c"] as const,
     board: ["Th", "7d", "9d"] as const,
+    outsSpec: makeOutsSpec("straightDraw", "currentPairTrips"),
     pot: "16bb",
     villainBet: "8bb",
     actionBefore: "Flop: OESD + Trips Draw (10 Outs)",
@@ -1808,13 +1830,15 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "실전",
     title: "Flop 11 Outs",
-    prompt: "플랍에서 JT가 Q92 보드를 보고 있어, 양방 스트레이트 가능성과 한 장 페어 개선이 함께 걸려 있습니다.",
+    prompt:
+      "플랍에서 KJ가 QT2 보드를 보고 있어, 양방 스트레이트 가능성과 한 장 오버카드 페어 개선이 함께 걸려 있습니다.",
     explanation:
       "플랍 11아웃은 약 42%입니다. 절반에는 못 미치지만 상당히 높은 수치라, 가격이 좋다면 적극적으로 플레이할 이유가 생깁니다.",
     pitfall: "11아웃 드로우를 30%대 정도로 과소평가하는 실수",
     tags: ["아웃 계산", "플랍 확률"],
-    holeCards: ["Jc", "Tc"] as const,
-    board: ["Qh", "9d", "2s"] as const,
+    holeCards: ["Kc", "Jc"] as const,
+    board: ["Qh", "Td", "2s"] as const,
+    outsSpec: makeOutsSpec("straightDraw", "overcardPair"),
     pot: "18bb",
     villainBet: "9bb",
     actionBefore: "Flop: OESD + Overcard Pair (11 Outs)",
@@ -1831,16 +1855,18 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "기초",
     title: "Turn 7 Outs",
-    prompt: "턴에서 KT가 QJ52 보드를 보고 있어, 스트레이트와 원페어 개선 가능성이 함께 남아 있습니다.",
+    prompt:
+      "턴에서 K9가 QJ52 보드를 보고 있어, 거트샷 스트레이트와 한 장 오버카드 페어 개선이 함께 남아 있습니다.",
     explanation:
       "턴 7아웃은 약 15%입니다. 8아웃 17%보다 조금 낮다고 생각하면 빠르게 실전에서 비교하기 좋습니다.",
     pitfall: "7아웃과 8아웃의 차이를 무시해 비슷한 확률로 처리하는 실수",
     tags: ["아웃 계산", "턴 확률"],
-    holeCards: ["Kd", "Tc"] as const,
+    holeCards: ["Kd", "9c"] as const,
     board: ["Qs", "Jh", "5d", "2c"] as const,
+    outsSpec: makeOutsSpec("straightDraw", "overcardPair"),
     pot: "26bb",
     villainBet: "14bb",
-    actionBefore: "Turn: Gutshot + Pair Draw (7 Outs)",
+    actionBefore: "Turn: Gutshot + Overcard Pair (7 Outs)",
     mathFocus: "7 Outs / Turn to River",
     options: [
       { value: "9", label: "약 9%" },
@@ -1861,6 +1887,7 @@ export const questionBank: HoldemQuestion[] = [
     tags: ["아웃 계산", "플랍 확률"],
     holeCards: ["Jd", "Tc"] as const,
     board: ["Qh", "9s", "Jh"] as const,
+    outsSpec: makeOutsSpec("straightDraw", "holePairImprove"),
     pot: "20bb",
     villainBet: "10bb",
     actionBefore: "Flop: OESD + Pair (13 Outs)",
@@ -1876,24 +1903,26 @@ export const questionBank: HoldemQuestion[] = [
     id: "odds-028",
     category: "odds",
     difficulty: "응용",
-    title: "Flop 16 Outs",
-    prompt: "플랍에서 98 수딧으로 AT7 보드를 보고 있어, 여러 개선 라인이 겹친 드로우 상황입니다.",
+    title: "Flop 15 Outs",
+    prompt:
+      "플랍에서 98 하트가 AT7 투톤 보드를 보고 있어, 플러시와 양방 스트레이트 개선이 함께 열려 있습니다.",
     explanation:
-      "플랍 16아웃은 약 57%입니다. 이미 코인플립을 넘는 수준이라, 강한 콤보 드로우가 프리미엄 원페어와도 맞설 수 있다는 점을 보여줍니다.",
-    pitfall: "매우 강한 콤보 드로우의 에퀴티를 평범한 드로우 수준으로 과소평가하는 실수",
+      "플랍 15아웃은 약 54%입니다. 절반을 넘는 강한 콤보 드로우라서, 프리미엄 원페어와도 충분히 맞설 수 있다는 감각을 익히기 좋습니다.",
+    pitfall: "매우 강한 15아웃 콤보 드로우를 평범한 드로우 수준으로 과소평가하는 실수",
     tags: ["아웃 계산", "플랍 확률"],
     holeCards: ["9h", "8h"] as const,
-    board: ["Th", "7d", "Ac"] as const,
+    board: ["Ah", "Td", "7h"] as const,
+    outsSpec: makeOutsSpec("flushDraw", "straightDraw"),
     pot: "22bb",
     villainBet: "11bb",
-    actionBefore: "Flop: Flush Draw + OESD (16 Outs)",
-    mathFocus: "16 Outs / Flop to River",
+    actionBefore: "Flop: Flush Draw + OESD (15 Outs)",
+    mathFocus: "15 Outs / Flop to River",
     options: [
       { value: "45", label: "약 45%" },
-      { value: "57", label: "약 57%" },
+      { value: "54", label: "약 54%" },
       { value: "67", label: "약 67%" },
     ],
-    correct: "57",
+    correct: "54",
   },
 ];
 

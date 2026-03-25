@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { getQuestion } from "./questions";
 import { questionBank } from "../training-data";
-import { CARD_CODES, type CardCode } from "./cards";
+import { CARD_CODES } from "./cards";
+import {
+  calculateOutsFromSpec,
+  getOutsHitRatePercent,
+  parseOutsCount,
+} from "./outs";
 
 const VALID_CARD_SET = new Set<string>(CARD_CODES);
 
@@ -271,6 +276,13 @@ describe("questionBank — postflop 정합성 (8-B)", () => {
 
 describe("questionBank — odds 수학 (8-C)", () => {
   const oddsQuestions = questionBank.filter((q) => q.category === "odds");
+  const cardOutsQuestions = oddsQuestions.filter(
+    (q) =>
+      q.category === "odds" &&
+      q.holeCards &&
+      q.board &&
+      parseOutsCount(q.mathFocus) !== null,
+  );
 
   it.each(oddsQuestions.map((q) => [q.id, q]))(
     "%s — correct가 options 중 하나에 존재",
@@ -300,6 +312,39 @@ describe("questionBank — odds 수학 (8-C)", () => {
           expect(VALID_CARD_SET.has(card), `invalid card: ${card}`).toBe(true);
         }
       }
+    },
+  );
+
+  it.each(cardOutsQuestions.map((q) => [q.id, q]))(
+    "%s — 카드 기반 아웃 문제는 outsSpec을 가진다",
+    (_id, q) => {
+      if (q.category !== "odds" || !q.holeCards || !q.board) return;
+      expect(q.outsSpec).toBeDefined();
+      expect(q.outsSpec?.components.length).toBeGreaterThan(0);
+    },
+  );
+
+  it.each(cardOutsQuestions.map((q) => [q.id, q]))(
+    "%s — outsSpec 계산 결과가 mathFocus 아웃 수와 일치",
+    (_id, q) => {
+      if (q.category !== "odds" || !q.holeCards || !q.board || !q.outsSpec) return;
+      const expectedOuts = parseOutsCount(q.mathFocus);
+      expect(expectedOuts).not.toBeNull();
+
+      const calculated = calculateOutsFromSpec(q.holeCards, q.board, q.outsSpec);
+      expect(calculated.outs).toHaveLength(expectedOuts ?? 0);
+    },
+  );
+
+  it.each(cardOutsQuestions.map((q) => [q.id, q]))(
+    "%s — outsSpec 계산 확률이 correct와 1%p 이내",
+    (_id, q) => {
+      if (q.category !== "odds" || !q.holeCards || !q.board || !q.outsSpec) return;
+      const calculated = calculateOutsFromSpec(q.holeCards, q.board, q.outsSpec);
+      const expectedPercent = getOutsHitRatePercent(calculated.outs.length, q.board);
+      const shownPercent = Number(q.correct);
+
+      expect(Math.abs(expectedPercent - shownPercent)).toBeLessThanOrEqual(1);
     },
   );
 
