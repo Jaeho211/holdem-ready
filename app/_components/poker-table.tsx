@@ -48,6 +48,18 @@ const SEAT_LABELS: Record<SeatName, string> = {
   BB: "BB",
 };
 
+const SPOTLIGHT_PLACEMENT: Record<SeatName, "above" | "below"> = {
+  BTN: "below",
+  SB: "below",
+  BB: "below",
+  UTG: "below",
+  "UTG+1": "above",
+  MP: "above",
+  LJ: "above",
+  HJ: "above",
+  CO: "above",
+};
+
 /* ── Seat style by action ── */
 
 function getSeatStyle(action: SeatAction, isHero: boolean) {
@@ -117,24 +129,37 @@ function SeatMarker({
   const badge = getActionBadge(state.action);
   const seatAriaLabel = getSeatAriaLabel(seat, state, isHero, spotlight);
   const spotlightCopy = spotlight ? [spotlight.label, spotlight.betSize].filter(Boolean).join(" ") : null;
+  const spotlightPlacement = SPOTLIGHT_PLACEMENT[seat];
+  const hasDealerChip = seat === "BTN";
 
   return (
     <div
       data-qa-region={`table-seat:${seat}`}
-      className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-0.5"
+      className="absolute flex flex-col items-center gap-0.5 -translate-x-1/2 -translate-y-1/2"
       style={{ top: pos.top, left: pos.left }}
       role="group"
       aria-label={seatAriaLabel}
     >
-      <div
-        data-qa-region={`table-seat-chip:${seat}`}
-        className={cn(
-          "flex items-center justify-center rounded-full border px-1.5 py-0.5 text-[11px] font-semibold leading-none tracking-wide transition-colors min-w-[32px]",
-          style,
-          spotlight && "shadow-[0_0_0_1px_rgba(255,231,231,0.18),0_0_18px_rgba(217,137,137,0.24)]",
+      <div className="relative">
+        <div
+          data-qa-region={`table-seat-chip:${seat}`}
+          className={cn(
+            "flex min-w-[32px] items-center justify-center rounded-full border px-1.5 py-0.5 text-[11px] font-semibold leading-none tracking-wide transition-colors",
+            style,
+            spotlight && "shadow-[0_0_0_1px_rgba(255,231,231,0.18),0_0_18px_rgba(217,137,137,0.24)]",
+          )}
+        >
+          {isHero ? "YOU" : label}
+        </div>
+        {hasDealerChip && (
+          <div
+            data-qa-region="table-dealer"
+            className="absolute flex h-4 w-4 items-center justify-center rounded-full bg-[#d7b977] text-[7px] font-bold text-[#1a1400] shadow-md -translate-y-1/2"
+            style={{ top: 0, left: "calc(100% + 4px)" }}
+          >
+            D
+          </div>
         )}
-      >
-        {isHero ? "YOU" : label}
       </div>
       {badge && !isHero && (
         <span
@@ -163,7 +188,11 @@ function SeatMarker({
       {spotlightCopy && (
         <span
           data-qa-overlay={`table-spotlight:${seat}`}
-          className="rounded-full border border-[#d98989]/36 bg-[#3a1b22]/88 px-1.5 py-0.5 text-[9px] font-semibold leading-none tracking-[0.14em] text-[#ffe7e7] shadow-[0_8px_18px_rgba(0,0,0,0.24)]"
+          className={cn(
+            "absolute z-10 whitespace-nowrap rounded-full border border-[#d98989]/36 bg-[#3a1b22]/88 px-1.5 py-0.5 text-[9px] font-semibold leading-none tracking-[0.14em] text-[#ffe7e7] shadow-[0_8px_18px_rgba(0,0,0,0.24)]",
+            seat === "BTN" ? "left-[calc(100%+4px)]" : "left-1/2 -translate-x-1/2",
+            spotlightPlacement === "above" ? "bottom-full mb-1" : "top-full mt-1",
+          )}
         >
           {spotlightCopy}
         </span>
@@ -206,15 +235,6 @@ export function PokerTableVisual({
       >
         {/* Felt oval */}
         <div className="absolute inset-[14%_6%] rounded-full border border-[#d7b977]/18 bg-[radial-gradient(ellipse,rgba(62,173,126,0.1),transparent_70%)]" />
-
-        {/* Dealer chip near BTN */}
-        <div
-          data-qa-region="table-dealer"
-          className="absolute flex h-4 w-4 items-center justify-center rounded-full bg-[#d7b977] text-[7px] font-bold text-[#1a1400] shadow-md"
-          style={{ top: "32%", left: "14%" }}
-        >
-          D
-        </div>
 
         {/* Seats */}
         {SEAT_ORDER.map((seat) => {
