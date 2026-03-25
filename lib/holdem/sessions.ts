@@ -54,12 +54,12 @@ const getDailyFocusIds = (
       focusIds.push(questionId);
 
       if (focusIds.length >= WEAKNESS_SESSION_SIZE) {
-        return focusIds;
+        return shuffleItems(focusIds, random);
       }
     }
   }
 
-  return focusIds;
+  return shuffleItems(focusIds, random);
 };
 
 export const buildDailySession = (
