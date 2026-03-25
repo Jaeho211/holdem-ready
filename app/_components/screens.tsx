@@ -927,7 +927,7 @@ export function QuizScreen({
             <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[520px] px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
               <div
                 className={cn(
-                  "pointer-events-auto max-h-[40svh] overflow-y-auto rounded-[28px] border p-4 shadow-[0_20px_90px_rgba(0,0,0,0.48)] backdrop-blur-xl scrollbar-thin",
+                  "pointer-events-auto max-h-[65svh] overflow-y-auto rounded-[28px] border p-4 shadow-[0_20px_90px_rgba(0,0,0,0.48)] backdrop-blur-xl scrollbar-thin",
                   feedback.correct
                     ? "border-[#2f9f6b]/45 bg-[#0d2b20]/96"
                     : "border-[#d56262]/36 bg-[#2a1618]/96",
