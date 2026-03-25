@@ -1713,9 +1713,11 @@ export const questionBank: HoldemQuestion[] = [
       "턴 5아웃은 약 11%입니다. 10%대 초반이라서, 큰 베팅을 상대할 때는 생각보다 자주 폴드가 맞습니다.",
     pitfall: "턴 5아웃을 체감보다 높게 잡아 과하게 따라가는 실수",
     tags: ["아웃 계산", "턴 확률"],
+    holeCards: ["Jh", "Tc"] as const,
+    board: ["Js", "8d", "5h", "2c"] as const,
     pot: "24bb",
     villainBet: "16bb",
-    actionBefore: "Turn: 5 Outs Draw",
+    actionBefore: "Turn: Top Pair + Kicker Draw (5 Outs)",
     mathFocus: "5 Outs / Turn to River",
     options: [
       { value: "4", label: "약 4%" },
