@@ -6,7 +6,7 @@ import { chromium } from "@playwright/test";
 
 const SCREENSHOT_VIEWPORT = {
   width: 384,
-  height: 832,
+  height: 698,
   device: "galaxy-s24",
 };
 const OUTPUT_DIR = path.resolve(".qa-artifacts/ui");
