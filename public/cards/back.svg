@@ -1,25 +1,51 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="240" height="336" viewBox="0 0 240 336" role="img" aria-label="Face-down playing card">
   <defs>
-    <linearGradient id="back-base" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#163e30" />
-      <stop offset="100%" stop-color="#071d16" />
+    <linearGradient id="navy-base" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e4278" />
+      <stop offset="100%" stop-color="#0a1f45" />
     </linearGradient>
-    <linearGradient id="back-core" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#245740" />
-      <stop offset="100%" stop-color="#0b2c21" />
+    <linearGradient id="navy-inner" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a3a6b" />
+      <stop offset="100%" stop-color="#0f2554" />
     </linearGradient>
-    <pattern id="diamond-grid" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-      <rect width="20" height="20" fill="none" />
-      <path d="M0 10H20" stroke="#d7b977" stroke-opacity="0.12" stroke-width="4" />
-      <path d="M10 0V20" stroke="#d7b977" stroke-opacity="0.08" stroke-width="2" />
+    <pattern id="crosshatch" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="18" height="18" fill="none" />
+      <path d="M0 9H18" stroke="#d7b977" stroke-opacity="0.14" stroke-width="3.5" />
+      <path d="M9 0V18" stroke="#d7b977" stroke-opacity="0.08" stroke-width="1.5" />
     </pattern>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#1a3a6b" stop-opacity="0" />
+      <stop offset="100%" stop-color="#060f28" stop-opacity="0.6" />
+    </radialGradient>
   </defs>
-  <rect x="8" y="8" width="224" height="320" rx="24" fill="#ffffff" fill-opacity="0.12" />
-  <rect x="12" y="12" width="216" height="312" rx="22" fill="url(#back-base)" stroke="#f2dfb4" stroke-opacity="0.55" stroke-width="2" />
-  <rect x="24" y="24" width="192" height="288" rx="18" fill="url(#back-core)" stroke="#d7b977" stroke-opacity="0.45" stroke-width="2" />
-  <rect x="32" y="32" width="176" height="272" rx="14" fill="url(#diamond-grid)" />
-  <ellipse cx="120" cy="168" rx="62" ry="84" fill="#082019" stroke="#d7b977" stroke-opacity="0.35" stroke-width="2" />
-  <ellipse cx="120" cy="168" rx="42" ry="58" fill="#0f3328" stroke="#d7b977" stroke-opacity="0.5" stroke-width="1.5" />
-  <text x="120" y="176" text-anchor="middle" fill="#f0d28f" font-size="44" font-weight="700" font-family="Trebuchet MS, Segoe UI, sans-serif">HR</text>
-  <text x="120" y="206" text-anchor="middle" fill="#f8edd1" fill-opacity="0.82" font-size="14" letter-spacing="4" font-family="Trebuchet MS, Segoe UI, sans-serif">HOLDEM READY</text>
+  <rect x="12" y="12" width="216" height="312" rx="22"
+        fill="url(#navy-base)"
+        stroke="#d7b977" stroke-opacity="0.50" stroke-width="1.5" />
+  <rect x="20" y="20" width="200" height="296" rx="18"
+        fill="none"
+        stroke="#d7b977" stroke-opacity="0.40" stroke-width="1" />
+  <rect x="28" y="28" width="184" height="280" rx="14" fill="url(#navy-inner)" />
+  <rect x="28" y="28" width="184" height="280" rx="14" fill="url(#crosshatch)" />
+  <rect x="28" y="28" width="184" height="280" rx="14" fill="url(#vignette)" />
+  <rect x="28" y="28" width="184" height="280" rx="14"
+        fill="none"
+        stroke="#d7b977" stroke-opacity="0.30" stroke-width="1" />
+  <path d="M43 37 L49 40 L43 43 L37 40 Z" fill="#d7b977" fill-opacity="0.55" />
+  <path d="M197 37 L203 40 L197 43 L191 40 Z" fill="#d7b977" fill-opacity="0.55" />
+  <path d="M43 293 L49 296 L43 299 L37 296 Z" fill="#d7b977" fill-opacity="0.55" />
+  <path d="M197 293 L203 296 L197 299 L191 296 Z" fill="#d7b977" fill-opacity="0.55" />
+  <ellipse cx="120" cy="168" rx="64" ry="87" fill="#060f28" fill-opacity="0.55" />
+  <ellipse cx="120" cy="168" rx="60" ry="82"
+           fill="#0f2554" stroke="#d7b977" stroke-opacity="0.60" stroke-width="2" />
+  <ellipse cx="120" cy="168" rx="46" ry="62"
+           fill="#1a3a6b" stroke="#d7b977" stroke-opacity="0.45" stroke-width="1.5" />
+  <ellipse cx="120" cy="138" rx="30" ry="14" fill="#ffffff" fill-opacity="0.05" />
+  <text x="120" y="176" text-anchor="middle"
+        fill="#f0d28f" font-size="46" font-weight="700"
+        font-family="Trebuchet MS, Segoe UI, sans-serif" letter-spacing="-1">HR</text>
+  <line x1="90" y1="188" x2="150" y2="188"
+        stroke="#d7b977" stroke-opacity="0.45" stroke-width="0.75" />
+  <text x="120" y="204" text-anchor="middle"
+        fill="#f8edd1" fill-opacity="0.80" font-size="11" letter-spacing="3.5"
+        font-family="Trebuchet MS, Segoe UI, sans-serif">HOLDEM READY</text>
 </svg>
