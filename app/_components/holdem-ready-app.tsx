@@ -2,20 +2,10 @@
 
 import { useEffect, useState } from "react";
 import {
-  type AnswerChoice,
   type TrainingCategory,
 } from "@/lib/training-data";
 import { createDefaultStore } from "@/lib/holdem/constants";
 import { QUESTIONS_BY_ID } from "@/lib/holdem/questions";
-import {
-  getCategoryAccuracy,
-  getOverallAccuracy,
-  getStreak,
-  getTodayCount,
-  getTrend,
-  getWeaknesses,
-  getWrongEntries,
-} from "@/lib/holdem/selectors";
 import {
   answerSessionQuestion,
   buildDailySession,
@@ -27,8 +17,6 @@ import {
 } from "@/lib/holdem/sessions";
 import { loadStore, saveStore } from "@/lib/holdem/store";
 import type {
-  AppTab,
-  AppView,
   Feedback,
   Session,
   Settings,
@@ -37,24 +25,15 @@ import type {
   WrongFilter,
 } from "@/lib/holdem/types";
 import { registerServiceWorker, triggerFeedback } from "./browser";
-import { cn } from "./ui";
-import {
-  AppHeader,
-  BottomNav,
-  HomeScreen,
-  LiveTipsScreen,
-  LoadingScreen,
-  QuizScreen,
-  RecordsScreen,
-  SettingsModal,
-  WrongsScreen,
-} from "./screens";
+import type { HoldemReadyAppActions, HoldemReadyAppState } from "./holdem-ready-model";
+import { HoldemReadyAppView } from "./holdem-ready-view";
+import { LoadingScreen } from "./screens";
 
 export function HoldemReadyApp() {
   const [ready, setReady] = useState(false);
   const [store, setStore] = useState<Store>(createDefaultStore);
-  const [view, setView] = useState<AppView>("home");
-  const [tab, setTab] = useState<AppTab>("home");
+  const [view, setView] = useState<HoldemReadyAppState["view"]>("home");
+  const [tab, setTab] = useState<HoldemReadyAppState["tab"]>("home");
   const [session, setSession] = useState<Session | null>(null);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [summary, setSummary] = useState<Summary | null>(null);
@@ -77,30 +56,11 @@ export function HoldemReadyApp() {
     registerServiceWorker();
   }, []);
 
-  const dailySessionKey = getDailySessionKey();
-  const dailySession = store.sessions[dailySessionKey];
-  const todayCount = getTodayCount(store.responses);
-  const weakTags = getWeaknesses(store.responses);
-  const hasWeaknessHistory = store.responses.some((entry) => !entry.correct);
-  const missed = getWrongEntries(store.responses, wrongFilter);
-  const currentQuestion = feedback
-    ? QUESTIONS_BY_ID[feedback.questionId]
-    : session && session.index < session.questionIds.length
-      ? QUESTIONS_BY_ID[session.questionIds[session.index]]
-      : null;
-  const tipCheckedCount = Object.values(store.tipChecks).filter(Boolean).length;
-
-  const categoryAccuracies = {
-    preflop: getCategoryAccuracy(store.responses, "preflop"),
-    postflop: getCategoryAccuracy(store.responses, "postflop"),
-    odds: getCategoryAccuracy(store.responses, "odds"),
-  };
-
   const mutateStore = (updater: (current: Store) => Store) => {
     setStore((current) => updater(current));
   };
 
-  const openTab = (next: AppTab) => {
+  const openTab: HoldemReadyAppActions["openTab"] = (next) => {
     setTab(next);
     setView(next);
     setSession(null);
@@ -119,6 +79,8 @@ export function HoldemReadyApp() {
   };
 
   const startDaily = () => {
+    const dailySession = store.sessions[getDailySessionKey()];
+
     if (dailySession && dailySession.index < dailySession.questionIds.length) {
       setSession(dailySession);
       setFeedback(null);
@@ -146,7 +108,11 @@ export function HoldemReadyApp() {
     beginSession(buildWeaknessSession(tag));
   };
 
-  const answer = (choice: AnswerChoice) => {
+  const answer: HoldemReadyAppActions["answer"] = (choice) => {
+    const currentQuestion = session && session.index < session.questionIds.length
+      ? QUESTIONS_BY_ID[session.questionIds[session.index]]
+      : null;
+
     if (!session || !currentQuestion || feedback) return;
 
     const result = answerSessionQuestion({
@@ -218,96 +184,37 @@ export function HoldemReadyApp() {
     return <LoadingScreen />;
   }
 
-  return (
-    <main
-      className={cn(
-        "relative z-10 mx-auto flex w-full max-w-[520px] flex-col",
-        view === "quiz"
-          ? "min-h-[100svh] overflow-hidden px-0 pb-0 pt-0"
-          : "min-h-screen px-4 pb-28 pt-4 sm:px-5",
-      )}
-    >
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-64 rounded-b-[48px] bg-[radial-gradient(circle_at_top,rgba(214,186,122,0.18),transparent_68%)]" />
-      <div className={cn("flex-1", view === "quiz" && "min-h-0")}>
-        {view !== "quiz" && <AppHeader view={view} onOpenSettings={() => setSettingsOpen(true)} />}
+  const state: HoldemReadyAppState = {
+    store,
+    view,
+    tab,
+    session,
+    feedback,
+    summary,
+    settingsOpen,
+    wrongFilter,
+  };
 
-        {view === "home" && (
-          <HomeScreen
-            todayCount={todayCount}
-            dailyGoal={store.settings.dailyGoal}
-            hasActiveDailySession={Boolean(dailySession && dailySession.index < dailySession.questionIds.length)}
-            hasWeaknessHistory={hasWeaknessHistory}
-            weakTags={weakTags}
-            streakDays={getStreak(store.responses)}
-            wrongsAvailable={Boolean(getWrongEntries(store.responses, "all").length)}
-            tipCheckedCount={tipCheckedCount}
-            onStartDaily={startDaily}
-            onStartWrongs={() => startWrongs()}
-            onOpenLiveTips={openLiveTips}
-          />
-        )}
+  const actions: HoldemReadyAppActions = {
+    openTab,
+    setSettingsOpen,
+    startDaily,
+    openLiveTips,
+    startWrongs,
+    startWeakness,
+    answer,
+    next,
+    toggleTip,
+    updateSettings,
+    resetAll,
+    exitQuiz: () => {
+      setSession(null);
+      setFeedback(null);
+      setSummary(null);
+      setView(tab);
+    },
+    setWrongFilter,
+  };
 
-        {view === "wrongs" && (
-          <WrongsScreen
-            wrongFilter={wrongFilter}
-            missed={missed}
-            onFilterChange={setWrongFilter}
-            onStartWrongs={() => startWrongs()}
-            onStartWeakness={startWeakness}
-          />
-        )}
-
-        {view === "records" && (
-          <RecordsScreen
-            overallAccuracy={getOverallAccuracy(store.responses)}
-            streakDays={getStreak(store.responses)}
-            totalResponses={store.responses.length}
-            categoryAccuracies={categoryAccuracies}
-            trend={getTrend(store.responses)}
-            weakTags={weakTags}
-            onStartWeakness={startWeakness}
-          />
-        )}
-
-        {view === "liveTips" && (
-          <LiveTipsScreen
-            tipChecks={store.tipChecks}
-            onToggleTip={toggleTip}
-            onBack={() => openTab("home")}
-          />
-        )}
-
-        {view === "quiz" && session && (
-          <QuizScreen
-            session={session}
-            summary={summary}
-            currentQuestion={currentQuestion}
-            feedback={feedback}
-            onExit={() => {
-              setSession(null);
-              setFeedback(null);
-              setSummary(null);
-              setView(tab);
-            }}
-            onAnswer={answer}
-            onStartWeakness={startWeakness}
-            onNext={next}
-            onOpenHome={() => openTab("home")}
-            onOpenRecords={() => openTab("records")}
-          />
-        )}
-      </div>
-
-      {view !== "quiz" && <BottomNav tab={tab} onOpenTab={openTab} />}
-
-      {settingsOpen && (
-        <SettingsModal
-          settings={store.settings}
-          onClose={() => setSettingsOpen(false)}
-          onUpdateSettings={updateSettings}
-          onReset={resetAll}
-        />
-      )}
-    </main>
-  );
+  return <HoldemReadyAppView state={state} actions={actions} />;
 }

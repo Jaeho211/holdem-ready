@@ -120,12 +120,14 @@ function SeatMarker({
 
   return (
     <div
+      data-qa-region={`table-seat:${seat}`}
       className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-0.5"
       style={{ top: pos.top, left: pos.left }}
       role="group"
       aria-label={seatAriaLabel}
     >
       <div
+        data-qa-region={`table-seat-chip:${seat}`}
         className={cn(
           "flex items-center justify-center rounded-full border px-1.5 py-0.5 text-[11px] font-semibold leading-none tracking-wide transition-colors min-w-[32px]",
           style,
@@ -135,7 +137,10 @@ function SeatMarker({
         {isHero ? "YOU" : label}
       </div>
       {badge && !isHero && (
-        <span className="rounded-full border border-[#efe2be]/40 bg-[#1b1b1b]/70 px-1 text-[9px] font-semibold leading-none text-[#efe2be]/90">
+        <span
+          data-qa-overlay={`table-action-badge:${seat}`}
+          className="rounded-full border border-[#efe2be]/40 bg-[#1b1b1b]/70 px-1 text-[9px] font-semibold leading-none text-[#efe2be]/90"
+        >
           {badge}
         </span>
       )}
@@ -156,7 +161,10 @@ function SeatMarker({
         <span className="text-[10px] leading-none text-[#d8e0ef]/85">waiting</span>
       )}
       {spotlightCopy && (
-        <span className="rounded-full border border-[#d98989]/36 bg-[#3a1b22]/88 px-1.5 py-0.5 text-[9px] font-semibold leading-none tracking-[0.14em] text-[#ffe7e7] shadow-[0_8px_18px_rgba(0,0,0,0.24)]">
+        <span
+          data-qa-overlay={`table-spotlight:${seat}`}
+          className="rounded-full border border-[#d98989]/36 bg-[#3a1b22]/88 px-1.5 py-0.5 text-[9px] font-semibold leading-none tracking-[0.14em] text-[#ffe7e7] shadow-[0_8px_18px_rgba(0,0,0,0.24)]"
+        >
           {spotlightCopy}
         </span>
       )}
@@ -191,6 +199,7 @@ export function PokerTableVisual({
     <div className="mt-3 flex w-full flex-col items-center gap-2">
       {/* Oval table with seats */}
       <div
+        data-qa-region="table-root"
         className="relative w-full max-w-[300px] aspect-[1.7]"
         role="group"
         aria-label="Preflop poker table seat status"
@@ -200,6 +209,7 @@ export function PokerTableVisual({
 
         {/* Dealer chip near BTN */}
         <div
+          data-qa-region="table-dealer"
           className="absolute flex h-4 w-4 items-center justify-center rounded-full bg-[#d7b977] text-[7px] font-bold text-[#1a1400] shadow-md"
           style={{ top: "32%", left: "14%" }}
         >

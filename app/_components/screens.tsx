@@ -98,7 +98,10 @@ function GlossaryChip({
 
 export function LoadingScreen() {
   return (
-    <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-[520px] items-center justify-center px-5 py-10">
+    <main
+      data-qa-screen="loading"
+      className="relative z-10 mx-auto flex min-h-screen w-full max-w-[520px] items-center justify-center px-5 py-10"
+    >
       <Surface>
         <p className="text-xs uppercase tracking-[0.28em] text-[#d7b977]">Holdem Ready</p>
         <h1 className="mt-3 font-serif text-3xl text-[#f6efe0]">모바일 학습 테이블 준비 중</h1>
@@ -117,7 +120,7 @@ export function AppHeader({
   const copy = VIEW_COPY[view];
 
   return (
-    <header className="mb-5 animate-rise">
+    <header data-qa-region="app-header" className="mb-5 animate-rise">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-[11px] uppercase tracking-[0.28em] text-[#d7b977]">Holdem Ready</p>
@@ -168,7 +171,7 @@ export function HomeScreen({
   onOpenLiveTips: () => void;
 }) {
   return (
-    <section className="space-y-4">
+    <section data-qa-screen="home" className="space-y-4">
       <Surface>
         <div className="absolute inset-x-0 top-0 h-28 bg-[radial-gradient(circle_at_top_left,rgba(215,185,119,0.22),transparent_66%)]" />
         <div className="relative flex items-center gap-4">
@@ -250,7 +253,7 @@ export function WrongsScreen({
   onStartWeakness: (tag: string) => void;
 }) {
   return (
-    <section className="space-y-4">
+    <section data-qa-screen="wrongs" className="space-y-4">
       <Surface>
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -350,7 +353,7 @@ export function RecordsScreen({
   onStartWeakness: (tag: string) => void;
 }) {
   return (
-    <section className="space-y-4">
+    <section data-qa-screen="records" className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-3">
         <Surface>
           <CardEyebrow>전체</CardEyebrow>
@@ -432,7 +435,7 @@ export function LiveTipsScreen({
   const checkedCount = Object.values(tipChecks).filter(Boolean).length;
 
   return (
-    <section className="space-y-4">
+    <section data-qa-screen="liveTips" className="space-y-4">
       <Surface>
         <div className="flex items-center justify-between gap-3">
           <div>
@@ -682,8 +685,14 @@ function TableScene({
   }, [question.id]);
 
   return (
-    <div className="mt-3 flex min-h-0 flex-1 rounded-[28px] border border-[#d7b977]/20 bg-[#03130f] p-2 shadow-[0_18px_60px_rgba(0,0,0,0.34)]">
-      <div className="quiz-table-felt relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[24px] px-3 pb-3 pt-3">
+    <div
+      data-qa-region="table-scene"
+      className="mt-3 flex min-h-0 flex-1 rounded-[28px] border border-[#d7b977]/20 bg-[#03130f] p-2 shadow-[0_18px_60px_rgba(0,0,0,0.34)]"
+    >
+      <div
+        data-qa-region="table-felt"
+        className="quiz-table-felt relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[24px] px-3 pb-3 pt-3"
+      >
         <div className="pointer-events-none absolute inset-x-[6%] top-[13%] h-[38%] rounded-[999px] border border-[#d7b977]/12 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.07),transparent_70%)]" />
         <div className="pointer-events-none absolute inset-x-3 bottom-0 h-20 bg-[linear-gradient(180deg,rgba(4,23,17,0),rgba(4,23,17,0.78))]" />
         <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-between">
@@ -729,7 +738,7 @@ function TableScene({
                 postflopAction={question.actionBefore}
                 currentBet={question.villainBet}
               />
-              <div className="mt-2 grid w-full grid-cols-2 gap-2">
+              <div data-qa-region="table-scene-details" className="mt-2 grid w-full grid-cols-2 gap-2">
                 {sceneDetails.map((detail) => (
                   <TableSceneStat
                     key={`${question.id}-${detail.label}`}
@@ -742,7 +751,7 @@ function TableScene({
             </>
           ) : (
             question.holeCards ? (
-              <div className="mt-3 grid w-full grid-cols-2 gap-2">
+              <div data-qa-region="table-scene-details" className="mt-3 grid w-full grid-cols-2 gap-2">
                 {sceneDetails.map((detail) => (
                   <TableSceneStat
                     key={`${question.id}-${detail.label}`}
@@ -821,8 +830,11 @@ export function QuizScreen({
   );
 
   return (
-    <section className="flex min-h-[100svh] flex-col overflow-hidden px-3 pb-3 pt-3">
-      <header className="z-20 mb-2 shrink-0 rounded-[22px] border border-[#d7b977]/18 bg-[#061d16]/90 px-3 py-3 shadow-[0_14px_40px_rgba(0,0,0,0.28)] backdrop-blur-xl">
+    <section data-qa-screen="quiz" className="flex min-h-[100svh] flex-col overflow-hidden px-3 pb-3 pt-3">
+      <header
+        data-qa-region="quiz-header"
+        className="z-20 mb-2 shrink-0 rounded-[22px] border border-[#d7b977]/18 bg-[#061d16]/90 px-3 py-3 shadow-[0_14px_40px_rgba(0,0,0,0.28)] backdrop-blur-xl"
+      >
         <div className="flex items-center justify-between gap-3">
           <button
             type="button"
@@ -870,9 +882,15 @@ export function QuizScreen({
         </Surface>
       ) : currentQuestion ? (
         <div className="flex min-h-0 flex-1 flex-col animate-rise">
-          <div className="flex min-h-0 flex-1 flex-col rounded-[28px] border border-[#d7b977]/20 bg-[linear-gradient(180deg,rgba(10,34,27,0.96),rgba(4,23,17,0.98))] p-4 shadow-[0_18px_60px_rgba(0,0,0,0.34)]">
+          <div
+            data-qa-region="quiz-card"
+            className="flex min-h-0 flex-1 flex-col rounded-[28px] border border-[#d7b977]/20 bg-[linear-gradient(180deg,rgba(10,34,27,0.96),rgba(4,23,17,0.98))] p-4 shadow-[0_18px_60px_rgba(0,0,0,0.34)]"
+          >
             <CardEyebrow>{currentQuestion.title}</CardEyebrow>
-            <div className="mt-3 rounded-[22px] border border-[#8ecdf7]/12 bg-[#081b22]/78 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+            <div
+              data-qa-region="quiz-prompt"
+              className="mt-3 rounded-[22px] border border-[#8ecdf7]/12 bg-[#081b22]/78 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+            >
               <p className="text-[10px] uppercase tracking-[0.2em] text-[#8ecdf7]/72">상황</p>
               <p className="mt-2 text-sm leading-6 text-[#e3f4ff]/74">{currentQuestion.prompt}</p>
             </div>
@@ -887,7 +905,10 @@ export function QuizScreen({
             </div>
             <TableScene question={currentQuestion} />
             {!feedback && (
-              <div className="mt-3 shrink-0 rounded-[24px] border border-[#d7b977]/20 bg-[#071d16]/96 p-2.5 shadow-[0_16px_44px_rgba(0,0,0,0.28)] backdrop-blur-xl">
+              <div
+                data-qa-region="decision-panel"
+                className="mt-3 shrink-0 rounded-[24px] border border-[#d7b977]/20 bg-[#071d16]/96 p-2.5 shadow-[0_16px_44px_rgba(0,0,0,0.28)] backdrop-blur-xl"
+              >
                 <div className="flex items-center justify-between gap-3 px-1">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-[#d7b977]">
                     {currentQuestion.category === "odds"
@@ -934,6 +955,8 @@ export function QuizScreen({
           {feedback && (
             <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[520px] px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
               <div
+                data-qa-overlay="sheet-feedback"
+                data-qa-scroll="sheet-feedback"
                 className={cn(
                   "pointer-events-auto max-h-[65svh] overflow-y-auto rounded-[28px] border p-4 shadow-[0_20px_90px_rgba(0,0,0,0.48)] backdrop-blur-xl scrollbar-thin",
                   feedback.correct
@@ -989,7 +1012,10 @@ export function QuizScreen({
       ) : null}
       {activeTerm && (
         <div className="fixed inset-0 z-[70] bg-[#020c09]/74 px-4 py-6 backdrop-blur-sm">
-          <div className="mx-auto mt-8 max-w-[520px] rounded-[30px] border border-[#8ecdf7]/28 bg-[#08202a]/95 p-5 shadow-[0_24px_90px_rgba(0,0,0,0.5)]">
+          <div
+            data-qa-overlay="modal-glossary"
+            className="mx-auto mt-8 max-w-[520px] rounded-[30px] border border-[#8ecdf7]/28 bg-[#08202a]/95 p-5 shadow-[0_24px_90px_rgba(0,0,0,0.5)]"
+          >
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.22em] text-[#8ecdf7]">Term Help</p>
@@ -1034,7 +1060,10 @@ export function BottomNav({
   onOpenTab: (next: AppTab) => void;
 }) {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-[520px] px-4 pb-4 sm:px-5">
+    <nav
+      data-qa-overlay="fixed-bottom-nav"
+      className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-[520px] px-4 pb-4 sm:px-5"
+    >
       <div className="grid grid-cols-3 gap-2 rounded-[30px] border border-[#d7b977]/18 bg-[#061d16]/94 p-2 shadow-[0_18px_80px_rgba(0,0,0,0.46)] backdrop-blur-xl">
         {NAV_ITEMS.map((item) => (
           <button
@@ -1075,7 +1104,10 @@ export function SettingsModal({
 
   return (
     <div className="fixed inset-0 z-[60] bg-[#020c09]/72 px-4 py-6 backdrop-blur-sm">
-      <div className="mx-auto mt-8 max-w-[520px] rounded-[32px] border border-[#d7b977]/18 bg-[#071d16]/95 p-5 shadow-[0_24px_90px_rgba(0,0,0,0.5)]">
+      <div
+        data-qa-overlay="modal-settings"
+        className="mx-auto mt-8 max-w-[520px] rounded-[32px] border border-[#d7b977]/18 bg-[#071d16]/95 p-5 shadow-[0_24px_90px_rgba(0,0,0,0.5)]"
+      >
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-[11px] uppercase tracking-[0.22em] text-[#d7b977]">Settings</p>

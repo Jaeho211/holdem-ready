@@ -12,7 +12,10 @@ export const cn = (...values: Array<string | false | null | undefined>) =>
 
 export function Surface({ children }: { children: ReactNode }) {
   return (
-    <section className="relative overflow-hidden rounded-[30px] border border-[#d7b977]/18 bg-white/6 p-5 shadow-[0_20px_70px_rgba(0,0,0,0.3)] backdrop-blur-xl animate-rise">
+    <section
+      data-qa-region="surface"
+      className="relative overflow-hidden rounded-[30px] border border-[#d7b977]/18 bg-white/6 p-5 shadow-[0_20px_70px_rgba(0,0,0,0.3)] backdrop-blur-xl animate-rise"
+    >
       {children}
     </section>
   );
@@ -32,7 +35,7 @@ export function Chip({ children }: { children: ReactNode }) {
 
 export function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[22px] border border-[#d7b977]/16 bg-[#09231b] px-4 py-3">
+    <div data-qa-region="metric" className="rounded-[22px] border border-[#d7b977]/16 bg-[#09231b] px-4 py-3">
       <p className="text-[11px] uppercase tracking-[0.18em] text-[#d7b977]">{label}</p>
       <p className="mt-2 break-words text-xl font-semibold text-[#f8f1de]">{value}</p>
     </div>
