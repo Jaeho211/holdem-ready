@@ -137,7 +137,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "preflop",
     difficulty: "기초",
     title: "버튼 스틸 기회",
-    prompt: "모두 폴드로 넘어온 버튼이라 블라인드 두 명만 남아 있고, 76s는 포스트플랍 연결성을 기대할 수 있는 핸드입니다.",
+    prompt: "앞사람들이 모두 폴드해 버튼까지 왔고, 뒤에는 블라인드만 남아 있습니다. 76s는 포지션이 있을 때 포스트플랍 플레이성을 살리기 쉬운 핸드입니다.",
     explanation:
       "버튼에서 수딧 커넥터는 포지션 이점이 커서 오픈하기 좋습니다. 라이브 저스테이크에서는 블라인드가 많이 포기해 바로 팟을 가져가는 경우도 잦습니다.",
     pitfall: "플레이 가능 핸드를 너무 소극적으로 콜만 하거나 버리는 실수",
@@ -173,7 +173,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "preflop",
     difficulty: "기초",
     title: "컷오프 밸류 오픈",
-    prompt: "컷오프는 뒤 플레이어 수가 줄어드는 자리라, 강한 브로드웨이가 어느 정도까지 선제 액션에 들어가는지 보게 됩니다.",
+    prompt: "컷오프는 뒤 플레이어 수가 줄어드는 자리라, AQo 같은 강한 브로드웨이도 초반 포지션보다 부담이 덜합니다.",
     explanation:
       "뒤에 남은 플레이어가 적고 핸드 강도도 충분합니다. 이런 핸드까지 머뭇거리면 좋은 포지션 수익을 놓치게 됩니다.",
     pitfall: "괜찮은 강도의 브로드웨이를 과도하게 소극적으로 운영하는 실수",
@@ -209,7 +209,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "preflop",
     difficulty: "실전",
     title: "MP 수딧 에이스 오픈",
-    prompt: "미들 포지션 선제 상황이라 뒤 플레이어는 남아 있지만, A5s는 수딧과 휠 가능성을 함께 가진 핸드입니다.",
+    prompt: "미들 포지션 선제 상황이라 뒤 플레이어는 남아 있지만, A5s는 수딧에 휠 가능성까지 있는 핸드입니다.",
     explanation:
       "미들 포지션에서 A5s는 플러시와 스트레이트 가능성이 있어 충분히 오픈 가능한 핸드입니다. 라이브 게임에서 블라인드 폴드도 자주 얻습니다.",
     pitfall: "수딧 에이스를 너무 타이트하게 접어 좋은 스팟을 놓치는 실수",
@@ -319,7 +319,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "postflop",
     difficulty: "실전",
     title: "셋으로 체크레이즈 대응",
-    prompt: "A-high 투톤 보드에서 셋을 만들었고, 체크레이즈까지 나와 드로우와 강한 메이드가 함께 얽힌 스팟입니다.",
+    prompt: "A-high 투톤 보드에서 셋을 만들었고, 체크레이즈까지 나와 드로우와 강한 메이드가 함께 얽혀 있습니다.",
     explanation:
       "A83 투톤에서 탑셋은 매우 강하지만, 플러시 드로우와 강한 Ax도 함께 얽힐 수 있습니다. 체크레이즈를 받더라도 드로우와 강한 에이스에서 크게 밸류를 받으면서 불편한 턴을 줄이기 위해 다시 레이즈가 좋습니다.",
     pitfall: "아주 강한 핸드로도 지나치게 느리게 플레이해 드로우에 공짜 카드를 주는 실수",
@@ -420,7 +420,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "postflop",
     difficulty: "응용",
     title: "멀티웨이 턴 오버벳",
-    prompt: "멀티웨이로 턴까지 온 뒤 드로우가 막힌 보드에서 큰 오버벳을 받아, 한 장 페어의 가치 판단이 까다롭습니다.",
+    prompt: "멀티웨이로 턴까지 온 뒤 드로우가 막힌 보드에서 큰 오버벳을 받아, 원페어의 가치 판단이 까다롭습니다.",
     explanation:
       "탑페어 탑키커라도 멀티웨이 턴 오버벳은 많이 강합니다. 특히 드로우가 막힌 보드에서 상대 둘 중 하나가 강하게 밀면 과감히 접는 훈련이 필요합니다.",
     pitfall: "TPTK라서 절대 못 접겠다고 버티는 실수",
@@ -484,7 +484,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "기초",
     title: "Flop Open-Ended",
-    prompt: "플랍에서 98이 T7 보드를 보고 있어, 6이나 J가 오면 스트레이트가 완성됩니다.",
+    prompt: "플랍에서 98은 T72 보드에서, 6이나 J가 오면 스트레이트가 완성됩니다.",
     explanation:
       "플랍에서 8아웃은 대략 8 x 4 = 32% 정도입니다. 빠르게 판단할 땐 31~32%로 외워두면 충분합니다.",
     pitfall: "오픈엔디드를 거트샷 수준으로 과소평가하는 실수",
@@ -577,7 +577,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "실전",
     title: "20 into 80",
-    prompt: "현재 팟은 80bb이고 콜 금액은 20bb라, 콜 뒤 최종 팟 기준으로 필요한 승률을 계산하는 스팟입니다.",
+    prompt: "현재 팟은 80bb이고 콜 금액은 20bb라, 콜 뒤 최종 팟 기준으로 필요한 승률을 계산해야 하는 상황입니다.",
     explanation:
       "20을 콜하면 총 100을 놓고 싸우게 되므로 필요한 승률은 20%입니다. 간단한 숫자는 몸에 배게 만드는 편이 좋습니다.",
     pitfall: "콜 금액과 최종 팟 크기를 구분하지 못하는 실수",
@@ -704,7 +704,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "preflop",
     difficulty: "기초",
     title: "CO 미들 페어 오픈",
-    prompt: "컷오프는 뒤 플레이어 수가 적고, 88은 즉시 쇼다운 가치와 세트 잠재력을 함께 가진 핸드입니다.",
+    prompt: "컷오프는 뒤 플레이어 수가 적고, 88은 쇼다운 가치가 있으면서 세트 가능성도 남아 있습니다.",
     explanation:
       "88은 쇼다운 가치와 세트 잠재력이 모두 있어 컷오프 오픈이 자연스럽습니다. 콜만 기다리기보다 먼저 레이즈해 이니셔티브를 가져가는 편이 좋습니다.",
     pitfall: "포켓페어를 뒤에서 너무 자주 림프하거나 머뭇거리며 기회를 놓치는 실수",
@@ -723,7 +723,7 @@ export const questionBank: HoldemQuestion[] = [
     difficulty: "기초",
     title: "버튼 수딧 브로드웨이 스틸",
     prompt:
-      "버튼까지 모두 폴드로 왔고, KTs는 포지션과 수딧 연결성을 함께 가진 브로드웨이 계열입니다.",
+      "앞사람들이 모두 폴드해 버튼까지 왔고, KTs는 수딧이라 포스트플랍 연결도 살아 있는 브로드웨이 계열입니다.",
     explanation:
       "KTs는 포지션 이점과 플레이성이 좋아 버튼 스틸에 잘 맞습니다. 라이브 저스테이크에서는 블라인드가 바로 포기하는 빈도도 충분합니다.",
     pitfall: "버튼 스틸 구간에서 괜찮은 수딧 브로드웨이까지 과하게 포기하는 실수",
@@ -760,7 +760,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "preflop",
     difficulty: "실전",
     title: "BB 수딧 에이스 방어",
-    prompt: "버튼 민레이즈를 받은 빅블라인드라 가격이 나쁘지 않고, A4s는 수딧과 휠 백도어를 함께 갖고 있습니다.",
+    prompt: "버튼 민레이즈를 받은 빅블라인드라 가격이 나쁘지 않고, A4s는 수딧에 휠 백도어까지 있습니다.",
     explanation:
       "버튼 민레이즈 상대로 A4s는 플러시 가능성과 휠 백도어가 있어 콜 가치가 충분합니다. 초보 기준으로는 무리한 3벳보다 콜이 더 단순하고 안정적입니다.",
     pitfall: "빅블라인드 수딧 에이스를 무조건 폴드하거나 반대로 무조건 3벳으로만 처리하는 실수",
@@ -778,7 +778,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "preflop",
     difficulty: "기초",
     title: "MP 99 선제 오픈",
-    prompt: "미들 포지션 선제 상황이라 뒤 액션은 남아 있지만, 99는 쇼다운 가치와 세트 잠재력을 함께 가진 중간 페어입니다.",
+    prompt: "미들 포지션 선제 상황이라 뒤 액션은 남아 있지만, 99는 쇼다운 가치가 있고 세트 가능성도 남아 있는 중간 페어입니다.",
     explanation:
       "99는 앞선 액션이 없을 때 충분히 오픈 가능한 강도입니다. 뒤에 남은 인원은 의식해야 하지만, 이런 핸드까지 접기 시작하면 범위가 너무 좁아집니다.",
     pitfall: "미들 포지션 포켓페어를 지나치게 타이트하게 접어 오픈 기회를 놓치는 실수",
@@ -890,7 +890,7 @@ export const questionBank: HoldemQuestion[] = [
     difficulty: "실전",
     title: "HJ ATo 오픈",
     prompt:
-      "하이잭은 UTG보다 넓어질 수 있지만 여전히 뒤 플레이어가 많아, ATo 같은 경계 핸드의 포함 범위를 점검하게 됩니다.",
+      "하이잭은 UTG보다 넓게 열 수 있지만 여전히 뒤 플레이어가 많아, ATo 같은 경계 핸드는 판단이 애매해지기 쉽습니다.",
     explanation:
       "ATo는 HJ에서 오픈 가능한 경계 핸드에 가깝고, 라이브 게임에선 선제 레이즈의 이점이 큽니다. 오프수트 브로드웨이라도 이 정도 강도면 먼저 여는 편이 좋습니다.",
     pitfall: "하이잭에서 오픈 가능한 오프수트 브로드웨이까지 지나치게 소극적으로 운영하는 실수",
@@ -927,7 +927,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "preflop",
     difficulty: "실전",
     title: "BTN 수딧 브로드웨이 콜",
-    prompt: "버튼에서 HJ 오픈을 상대하고 있고, KJs는 수딧 브로드웨이답게 포지션과 연결성을 모두 활용할 수 있는 핸드입니다.",
+    prompt: "버튼에서 HJ 오픈을 상대하고 있고, KJs는 포지션과 플레이성을 함께 살릴 수 있는 수딧 브로드웨이입니다.",
     explanation:
       "KJs는 HJ 오픈에 대해 3벳만이 정답은 아닙니다. 라이브 저스테이크 초보 기준으로는 버튼에서 콜해 포지션 이점을 활용하는 라인이 충분히 좋습니다.",
     pitfall: "플레이성 좋은 버튼 콜 핸드를 무조건 3벳 아니면 폴드로만 생각하는 실수",
@@ -1177,7 +1177,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "postflop",
     difficulty: "응용",
     title: "멀티웨이 턴 큰 압박",
-    prompt: "멀티웨이 턴에서 J 한 장 페어를 들고 있고, 큰 리드가 나와 상대 범위를 보수적으로 봐야 하는 스팟입니다.",
+    prompt: "멀티웨이 턴에서 탑페어를 들고 있는데 큰 리드가 나와, 상대 범위를 보수적으로 봐야 하는 상황입니다.",
     explanation:
       "KJ로 J-high 탑페어를 들고 있어도 멀티웨이 턴 오버사이즈 압박은 범위가 강합니다. 특히 초보 기준으로는 탑페어 하나로 끝까지 버티기보다 과감히 접는 편이 손실이 적습니다.",
     pitfall: "멀티웨이 큰 턴 압박에도 탑페어면 무조건 버텨야 한다고 생각하는 실수",
@@ -1198,7 +1198,7 @@ export const questionBank: HoldemQuestion[] = [
     difficulty: "실전",
     title: "리버 풀하우스 밸류",
     prompt:
-      "리버에서 7 full of 2로 거의 최상위 밸류 구간을 만들었고, 상대가 먼저 체크했습니다.",
+      "리버에서 풀하우스를 완성했고, 상대가 먼저 체크했습니다.",
     explanation:
       "77로 7Q322 보드면 풀하우스라 거의 최상위 밸류 구간입니다. 라이브 저스테이크에서는 트립스나 Qx가 생각보다 자주 콜하므로 작게라도 반드시 베팅하는 편이 좋습니다.",
     pitfall: "리버의 매우 강한 메이드 핸드를 체크백해 밸류를 흘리는 실수",
@@ -1381,9 +1381,9 @@ export const questionBank: HoldemQuestion[] = [
     difficulty: "실전",
     title: "페어 + 넛 플러시 드로우",
     prompt:
-      "A9dd로 원페어와 넛 플러시 드로우가 겹쳐, 메이드 핸드와 드로우가 함께 작동하는 플랍입니다.",
+      "Ad9d는 원페어와 넛 플러시 드로우가 함께 생긴 상황이라, 메이드 핸드와 드로우가 동시에 걸려 있습니다.",
     explanation:
-      "A9dd로 962dd 보드면 페어와 넛 플러시 드로우를 함께 갖고 있습니다. 표준 c-bet에는 충분히 콜할 수 있는 힘입니다.",
+      "Ad9d로 9h6d2d 보드를 맞으면 페어와 넛 플러시 드로우를 함께 갖게 됩니다. 표준 c-bet에는 충분히 콜할 수 있는 힘입니다.",
     pitfall: "페어와 강한 드로우가 겹친 손을 항상 즉시 레이즈로만 처리하는 실수",
     tags: ["강한 드로우", "플랍 콜다운"],
     position: "BTN",
@@ -1403,7 +1403,7 @@ export const questionBank: HoldemQuestion[] = [
     title: "페어드 보드의 탑페어",
     prompt: "턴에 보드가 페어되며 여전히 탑페어를 유지했고, 상대의 작은 리드가 밸류와 블러프를 함께 가질 수 있습니다.",
     explanation:
-      "QJ로 J73-7 보드에서 탑페어를 들고 있다면 작은 턴 배팅엔 계속 콜할 수 있습니다. 여기서 성급하게 접으면 너무 자주 최고의 한 장 페어를 버리게 됩니다.",
+      "QJ로 J73-7 보드에서 탑페어를 들고 있다면 작은 턴 배팅엔 계속 콜할 수 있습니다. 여기서 성급하게 접으면 충분히 버틸 수 있는 탑페어를 너무 자주 버리게 됩니다.",
     pitfall: "페어드 보드라고 해서 적당한 탑페어까지 너무 쉽게 접는 실수",
     tags: ["탑페어 운영", "플랍 콜다운"],
     position: "BTN",
@@ -1423,7 +1423,7 @@ export const questionBank: HoldemQuestion[] = [
     title: "턴 넛 플러시 드로우 + 거트샷",
     prompt: "턴에서 넛 플러시 드로우와 브로드웨이 거트샷이 겹쳐, 한 장만 남았어도 개선 카드 수가 적지 않습니다.",
     explanation:
-      "AQhh로 JT4-2 보드면 넛 플러시 드로우에 브로드웨이 거트샷까지 더해집니다. 한 장만 남았어도 여전히 개선 카드가 많아 콜이 충분히 가능합니다.",
+      "AhQh로 JdTh4c2h 보드면 넛 플러시 드로우에 브로드웨이 거트샷까지 더해집니다. 한 장만 남았어도 개선 카드가 적지 않아 콜이 충분히 가능합니다.",
     pitfall: "턴의 강한 드로우를 겁먹고 필요 이상으로 쉽게 포기하는 실수",
     tags: ["강한 드로우", "턴 더블배럴"],
     position: "BTN",
@@ -1462,7 +1462,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "기초",
     title: "Pocket Pair: 2 Outs",
-    prompt: "플랍에서 99가 A72 보드를 보고 있어, 남은 9를 맞혀 셋으로 좋아지는 경우만 생각하면 됩니다.",
+    prompt: "플랍에서 99는 A72 보드에서, 남은 9를 맞혀 셋으로 좋아지는 경우만 생각하면 됩니다.",
     explanation:
       "플랍에서 2아웃으로 턴과 리버를 모두 본다면 약 8% 정도입니다. 세트 가능성만 보고 큰 베팅을 따라가기엔 생각보다 낮은 숫자입니다.",
     pitfall: "포켓페어가 셋으로 좋아질 확률을 실제보다 훨씬 높게 기억하는 실수",
@@ -1486,7 +1486,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "기초",
     title: "Turn Set Saver",
-    prompt: "턴에서 88이 KJ42 보드를 보고 있어, 리버 한 장으로 남은 8을 맞힐 때만 셋이 됩니다.",
+    prompt: "턴에서 88은 KJ42 보드에서, 리버 한 장으로 남은 8을 맞힐 때만 셋이 됩니다.",
     explanation:
       "턴에서 2아웃이면 리버 한 장만 남아 있어 확률은 약 4%입니다. 턴 이후엔 플랍 때처럼 넉넉한 확률을 기대하면 안 됩니다.",
     pitfall: "턴과 플랍의 세트 확률을 같은 수준으로 착각하는 실수",
@@ -1510,7 +1510,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "기초",
     title: "Two Overcards",
-    prompt: "플랍에서 AKo가 Q83 보드를 보고 있어, A나 K가 떨어질 때만 원페어로 개선됩니다.",
+    prompt: "플랍에서 AKo는 Q83 보드에서, A나 K가 떨어질 때만 원페어로 개선됩니다.",
     explanation:
       "두 오버카드는 보통 6아웃으로 계산해 플랍에서 리버까지 약 24% 정도입니다. 그냥 막연히 '에이스킹이니까 맞겠지' 하고 생각하면 과대평가가 됩니다.",
     pitfall: "오버카드 두 장의 실제 개선 확률을 너무 높게 보는 실수",
@@ -1534,7 +1534,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "기초",
     title: "Turn Open-Ended",
-    prompt: "턴에서 98이 T72K 보드를 보고 있어, 6이나 J가 리버에 오면 스트레이트가 완성됩니다.",
+    prompt: "턴에서 98은 T72K 보드에서, 6이나 J가 리버에 오면 스트레이트가 완성됩니다.",
     explanation:
       "턴 8아웃은 대략 8 x 2 규칙으로 16~17% 정도로 보면 됩니다. 플랍의 31%와 혼동하면 너무 넓게 따라가게 됩니다.",
     pitfall: "턴 오픈엔디드 확률을 플랍 수치와 혼동해 과대평가하는 실수",
@@ -1558,7 +1558,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "실전",
     title: "12 Outs on the Flop",
-    prompt: "플랍에서 AhJh가 KhTh4d 보드를 보고 있어, 하트와 Q를 중심으로 여러 개선 카드가 겹쳐 있습니다.",
+    prompt: "플랍에서 AhJh는 KhTh4d 보드에서, 하트와 Q가 모두 강한 개선 카드로 작용합니다.",
     explanation:
       "12아웃은 플랍에서 리버까지 약 45%입니다. 절반에 가까운 수치라 강한 드로우가 왜 공격적으로 플레이되는지 이해하는 데 중요합니다.",
     pitfall: "강한 드로우 12아웃의 실제 에퀴티를 과소평가하는 실수",
@@ -1582,7 +1582,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "응용",
     title: "Turn Combo Draw 15 Outs",
-    prompt: "턴에서 98하트가 Th7h2cKs 보드를 보고 있어, 하트와 6/J 쪽 카드들이 함께 개선 후보입니다.",
+    prompt: "턴에서 9h8h는 Th7h2cKs 보드에서, 하트와 6/J 쪽 카드들이 함께 개선 후보입니다.",
     explanation:
       "턴 15아웃은 약 33%입니다. 플랍에서의 54%와는 전혀 다른 숫자라, 한 장만 남았다는 점을 항상 분리해서 생각해야 합니다.",
     pitfall: "턴 콤보 드로우를 플랍 수준의 고에퀴티로 착각하는 실수",
@@ -1606,7 +1606,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "기초",
     title: "Quarter Pot: Required Equity",
-    prompt: "기존 팟 40bb에 상대가 10bb를 베팅했고, 작은 사이즈 앞에서 콜에 필요한 승률을 계산하는 문제입니다.",
+    prompt: "기존 팟 40bb에 상대가 10bb를 베팅했고, 작은 사이즈 앞에서 콜에 필요한 승률을 계산해야 합니다.",
     explanation:
       "1/4 팟 베팅엔 약 17%의 승률만 있으면 됩니다. 가격이 좋기 때문에 약한 드로우도 종종 계속 갈 수 있는 이유가 여기 있습니다.",
     pitfall: "작은 베팅의 좋은 가격을 무시하고 필요 승률을 과하게 높게 잡는 실수",
@@ -1627,7 +1627,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "기초",
     title: "One-Third Pot",
-    prompt: "기존 팟 60bb에 상대가 20bb를 베팅했고, 1/3 팟 콜이 요구하는 최소 승률을 바로 떠올리는 스팟입니다.",
+    prompt: "기존 팟 60bb에 상대가 20bb를 베팅했고, 1/3 팟 콜에 필요한 최소 승률을 바로 떠올려야 하는 상황입니다.",
     explanation:
       "1/3 팟 베팅엔 약 20%의 승률이 필요합니다. 하프 팟 25%와 함께 자주 나오는 기준이라 암기해 두면 좋습니다.",
     pitfall: "1/3 팟과 하프 팟의 필요 승률을 비슷하게 착각하는 실수",
@@ -1758,7 +1758,7 @@ export const questionBank: HoldemQuestion[] = [
     difficulty: "기초",
     title: "Turn 10 Outs",
     prompt:
-      "턴에서 AKo가 QJ72 보드를 보고 있어, 리버 A나 K로 원페어를 만들거나 T로 브로드웨이 스트레이트를 완성할 수 있습니다.",
+      "턴에서 AKo는 QJ72 보드에서, 리버 A나 K로 원페어를 만들거나 T로 브로드웨이 스트레이트를 완성할 수 있습니다.",
     explanation:
       "남은 A 3장, K 3장, T 4장으로 총 10아웃입니다. 턴 10아웃은 10/46으로 약 22%라서, 두 오버카드 6아웃으로만 줄여 잡으면 실제보다 너무 타이트하게 계산하게 됩니다.",
     pitfall: "브로드웨이를 완성하는 T 4장을 빼고 두 오버카드 6아웃으로만 계산하는 실수",
@@ -1782,7 +1782,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "실전",
     title: "Turn 12 Outs",
-    prompt: "턴에서 AhJh가 KhTh5s2c 보드를 보고 있어, 하트와 Q를 중심으로 여러 개선 카드가 남아 있습니다.",
+    prompt: "턴에서 AhJh는 KhTh5s2c 보드에서, 하트와 Q가 모두 개선 카드로 남아 있습니다.",
     explanation:
       "턴 12아웃은 약 26%입니다. 꽤 좋아 보이지만 여전히 4번 중 3번은 놓치므로, 가격과 사이즈를 꼭 함께 봐야 합니다.",
     pitfall: "강한 턴 드로우 12아웃을 무조건 콜 가능한 숫자로 착각하는 실수",
@@ -1806,7 +1806,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "실전",
     title: "Flop 10 Outs",
-    prompt: "플랍에서 98이 T79 보드를 보고 있어, 스트레이트와 트립스 쪽 개선을 함께 계산하는 상황입니다.",
+    prompt: "플랍에서 98은 T79 보드에서, 스트레이트와 트립스 쪽 개선을 함께 계산하는 상황입니다.",
     explanation:
       "플랍 10아웃은 약 38%입니다. 4분의 1보다 훨씬 높고, 절반보다는 낮은 중간대라는 감각을 익히는 것이 중요합니다.",
     pitfall: "10아웃 드로우를 막연히 50% 가까운 확률로 과대평가하는 실수",
@@ -1831,7 +1831,7 @@ export const questionBank: HoldemQuestion[] = [
     difficulty: "실전",
     title: "Flop 11 Outs",
     prompt:
-      "플랍에서 KJ가 QT2 보드를 보고 있어, 양방 스트레이트 가능성과 한 장 오버카드 페어 개선이 함께 걸려 있습니다.",
+      "플랍에서 KJ는 QT2 보드에서, 양방 스트레이트 가능성과 K로 원페어가 되는 경우가 함께 열려 있습니다.",
     explanation:
       "플랍 11아웃은 약 42%입니다. 절반에는 못 미치지만 상당히 높은 수치라, 가격이 좋다면 적극적으로 플레이할 이유가 생깁니다.",
     pitfall: "11아웃 드로우를 30%대 정도로 과소평가하는 실수",
@@ -1856,7 +1856,7 @@ export const questionBank: HoldemQuestion[] = [
     difficulty: "기초",
     title: "Turn 7 Outs",
     prompt:
-      "턴에서 K9가 QJ52 보드를 보고 있어, 거트샷 스트레이트와 한 장 오버카드 페어 개선이 함께 남아 있습니다.",
+      "턴에서 K9는 QJ52 보드에서, 거트샷과 K로 원페어가 되는 경우가 함께 남아 있습니다.",
     explanation:
       "턴 7아웃은 약 15%입니다. 8아웃 17%보다 조금 낮다고 생각하면 빠르게 실전에서 비교하기 좋습니다.",
     pitfall: "7아웃과 8아웃의 차이를 무시해 비슷한 확률로 처리하는 실수",
@@ -1880,7 +1880,7 @@ export const questionBank: HoldemQuestion[] = [
     category: "odds",
     difficulty: "응용",
     title: "Flop 13 Outs",
-    prompt: "플랍에서 JT가 Q9J 보드를 보고 있어, 이미 페어를 갖고 있으면서 스트레이트 개선도 양쪽으로 열려 있습니다.",
+    prompt: "플랍에서 JT는 Q9J 보드에서, 이미 페어를 갖고 있으면서 스트레이트 개선도 양쪽으로 열려 있습니다.",
     explanation:
       "플랍 13아웃은 약 48%입니다. 거의 반반에 가깝기 때문에, 강한 드로우가 왜 공격적으로 활용되는지 감을 잡는 데 좋습니다.",
     pitfall: "13아웃 큰 드로우의 실제 에퀴티를 절반보다 훨씬 낮게 보는 실수",
@@ -1905,7 +1905,7 @@ export const questionBank: HoldemQuestion[] = [
     difficulty: "응용",
     title: "Flop 15 Outs",
     prompt:
-      "플랍에서 98 하트가 AT7 투톤 보드를 보고 있어, 플러시와 양방 스트레이트 개선이 함께 열려 있습니다.",
+      "플랍에서 9h8h는 AhTd7h 보드에서, 플러시와 양방 스트레이트 개선이 함께 열려 있습니다.",
     explanation:
       "플랍 15아웃은 약 54%입니다. 절반을 넘는 강한 콤보 드로우라서, 프리미엄 원페어와도 충분히 맞설 수 있다는 감각을 익히기 좋습니다.",
     pitfall: "매우 강한 15아웃 콤보 드로우를 평범한 드로우 수준으로 과소평가하는 실수",
