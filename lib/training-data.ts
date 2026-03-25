@@ -1713,17 +1713,18 @@ export const questionBank: HoldemQuestion[] = [
     id: "odds-021",
     category: "odds",
     difficulty: "기초",
-    title: "Turn 5 Outs",
-    prompt: "턴에서 5아웃 드로우가 리버 한 장으로 맞을 확률 감각을 묻는 문제입니다.",
+    title: "Turn 5 Outs With Top Pair",
+    prompt:
+      "턴에 탑페어를 들고 있고, 리버에서 투페어나 트립스로 개선될 카드가 5장 남았을 때의 확률 감각을 묻는 문제입니다.",
     explanation:
-      "턴 5아웃은 약 11%입니다. 10%대 초반이라서, 큰 베팅을 상대할 때는 생각보다 자주 폴드가 맞습니다.",
-    pitfall: "턴 5아웃을 체감보다 높게 잡아 과하게 따라가는 실수",
+      "순수 아웃 계산 문제라 남은 T 3장으로 투페어, 남은 J 2장으로 트립스가 되어 총 5아웃으로 잡습니다. 턴 5아웃은 5/46으로 약 11%입니다.",
+    pitfall: "이미 원페어를 들고 있다는 이유로 투페어·트립스로 좋아지는 아웃을 계산에서 빼먹는 실수",
     tags: ["아웃 계산", "턴 확률"],
     holeCards: ["Jh", "Tc"] as const,
     board: ["Js", "8d", "5h", "2c"] as const,
     pot: "24bb",
     villainBet: "16bb",
-    actionBefore: "Turn: Top Pair + Kicker Draw (5 Outs)",
+    actionBefore: "Turn: Top Pair can improve to Two Pair/Trips (5 Outs)",
     mathFocus: "5 Outs / Turn to River",
     options: [
       { value: "4", label: "약 4%" },
