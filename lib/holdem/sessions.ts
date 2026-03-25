@@ -68,17 +68,18 @@ export const buildDailySession = (
 ) => {
   const focusIds = getDailyFocusIds(responses, random);
   const focusSet = new Set(focusIds);
+  const questionIds = [
+    ...focusIds,
+    ...shuffleItems(
+      allQuestionIds.filter((questionId) => !focusSet.has(questionId)),
+      random,
+    ),
+  ].slice(0, DAILY_SESSION_SIZE);
 
   return createSession(
     getDailySessionKey(),
     "오늘의 10문제",
-    [
-      ...focusIds,
-      ...shuffleItems(
-        allQuestionIds.filter((questionId) => !focusSet.has(questionId)),
-        random,
-      ),
-    ].slice(0, DAILY_SESSION_SIZE),
+    focusIds.length ? shuffleItems(questionIds, random) : questionIds,
   );
 };
 

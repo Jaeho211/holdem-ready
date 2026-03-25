@@ -31,7 +31,8 @@ describe("session helpers", () => {
     expect(session.questionIds.every((questionId) => questionId.startsWith("pre-"))).toBe(true);
   });
 
-  it("prioritizes weakness-tagged questions in daily sessions", () => {
+  it("shuffles daily sessions after applying weakness-tagged questions", () => {
+    const random = () => 0;
     const session = buildDailySession(
       [
         {
@@ -44,12 +45,48 @@ describe("session helpers", () => {
           tags: ["SB 디펜스", "오프수트 브로드웨이"],
         },
       ],
-      () => 0,
+      random,
     );
+    const focusCandidates: string[] = [];
+    const seen = new Set<string>();
+
+    for (const tag of ["SB 디펜스", "오프수트 브로드웨이"]) {
+      const matchingIds = shuffleItems(
+        questionBank
+          .filter((question) => question.tags.includes(tag))
+          .map((question) => question.id),
+        random,
+      );
+
+      for (const questionId of matchingIds) {
+        if (seen.has(questionId)) continue;
+
+        seen.add(questionId);
+        focusCandidates.push(questionId);
+
+        if (focusCandidates.length >= 5) break;
+      }
+
+      if (focusCandidates.length >= 5) break;
+    }
+
+    const focusIds = shuffleItems(focusCandidates, random);
+    const focusSet = new Set(focusIds);
+    const prioritizedQuestionIds = [
+      ...focusIds,
+      ...shuffleItems(
+        questionBank
+          .map((question) => question.id)
+          .filter((questionId) => !focusSet.has(questionId)),
+        random,
+      ),
+    ].slice(0, 10);
 
     expect(session.questionIds).toHaveLength(10);
     expect(new Set(session.questionIds).size).toBe(10);
     expect(session.questionIds).toContain("pre-003");
+    expect(session.questionIds).not.toEqual(prioritizedQuestionIds);
+    expect(session.questionIds).toEqual(shuffleItems(prioritizedQuestionIds, random));
   });
 
   it("falls back to a shuffled bank when there is no weakness history", () => {
