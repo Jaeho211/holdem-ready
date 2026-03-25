@@ -695,20 +695,14 @@ function TableScene({
       >
         <div className="pointer-events-none absolute inset-x-[6%] top-[13%] h-[38%] rounded-[999px] border border-[#d7b977]/12 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.07),transparent_70%)]" />
         <div className="pointer-events-none absolute inset-x-3 bottom-0 h-20 bg-[linear-gradient(180deg,rgba(4,23,17,0),rgba(4,23,17,0.78))]" />
-        <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-between">
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <span className="rounded-full border border-white/8 bg-white/6 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-[#f6efe0]">
-              {question.difficulty}
-            </span>
-          </div>
-
-          <div ref={boardWrapperRef} className="mt-4 w-full text-center">
+        <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center gap-3">
+          <div ref={boardWrapperRef} className="w-full text-center">
             <p className="text-[10px] uppercase tracking-[0.24em] text-[#d7b977]">
               {question.category === "preflop" ? "Board Opens After The Deal" : "Board"}
             </p>
             <div
               ref={boardRowRef}
-              className="mt-2.5 flex flex-nowrap justify-center gap-1.5 sm:gap-2"
+              className="mt-2 flex flex-nowrap justify-center gap-2 sm:gap-2.5"
               style={boardScale < 1 ? { zoom: boardScale } : undefined}
             >
               {boardSlots.map((card, index) => (
@@ -738,7 +732,7 @@ function TableScene({
                 postflopAction={question.actionBefore}
                 currentBet={question.villainBet}
               />
-              <div data-qa-region="table-scene-details" className="mt-2 grid w-full grid-cols-2 gap-2">
+              <div data-qa-region="table-scene-details" className="mt-1 grid w-full grid-cols-2 gap-2">
                 {sceneDetails.map((detail) => (
                   <TableSceneStat
                     key={`${question.id}-${detail.label}`}
@@ -751,7 +745,7 @@ function TableScene({
             </>
           ) : (
             question.holeCards ? (
-              <div data-qa-region="table-scene-details" className="mt-3 grid w-full grid-cols-2 gap-2">
+              <div data-qa-region="table-scene-details" className="mt-2 grid w-full grid-cols-2 gap-2">
                 {sceneDetails.map((detail) => (
                   <TableSceneStat
                     key={`${question.id}-${detail.label}`}
@@ -762,7 +756,7 @@ function TableScene({
                 ))}
               </div>
             ) : question.mathFocus.includes("아웃") || question.mathFocus.toLowerCase().includes("outs") ? (
-              <div className="mt-3 w-full text-center">
+              <div className="mt-2 w-full text-center">
                 <p className="text-[10px] uppercase tracking-[0.22em] text-[#8ecdf7]">{question.mathFocus}</p>
                 <p className="mt-2 text-[11px] leading-4 text-[#d9ecfa]/68">
                   필요한 용어는 문제 제목 아래 칩에서 바로 확인할 수 있습니다.
@@ -778,9 +772,9 @@ function TableScene({
             )
           )}
 
-          <div className="mt-4 text-center">
+          <div className="mt-auto w-full pt-1 text-center">
             <p className="text-[10px] uppercase tracking-[0.24em] text-[#d7b977]">{heroLabel}</p>
-            <div className="mt-2.5 flex justify-center gap-2.5">
+            <div className="mt-2 flex justify-center gap-2.5">
               {(heroCards.length ? heroCards : [null, null]).map((card, index) => (
                 <PlayingCard
                   key={`${question.id}-hero-${index}`}
@@ -791,7 +785,7 @@ function TableScene({
                 />
               ))}
             </div>
-            <p className="mt-2 text-[11px] leading-4 text-[#efe2be]/70">{heroHint}</p>
+            <p className="mt-1.5 text-[11px] leading-4 text-[#efe2be]/70">{heroHint}</p>
           </div>
         </div>
       </div>

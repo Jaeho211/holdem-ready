@@ -144,7 +144,7 @@ function SeatMarker({
         <div
           data-qa-region={`table-seat-chip:${seat}`}
           className={cn(
-            "flex min-w-[32px] items-center justify-center rounded-full border px-1.5 py-0.5 text-[11px] font-semibold leading-none tracking-wide transition-colors",
+            "flex min-w-[34px] items-center justify-center rounded-full border px-1.5 py-0.5 text-[11.5px] font-semibold leading-none tracking-wide transition-colors",
             style,
             spotlight && "shadow-[0_0_0_1px_rgba(255,231,231,0.18),0_0_18px_rgba(217,137,137,0.24)]",
           )}
@@ -189,9 +189,12 @@ function SeatMarker({
         <span
           data-qa-overlay={`table-spotlight:${seat}`}
           className={cn(
-            "absolute z-10 whitespace-nowrap rounded-full border border-[#d98989]/36 bg-[#3a1b22]/88 px-1.5 py-0.5 text-[9px] font-semibold leading-none tracking-[0.14em] text-[#ffe7e7] shadow-[0_8px_18px_rgba(0,0,0,0.24)]",
+            "absolute z-10 whitespace-nowrap rounded-full border border-[#d98989]/36 bg-[#3a1b22]/88 px-1.5 py-0.5 text-[9px] font-semibold leading-none tracking-[0.08em] text-[#ffe7e7] shadow-[0_8px_18px_rgba(0,0,0,0.24)]",
             seat === "BTN" ? "left-[calc(100%+4px)]" : "left-1/2 -translate-x-1/2",
             spotlightPlacement === "above" ? "bottom-full mb-1" : "top-full mt-1",
+            seat !== "BTN" && "after:absolute after:left-1/2 after:w-px after:-translate-x-1/2 after:bg-[#d98989]/42 after:content-['']",
+            seat !== "BTN" && spotlightPlacement === "above" && "after:top-full after:h-2",
+            seat !== "BTN" && spotlightPlacement === "below" && "after:bottom-full after:h-2",
           )}
         >
           {spotlightCopy}
@@ -225,11 +228,11 @@ export function PokerTableVisual({
     : null;
 
   return (
-    <div className="mt-3 flex w-full flex-col items-center gap-2">
+    <div className="mt-2 flex w-full flex-col items-center gap-2">
       {/* Oval table with seats */}
       <div
         data-qa-region="table-root"
-        className="relative w-full max-w-[300px] aspect-[1.7]"
+        className="relative w-full max-w-[336px] aspect-[1.62] sm:max-w-[348px]"
         role="group"
         aria-label="Preflop poker table seat status"
       >

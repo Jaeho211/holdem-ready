@@ -5,8 +5,8 @@ import process from "node:process";
 import { chromium } from "@playwright/test";
 
 const SCREENSHOT_VIEWPORT = {
-  width: 390,
-  height: 845,
+  width: 384,
+  height: 832,
   device: "galaxy-s24",
 };
 const OUTPUT_DIR = path.resolve(".qa-artifacts/ui");
