@@ -28,6 +28,8 @@ export type SeatSpotlight = {
   betSize?: string;
 };
 
+const SEAT_PATTERN = "UTG\\+1|UTG|MP|LJ|HJ|CO|BTN|SB|BB";
+
 const ACTION_KEYWORDS: Record<string, SeatAction> = {
   오픈: "open",
   폴드: "fold",
@@ -36,39 +38,60 @@ const ACTION_KEYWORDS: Record<string, SeatAction> = {
 };
 
 const POSITION_PATTERN =
-  /^(UTG\+1|UTG|MP|LJ|HJ|CO|BTN|SB|BB)\s+(?:(\d+(?:\.\d+)?bb)\s+)?(오픈|폴드|콜|림프)/;
+  new RegExp(`^(${SEAT_PATTERN})\\s+(?:(\\d+(?:\\.\\d+)?bb)\\s+)?(오픈|폴드|콜|림프)`);
+
+type PostflopActionCopy = {
+  label: string;
+  summary: string;
+  aria: string;
+};
 
 const POSTFLOP_ACTION_COPY = {
-  "미니 체크레이즈": {
-    label: "MIN X/R",
-    aria: "mini check-raise",
-  },
+  "큰 세컨드 배럴": { label: "BET", summary: "bet", aria: "bet" },
+  "세컨드 배럴": { label: "BET", summary: "bet", aria: "bet" },
+  배럴: { label: "BET", summary: "bet", aria: "bet" },
+  "소형 돈크벳": { label: "BET", summary: "bet", aria: "bet" },
+  돈크벳: { label: "BET", summary: "bet", aria: "bet" },
+  "소형 c-bet": { label: "BET", summary: "bet", aria: "bet" },
+  "c-bet": { label: "BET", summary: "bet", aria: "bet" },
+  "큰 리드": { label: "BET", summary: "bet", aria: "bet" },
+  "소형 리드": { label: "BET", summary: "bet", aria: "bet" },
+  리드: { label: "BET", summary: "bet", aria: "bet" },
   체크레이즈: {
-    label: "X/R",
+    label: "CHECK-RAISE",
+    summary: "check-raise",
     aria: "check-raise",
   },
   오버벳: {
-    label: "OVB",
+    label: "OVERBET",
+    summary: "overbet",
     aria: "overbet",
   },
-  돈크벳: {
-    label: "DONK",
-    aria: "donk bet",
+  "미니 체크레이즈": {
+    label: "CHECK-RAISE",
+    summary: "check-raise",
+    aria: "check-raise",
   },
-  "c-bet": {
-    label: "C-BET",
-    aria: "continuation bet",
-  },
-  리드: {
-    label: "LEAD",
-    aria: "lead bet",
-  },
-} as const;
+} as const satisfies Record<string, PostflopActionCopy>;
+
+const CHECK_ACTION_COPY = {
+  label: "CHECK",
+  summary: "check",
+  aria: "check",
+} as const satisfies PostflopActionCopy;
 
 type PostflopActionKeyword = keyof typeof POSTFLOP_ACTION_COPY;
 
-const POSTFLOP_ACTION_PATTERN =
-  /(UTG\+1|UTG|MP|LJ|HJ|CO|BTN|SB|BB)\s+(미니 체크레이즈|체크레이즈|오버벳|돈크벳|c-bet|리드)/g;
+const POSTFLOP_ACTION_PATTERN = new RegExp(
+  `(${SEAT_PATTERN})\\s+(${Object.keys(POSTFLOP_ACTION_COPY)
+    .sort((a, b) => b.length - a.length)
+    .map((keyword) => keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join("|")})`,
+  "g",
+);
+
+const TRAILING_CHECK_PATTERN = /(플랍|턴|리버)\s+체크$/;
+const SEAT_NAME_PATTERN = new RegExp(SEAT_PATTERN, "g");
 
 function isBefore(seatIdx: number, heroIdx: number): boolean {
   return seatIdx < heroIdx;
@@ -82,7 +105,52 @@ function getDisplayBetSize(value?: string) {
   if (!value) return undefined;
 
   const match = value.match(/\d+(?:\.\d+)?bb/);
-  return match?.[0] ?? value;
+  return match?.[0];
+}
+
+function getReferencedSeats(actionBefore: string): SeatName[] {
+  const matches = actionBefore.match(SEAT_NAME_PATTERN) ?? [];
+  const seats = new Set<SeatName>();
+
+  for (const match of matches) {
+    const seat = toSeatName(match);
+    if (seat) {
+      seats.add(seat);
+    }
+  }
+
+  return [...seats];
+}
+
+function inferTrailingCheckSeat(actionBefore: string, heroPosition: string): SeatName | null {
+  if (!TRAILING_CHECK_PATTERN.test(actionBefore)) {
+    return null;
+  }
+
+  const heroSeat = toSeatName(heroPosition);
+  if (!heroSeat) {
+    return null;
+  }
+
+  const remainingSeats = getReferencedSeats(actionBefore).filter((seat) => seat !== heroSeat);
+  return remainingSeats.length === 1 ? remainingSeats[0] : null;
+}
+
+function buildPostflopSpotlight(
+  seat: SeatName,
+  action: PostflopActionCopy,
+  betSize?: string,
+): SeatSpotlight {
+  const displayBetSize = getDisplayBetSize(betSize);
+
+  return {
+    seat,
+    label: action.label,
+    actionText: action.summary,
+    ariaLabel: [seat, action.aria, displayBetSize].filter(Boolean).join(", "),
+    summary: [seat, displayBetSize, action.summary].filter(Boolean).join(" "),
+    betSize: displayBetSize,
+  };
 }
 
 export function parsePreflopActions(
@@ -139,9 +207,15 @@ export function parsePreflopActions(
 }
 
 export function parsePostflopSpotlight(
+  heroPosition: string,
   actionBefore: string,
   betSize?: string,
 ): SeatSpotlight | null {
+  const trailingCheckSeat = inferTrailingCheckSeat(actionBefore, heroPosition);
+  if (trailingCheckSeat) {
+    return buildPostflopSpotlight(trailingCheckSeat, CHECK_ACTION_COPY);
+  }
+
   const matches = Array.from(actionBefore.matchAll(POSTFLOP_ACTION_PATTERN));
   const lastMatch = matches.at(-1);
 
@@ -156,15 +230,9 @@ export function parsePostflopSpotlight(
     return null;
   }
 
-  const action = POSTFLOP_ACTION_COPY[actionValue as PostflopActionKeyword];
-  const displayBetSize = getDisplayBetSize(betSize);
-
-  return {
+  return buildPostflopSpotlight(
     seat,
-    label: action.label,
-    actionText: actionValue,
-    ariaLabel: `${seat}, ${action.aria}${displayBetSize ? `, ${displayBetSize}` : ""}`,
-    summary: [seat, actionValue, displayBetSize].filter(Boolean).join(" "),
-    betSize: displayBetSize,
-  };
+    POSTFLOP_ACTION_COPY[actionValue as PostflopActionKeyword],
+    betSize,
+  );
 }

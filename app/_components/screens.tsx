@@ -546,18 +546,22 @@ function getTableSceneDetails(question: HoldemQuestion): TableSceneDetail[] {
       { label: "Position", value: question.position, tone: "gold" },
       { label: "Stack", value: question.stack, tone: "emerald" },
       { label: "Table", value: question.table, tone: "sky" },
-      { label: "Action", value: question.actionBefore, tone: "rose" },
+      { label: "Prior Action", value: question.actionBefore, tone: "rose" },
     ];
   }
 
   if (question.category === "postflop") {
-    const spotlight = parsePostflopSpotlight(question.actionBefore, question.villainBet);
+    const spotlight = parsePostflopSpotlight(
+      question.position,
+      question.actionBefore,
+      question.villainBet,
+    );
 
     return [
       { label: "Pot", value: question.pot, tone: "gold" },
       {
-        label: "Action",
-        value: spotlight?.summary ?? question.villainBet,
+        label: "Prior Action",
+        value: spotlight?.summary ?? question.actionBefore,
         tone: "rose",
       },
     ];
@@ -891,10 +895,10 @@ export function QuizScreen({
                         currentQuestion.mathFocus.toLowerCase().includes("outs")
                         ? "이 드로우의 승률은?"
                         : "콜에 필요한 승률은?"
-                      : "Choose Action"}
+                      : "Your Decision"}
                   </p>
                   <p className="text-[10px] text-[#efe2be]/64">
-                    {currentQuestion.category === "odds" ? currentQuestion.mathFocus : "Live Table Action"}
+                    {currentQuestion.category === "odds" ? currentQuestion.mathFocus : "Current Spot"}
                   </p>
                 </div>
                 <div className="mt-2 grid grid-cols-3 gap-2">
@@ -916,7 +920,7 @@ export function QuizScreen({
                     >
                       <span className="block text-sm font-semibold">{option.label}</span>
                       <span className="mt-1.5 block text-[9px] uppercase tracking-[0.18em] opacity-70">
-                        {currentQuestion.category === "odds" ? "승률" : "Action"}
+                        {currentQuestion.category === "odds" ? "승률" : "Decision"}
                       </span>
                     </button>
                   ))}

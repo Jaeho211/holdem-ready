@@ -183,7 +183,9 @@ export function PokerTableVisual({
   currentBet?: string;
 }) {
   const seatStates = parsePreflopActions(position, actionBefore);
-  const spotlight = postflopAction ? parsePostflopSpotlight(postflopAction, currentBet) : null;
+  const spotlight = postflopAction
+    ? parsePostflopSpotlight(position, postflopAction, currentBet)
+    : null;
 
   return (
     <div className="mt-3 flex w-full flex-col items-center gap-2">
