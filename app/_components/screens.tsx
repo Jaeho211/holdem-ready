@@ -868,9 +868,9 @@ export function QuizScreen({
         <div className="flex min-h-0 flex-1 flex-col animate-rise">
           <div className="flex min-h-0 flex-1 flex-col rounded-[28px] border border-[#d7b977]/20 bg-[linear-gradient(180deg,rgba(10,34,27,0.96),rgba(4,23,17,0.98))] p-4 shadow-[0_18px_60px_rgba(0,0,0,0.34)]">
             <CardEyebrow>{currentQuestion.title}</CardEyebrow>
-            <div className="mt-3 rounded-[22px] border border-[#8ecdf7]/16 bg-[#081b22]/88 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-[#8ecdf7]">Question Read</p>
-              <p className="mt-2 text-sm leading-6 text-[#e3f4ff]/82">{currentQuestion.prompt}</p>
+            <div className="mt-3 rounded-[22px] border border-[#8ecdf7]/12 bg-[#081b22]/78 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-[#8ecdf7]/72">상황</p>
+              <p className="mt-2 text-sm leading-6 text-[#e3f4ff]/74">{currentQuestion.prompt}</p>
             </div>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {questionTerms.map((term) => (
