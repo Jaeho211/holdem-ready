@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { getQuestion } from "./questions";
 import { questionBank } from "../training-data";
+import { oddsQuestions } from "../training-data/questions/odds";
+import { postflopQuestions } from "../training-data/questions/postflop";
+import { preflopQuestions } from "../training-data/questions/preflop";
 import { CARD_CODES } from "./cards";
 import {
   calculateOutsFromSpec,
@@ -111,6 +114,17 @@ function parseBb(value: string): number {
 // ─── Existing hand-written review guards ────────────────────────────
 
 describe("question bank review guards", () => {
+  it("rebuilds questionBank from category modules in the expected order", () => {
+    expect(questionBank).toEqual([
+      ...preflopQuestions,
+      ...postflopQuestions,
+      ...oddsQuestions,
+    ]);
+    expect(questionBank).toHaveLength(
+      preflopQuestions.length + postflopQuestions.length + oddsQuestions.length,
+    );
+  });
+
   it("keeps the gutshot turn spot as exactly four straight outs", () => {
     const question = getQuestion("post-003");
 

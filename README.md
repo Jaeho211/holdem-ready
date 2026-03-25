@@ -17,12 +17,12 @@
 
 ## 문제 구성
 
-- 프리플랍 10문제
-- 포스트플랍 8문제
-- 확률 6문제
-- 라이브 팁 5개 섹션 / 15개 체크 항목
+- 프리플랍 31문제
+- 포스트플랍 29문제
+- 확률 28문제
+- 라이브 팁 8개 섹션 / 24개 체크 항목
 
-총 24개의 퀴즈 문제와 15개의 현장 체크 항목이 들어 있습니다.
+총 88개의 퀴즈 문제와 24개의 현장 체크 항목이 들어 있습니다.
 
 ## 화면 구성
 
@@ -144,7 +144,12 @@ lib/
     selectors.ts     통계/오답/약점 계산
     sessions.ts      세션 생성과 진행 로직
     store.ts         localStorage 입출력
-  training-data.ts   문제 은행, 카테고리 메타, 라이브 팁 데이터
+  training-data.ts   공개 데이터 export 진입점
+  training-data/
+    questions/       카테고리별 문제 데이터
+    question-bank.ts questionBank 조합
+    live-tips.ts     라이브 팁 데이터
+    category-meta.ts 카테고리 메타
 public/
   cards/             카드 뒷면 SVG와 카드 관련 정적 에셋
   icon.svg           앱 아이콘

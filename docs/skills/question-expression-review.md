@@ -1,6 +1,6 @@
 # Question Expression Review Skill
 
-이 문서는 `lib/training-data.ts`의 `questionBank` 문구를 검토하고 다듬을 때 쓰는 표현 리뷰 가이드입니다.
+이 문서는 `lib/training-data/questions/*.ts`의 `questionBank` 문구를 검토하고 다듬을 때 쓰는 표현 리뷰 가이드입니다.
 `question-generator`가 문제 구조와 필드 역할의 기준이라면, 이 문서는 그 기준을 지키면서 한국어 표현을 자연스럽게 다듬는 **2차 검수 단계**입니다.
 
 > 규칙이 충돌하면 항상 `question-generator.md`를 우선합니다.
@@ -16,7 +16,7 @@
 - `"이 문장 어색한가?"`, `"이 표현 번역투인가?"`, `"이 문장을 더 자연스럽게 바꿔줘"` 같은 요청을 처리할 때
 - 문제를 최종 반영하기 전에 표현 품질을 한 번 더 검수할 때
 
-이 문서는 **questionBank 전용**입니다. 일반 UI 카피, README, 앱 전반 문서는 범위에 포함하지 않습니다.
+이 문서는 **questionBank 전용**입니다. 공개 진입점은 `lib/training-data.ts`지만, 실제 문구 수정 대상은 `lib/training-data/questions/*.ts`입니다. 일반 UI 카피, README, 앱 전반 문서는 범위에 포함하지 않습니다.
 
 ---
 

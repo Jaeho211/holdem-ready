@@ -1,13 +1,13 @@
 # Question Generator Skill
 
-이 문서는 `lib/training-data.ts`의 `questionBank`에 새 문제를 추가할 때 따라야 할 규칙과 레퍼런스입니다.
+이 문서는 `lib/training-data/questions/*.ts`의 `questionBank` 데이터에 새 문제를 추가할 때 따라야 할 규칙과 레퍼런스입니다.
 AI 코딩 도구(Gemini, Claude Code, Codex 등)가 이 문서를 읽고 일관된 품질의 문제를 생성합니다.
 
 ---
 
 ## 1. 타입 스키마
 
-모든 문제는 `lib/training-data.ts`에 정의된 타입을 따릅니다. 추가 전에 반드시 해당 파일의 최신 타입을 확인하세요.
+모든 문제 타입은 `lib/training-data.ts`에서 export됩니다. 추가 전에 공개 타입과 해당 카테고리 파일의 최신 구조를 함께 확인하세요.
 
 > **타입 임포트**: `CardCode = \`${CardRank}${CardSuit}\``, `HoleCards = readonly [CardCode, CardCode]` — `lib/holdem/cards.ts`에서 정의
 
@@ -466,7 +466,7 @@ correct: "33"
 "커버되지 않은 스팟 위주로 각 카테고리 3개씩"
 ```
 
-결과물은 `lib/training-data.ts`의 `questionBank` 배열 끝에 추가합니다.
+결과물은 해당 카테고리 파일(`lib/training-data/questions/preflop.ts`, `postflop.ts`, `odds.ts`)의 배열 끝에 추가합니다.
 추가 후 아래 검증을 수행하세요:
 
 1. `npx tsc --noEmit` — 타입 에러 없는지 확인
