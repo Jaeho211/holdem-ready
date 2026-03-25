@@ -4,7 +4,11 @@ import path from "node:path";
 import process from "node:process";
 import { chromium } from "@playwright/test";
 
-const VIEWPORT_WIDTHS = [360, 390, 430];
+const SCREENSHOT_VIEWPORT = {
+  width: 390,
+  height: 845,
+  device: "galaxy-s24",
+};
 const OUTPUT_DIR = path.resolve(".qa-artifacts/ui");
 const DEFAULT_BASE_URL = "http://127.0.0.1:3301";
 const EXISTING_DEV_BASE_URL = "http://127.0.0.1:3000";
@@ -146,7 +150,7 @@ const getScenarioIds = async (page, baseUrl) => {
   );
 };
 
-const evaluateLayout = ({ scenarioId, viewportWidth }) => {
+const evaluateLayout = ({ scenarioId, viewportWidth, viewportHeight, viewportDevice }) => {
   const round = (value) => Math.round(value * 100) / 100;
   const isVisible = (element) => {
     const style = window.getComputedStyle(element);
@@ -318,6 +322,8 @@ const evaluateLayout = ({ scenarioId, viewportWidth }) => {
   return {
     scenarioId,
     viewportWidth,
+    viewportHeight,
+    viewportDevice,
     pass: !horizontalOverflow && clippedElements.length === 0 && overlaps.length === 0,
     horizontalOverflow,
     clippedElements,
@@ -358,8 +364,8 @@ const main = async () => {
     try {
       const manifestPage = await browser.newPage({
         viewport: {
-          width: VIEWPORT_WIDTHS[0],
-          height: 900,
+          width: SCREENSHOT_VIEWPORT.width,
+          height: SCREENSHOT_VIEWPORT.height,
         },
       });
       const scenarioIds = args.scenario ? [args.scenario] : await getScenarioIds(manifestPage, baseUrl);
@@ -372,44 +378,47 @@ const main = async () => {
       const results = [];
 
       for (const scenarioId of scenarioIds) {
-        for (const viewportWidth of VIEWPORT_WIDTHS) {
-          const page = await browser.newPage({
-            viewport: {
-              width: viewportWidth,
-              height: 900,
-            },
-            deviceScaleFactor: 1,
+        const page = await browser.newPage({
+          viewport: {
+            width: SCREENSHOT_VIEWPORT.width,
+            height: SCREENSHOT_VIEWPORT.height,
+          },
+          deviceScaleFactor: 1,
+        });
+
+        try {
+          await page.goto(buildRouteUrl(baseUrl, scenarioId), {
+            waitUntil: "networkidle",
+          });
+          await page.waitForSelector('[data-qa-root="app"]');
+          await page.evaluate(async () => {
+            if ("fonts" in document) {
+              await document.fonts.ready;
+            }
           });
 
-          try {
-            await page.goto(buildRouteUrl(baseUrl, scenarioId), {
-              waitUntil: "networkidle",
-            });
-            await page.waitForSelector('[data-qa-root="app"]');
-            await page.evaluate(async () => {
-              if ("fonts" in document) {
-                await document.fonts.ready;
-              }
-            });
+          const screenshotPath = path.join(
+            OUTPUT_DIR,
+            `${scenarioId}-${SCREENSHOT_VIEWPORT.width}x${SCREENSHOT_VIEWPORT.height}.png`,
+          );
+          await page.screenshot({
+            path: screenshotPath,
+            fullPage: false,
+          });
 
-            const screenshotPath = path.join(OUTPUT_DIR, `${scenarioId}-${viewportWidth}.png`);
-            await page.screenshot({
-              path: screenshotPath,
-              fullPage: false,
-            });
+          const result = await page.evaluate(evaluateLayout, {
+            scenarioId,
+            viewportWidth: SCREENSHOT_VIEWPORT.width,
+            viewportHeight: SCREENSHOT_VIEWPORT.height,
+            viewportDevice: SCREENSHOT_VIEWPORT.device,
+          });
 
-            const result = await page.evaluate(evaluateLayout, {
-              scenarioId,
-              viewportWidth,
-            });
-
-            results.push({
-              ...result,
-              screenshotPath: path.relative(process.cwd(), screenshotPath),
-            });
-          } finally {
-            await page.close();
-          }
+          results.push({
+            ...result,
+            screenshotPath: path.relative(process.cwd(), screenshotPath),
+          });
+        } finally {
+          await page.close();
         }
       }
 
@@ -435,7 +444,7 @@ const main = async () => {
       if (failed.length) {
         for (const result of failed) {
           console.error(
-            `${result.scenarioId} @ ${result.viewportWidth}px failed: overflow=${result.horizontalOverflow}, clipped=${result.clippedElements.length}, overlaps=${result.overlaps.length}`,
+            `${result.scenarioId} @ ${result.viewportWidth}x${result.viewportHeight}px (${result.viewportDevice}) failed: overflow=${result.horizontalOverflow}, clipped=${result.clippedElements.length}, overlaps=${result.overlaps.length}`,
           );
         }
         process.exitCode = 1;

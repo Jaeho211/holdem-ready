@@ -16,7 +16,8 @@
 }
 
 @theme inline {
-  --font-sans: "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-sans: var(--font-app-sans);
+  --font-serif: var(--font-app-serif);
   --font-mono: "Consolas", "SFMono-Regular", monospace;
 }
 
