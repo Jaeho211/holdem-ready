@@ -1,7 +1,11 @@
 # 테스트 가이드
 
-이 프로젝트의 테스트는 `Vitest` 기반이며, 현재는 **수동 실행**입니다.
-저장, 커밋, 푸시 시 자동으로 돌지 않습니다.
+이 프로젝트의 테스트는 두 갈래입니다.
+
+- `Vitest`: 데이터/로직 검증
+- `Playwright`: 개발용 UI 시나리오 스크린샷 및 레이아웃 점검
+
+두 방식 모두 현재는 **수동 실행**입니다. 저장, 커밋, 푸시 시 자동으로 돌지 않습니다.
 
 ## 언제 테스트가 도는가
 
@@ -9,6 +13,7 @@
 
 - 개발자가 직접 `npm test`를 실행할 때
 - 개발자가 직접 `npx vitest run ...`으로 특정 테스트 파일을 실행할 때
+- 개발자가 직접 `npm run qa:ui`를 실행할 때
 
 자동 실행되지 않는 항목:
 
@@ -19,6 +24,7 @@
 근거:
 
 - [`package.json`](../package.json)에서 `test` 스크립트는 `vitest run`
+- [`package.json`](../package.json)에서 `qa:ui` 스크립트는 `node scripts/qa-ui.mjs`
 - [`vitest.config.ts`](../vitest.config.ts)에서 `lib/**/*.test.ts`만 테스트 대상으로 포함
 - 저장소에 `.husky/`, `.github/workflows/`가 없음
 
@@ -37,6 +43,19 @@ npx vitest run lib/holdem/question-bank.test.ts
 npx vitest run lib/holdem/outs.test.ts
 ```
 
+UI QA 실행:
+
+```bash
+npm run qa:ui:install
+npm run qa:ui
+```
+
+특정 시나리오만:
+
+```bash
+npm run qa:ui -- --scenario quiz-postflop
+```
+
 테스트와 별개로 린트도 같이 확인하는 편이 좋습니다.
 
 ```bash
@@ -44,6 +63,8 @@ npm run lint
 ```
 
 ## 어떤 파일이 테스트되는가
+
+### 1. Vitest 로직 테스트
 
 Vitest 설정은 [`vitest.config.ts`](../vitest.config.ts)에 있습니다.
 
@@ -66,6 +87,39 @@ test: {
 - [`lib/holdem/store.test.ts`](../lib/holdem/store.test.ts): 저장 포맷 검증
 - [`lib/holdem/selectors.test.ts`](../lib/holdem/selectors.test.ts): 통계/선택자 계산 검증
 - [`lib/holdem/table.test.ts`](../lib/holdem/table.test.ts): 액션 파서 검증
+
+### 2. Playwright UI QA
+
+UI QA는 [`scripts/qa-ui.mjs`](../scripts/qa-ui.mjs)가 담당합니다.
+
+이 스크립트는 다음 순서로 동작합니다.
+
+1. 기존 개발 서버 `http://127.0.0.1:3000`이 살아 있으면 재사용합니다.
+2. 없으면 별도 개발 서버를 `http://127.0.0.1:3301`에서 띄웁니다.
+3. 개발 전용 라우트 [`app/qa/ui/page.tsx`](../app/qa/ui/page.tsx)의 시나리오 목록을 읽습니다.
+4. 각 시나리오를 모바일 뷰포트 `384x698` 기준으로 캡처합니다.
+5. 수평 오버플로우, 잘림, 형제 요소 겹침을 검사합니다.
+6. 결과를 `.qa-artifacts/ui/report.json`과 PNG 파일로 저장합니다.
+
+시나리오 정의는 [`app/_components/qa-ui-scenarios.ts`](../app/_components/qa-ui-scenarios.ts)에 있습니다.
+
+대표 시나리오:
+
+- `home-default`
+- `home-progress`
+- `wrongs-list`
+- `records-populated`
+- `live-tips`
+- `quiz-preflop`
+- `quiz-postflop`
+- `quiz-feedback-sheet`
+- `quiz-summary`
+- `settings-modal`
+
+주의:
+
+- `/qa/ui`는 개발 환경에서만 열립니다.
+- Chromium이 없으면 먼저 `npm run qa:ui:install`을 한 번 실행해야 합니다.
 
 ## 문제 데이터 테스트 구조
 
