@@ -9,6 +9,7 @@ import { QUESTIONS_BY_ID } from "@/lib/holdem/questions";
 import {
   answerSessionQuestion,
   buildDailySession,
+  buildSingleQuestionSession,
   buildWeaknessSession,
   buildWrongsSession,
   getDailySessionKey,
@@ -214,6 +215,9 @@ export function HoldemReadyApp() {
       setView(tab);
     },
     setWrongFilter,
+    reviewWrong: (questionId: string) => {
+      beginSession(buildSingleQuestionSession(questionId));
+    },
   };
 
   return <HoldemReadyAppView state={state} actions={actions} />;

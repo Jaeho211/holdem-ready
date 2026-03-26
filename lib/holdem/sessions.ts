@@ -117,6 +117,9 @@ export const buildWrongsSession = (
   );
 };
 
+export const buildSingleQuestionSession = (questionId: string) =>
+  createSession(`single:${questionId}`, "오답 다시 풀기", [questionId]);
+
 export const buildWeaknessSession = (
   tag: string,
   random: () => number = Math.random,

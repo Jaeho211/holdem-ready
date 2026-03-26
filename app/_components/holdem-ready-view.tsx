@@ -91,6 +91,7 @@ export function HoldemReadyAppView({
             onFilterChange={actions.setWrongFilter}
             onStartWrongs={() => actions.startWrongs()}
             onStartWeakness={actions.startWeakness}
+            onReviewWrong={actions.reviewWrong}
           />
         )}
 

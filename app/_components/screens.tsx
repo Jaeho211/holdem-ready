@@ -245,12 +245,14 @@ export function WrongsScreen({
   onFilterChange,
   onStartWrongs,
   onStartWeakness,
+  onReviewWrong,
 }: {
   wrongFilter: WrongFilter;
   missed: ResponseEntry[];
   onFilterChange: (filter: WrongFilter) => void;
   onStartWrongs: () => void;
   onStartWeakness: (tag: string) => void;
+  onReviewWrong: (questionId: string) => void;
 }) {
   return (
     <section data-qa-screen="wrongs" className="space-y-4">
@@ -304,7 +306,7 @@ export function WrongsScreen({
                 <Metric label="내 선택" value={getChoiceLabel(question, entry.choice)} />
                 <Metric label="정답" value={getChoiceLabel(question, question.correct)} />
               </div>
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-4 flex flex-wrap items-center gap-2">
                 {question.tags.map((tag) => (
                   <button
                     key={tag}
@@ -315,6 +317,13 @@ export function WrongsScreen({
                     {tag}
                   </button>
                 ))}
+                <button
+                  type="button"
+                  onClick={() => onReviewWrong(entry.questionId)}
+                  className="ml-auto rounded-full border border-[#d7b977]/40 bg-[#d7b977]/10 px-4 py-2 text-xs text-[#d7b977] transition hover:bg-[#d7b977]/20"
+                >
+                  다시 풀기
+                </button>
               </div>
             </Surface>
           );
