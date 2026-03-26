@@ -1,311 +1,239 @@
 # 테스트 가이드
 
-이 프로젝트의 테스트는 두 갈래입니다.
+이 프로젝트의 콘텐츠 검증은 세 층으로 나뉩니다.
 
-- `Vitest`: 데이터/로직 검증
-- `Playwright`: 개발용 UI 시나리오 스크린샷 및 레이아웃 점검
+- `questions:validate`: 문제 데이터 규칙 검증
+- `Vitest`: 로직 및 통합 테스트
+- `Playwright`: 모바일 UI 레이아웃 QA
 
-두 방식 모두 현재는 **수동 실행**입니다. 저장, 커밋, 푸시 시 자동으로 돌지 않습니다.
+문제 데이터 작업은 이제 수동 확인만으로 끝내지 않습니다. 관련 파일이 바뀌면 로컬 `pre-push`와 GitHub Actions가 자동 게이트를 겁니다.
 
-## 언제 테스트가 도는가
+## 자동 실행 지점
 
-현재 테스트는 아래 경우에만 실행됩니다.
+### 1. 로컬 pre-push
 
-- 개발자가 직접 `npm test`를 실행할 때
-- 개발자가 직접 `npx vitest run ...`으로 특정 테스트 파일을 실행할 때
-- 개발자가 직접 `npm run qa:ui`를 실행할 때
+- `.githooks/pre-push`가 `node scripts/pre-push-verify.mjs`를 실행합니다.
+- 질문 데이터, validator, QA, 파이프라인 문서 관련 파일이 바뀐 경우에만 동작합니다.
+- 실행 내용:
+  - `npm run verify:content`
+  - `docs/question-catalog.md` 최신화 여부 확인
 
-자동 실행되지 않는 항목:
+관련 파일이 아니면 no-op입니다.
 
-- 파일 저장 시 자동 실행 없음
-- Git pre-commit 훅 없음
-- GitHub Actions / CI 없음
+### 2. GitHub Actions
 
-근거:
+- 워크플로 파일: [`content-quality.yml`](../.github/workflows/content-quality.yml)
+- PR과 `main` push에서, 콘텐츠 관련 경로가 바뀐 경우에만 실행됩니다.
+- 실행 내용:
+  - `npm ci`
+  - `npm run verify:content -- --base <base sha>`
+  - generated catalog drift 확인
+  - `npm run qa:ui:install`
+  - `npm run qa:questions -- --base <base sha>`
 
-- [`package.json`](../package.json)에서 `test` 스크립트는 `vitest run`
-- [`package.json`](../package.json)에서 `qa:ui` 스크립트는 `node scripts/qa-ui.mjs`
-- [`vitest.config.ts`](../vitest.config.ts)에서 `lib/**/*.test.ts`만 테스트 대상으로 포함
-- 저장소에 `.husky/`, `.github/workflows/`가 없음
+즉, question data가 포함된 PR은 `verify:content`와 `qa:questions`를 둘 다 통과해야 merge 가능합니다.
 
-## 실행 방법
+## 핵심 명령
 
-전체 테스트:
+전체 콘텐츠 검증:
 
 ```bash
-npm test
+npm run verify:content -- --base origin/main
 ```
 
-특정 파일만:
+이 명령은 아래를 순서대로 실행합니다.
+
+1. `npm run lint`
+2. `npx tsc --noEmit`
+3. `npm run questions:validate`
+4. `npm test`
+5. `npm run questions:catalog`
+6. `npm run questions:batch-report -- --base <ref>`
+
+질문 데이터 validator만 단독 실행:
 
 ```bash
-npx vitest run lib/holdem/question-bank.test.ts
-npx vitest run lib/holdem/outs.test.ts
+npm run questions:validate
 ```
 
-UI QA 실행:
+catalog 생성:
+
+```bash
+npm run questions:catalog
+```
+
+변경 문제 batch report 생성:
+
+```bash
+npm run questions:batch-report -- --base origin/main
+```
+
+변경 문제 모바일 QA:
 
 ```bash
 npm run qa:ui:install
+npm run qa:questions -- --base origin/main
+```
+
+기존 고정 fixture 기반 앱 셸 smoke QA:
+
+```bash
 npm run qa:ui
 ```
 
-특정 시나리오만:
+## 질문 데이터 validator
 
-```bash
-npm run qa:ui -- --scenario quiz-postflop
-```
+공통 validator는 [`lib/holdem/question-bank-validator.ts`](../lib/holdem/question-bank-validator.ts)에 있습니다.
+[`lib/holdem/question-bank.test.ts`](../lib/holdem/question-bank.test.ts)는 이 shared validator를 호출하는 통합 테스트 레이어입니다.
 
-테스트와 별개로 린트도 같이 확인하는 편이 좋습니다.
+### Hard fail 규칙
 
-```bash
-npm run lint
-```
+- 카테고리별 ID 연속성 및 no-gap
+- `questionBank` 카테고리 순서 유지
+- 문자열 trim / empty 금지
+- `tags` 정확히 2개
+- tag registry 미등록 태그 금지
+- `pitfall`의 `"~실수"` 패턴 유지
+- `title <= 32자`
+- `prompt <= 100자`
+- `prompt <= 2문장`
+- `prompt` 금지 표현 차단
+- `actionBefore <= 60자`
+- `mathFocus <= 24자`
+- whole-bank 난이도 분포 `기초 30-50 / 실전 30-50 / 응용 10-30`
+- exact duplicate signature 금지
 
-## 어떤 파일이 테스트되는가
+카테고리별 추가 규칙:
 
-### 1. Vitest 로직 테스트
+- preflop: `hand`와 `holeCards` 일치
+- postflop: `reviewSpec`과 실제 카드 상태 일치
+- postflop: `title`, `prompt`, `explanation`의 핵심 용어와 `reviewSpec` 모순 금지
+- odds: `options.length === 3`
+- odds: `options[].label`은 `/^(약 )?\d+%$/`
+- odds: pot odds는 `pot = 현재 팟(상대 베팅 포함)` 규약만 허용
+- odds: 카드 기반 문제는 `outsSpec` 기준 아웃 수/확률 자동 검산
 
-Vitest 설정은 [`vitest.config.ts`](../vitest.config.ts)에 있습니다.
+### Warning 규칙
+
+- near duplicate signature
+
+warning은 테스트를 깨지 않지만, batch report의 필수 샘플 검수 대상으로 올라갑니다.
+
+## Postflop reviewSpec 검증
+
+postflop 문제는 `reviewSpec`이 필수입니다.
 
 ```ts
-test: {
-  environment: "node",
-  include: ["lib/**/*.test.ts"],
+reviewSpec: {
+  street: "flop" | "turn" | "river";
+  madeHand?: "topPair" | "middlePair" | "bottomPair" | "overpair" | "twoPair" | "set" | "trips" | "straight" | "flush" | "fullHouse";
+  draws?: ("flushDraw" | "nutFlushDraw" | "oesd" | "gutshot" | "comboDraw")[];
+  boardTexture?: "dry" | "wet";
+  suitTexture?: "rainbow" | "twoTone" | "mono";
 }
 ```
 
-즉 현재는 `lib/` 아래의 `*.test.ts` 파일만 실행됩니다.
+validator는 [`postflop-review.ts`](../lib/holdem/postflop-review.ts)에서 실제 값을 계산해 아래를 비교합니다.
 
-주요 테스트 파일:
+- street
+- made hand
+- draws
+- board texture
+- suit texture
 
-- [`lib/holdem/question-bank.test.ts`](../lib/holdem/question-bank.test.ts): 문제 데이터 자동 검증
-- [`lib/holdem/outs.test.ts`](../lib/holdem/outs.test.ts): 아웃 계산 로직 검증
-- [`lib/holdem/glossary.test.ts`](../lib/holdem/glossary.test.ts): 글로서리 칩 추출 검증
-- [`lib/holdem/cards.test.ts`](../lib/holdem/cards.test.ts): 카드 코드/핸드 표기 정합성 검증
-- [`lib/holdem/sessions.test.ts`](../lib/holdem/sessions.test.ts): 세션 생성/진행 검증
-- [`lib/holdem/store.test.ts`](../lib/holdem/store.test.ts): 저장 포맷 검증
-- [`lib/holdem/selectors.test.ts`](../lib/holdem/selectors.test.ts): 통계/선택자 계산 검증
-- [`lib/holdem/table.test.ts`](../lib/holdem/table.test.ts): 액션 파서 검증
+또한 `탑페어`, `미들페어`, `바텀페어`, `오버페어`, `투페어`, `셋`, `트립스`, `플러시 드로우`, `넛 플러시 드로우`, `오픈엔디드`, `거트샷`, `콤보 드로우`, `젖은 보드`, `드라이 보드`, `레인보우`, `투톤` 같은 키워드가 `title/prompt/explanation`에 들어가면 `reviewSpec`과 모순되면 fail입니다.
 
-### 2. Playwright UI QA
+## Odds 수학 검증
 
-UI QA는 [`scripts/qa-ui.mjs`](../scripts/qa-ui.mjs)가 담당합니다.
+카드 기반 문제는 [`outs.ts`](../lib/holdem/outs.ts)로 자동 검산합니다.
 
-이 스크립트는 다음 순서로 동작합니다.
+- `mathFocus`의 아웃 수와 실제 계산 아웃 수 비교
+- `correct`와 실제 hit rate 비교
+- `outsSpec` 누락 시 fail
 
-1. 기존 개발 서버 `http://127.0.0.1:3000`이 살아 있으면 재사용합니다.
-2. 없으면 별도 개발 서버를 `http://127.0.0.1:3301`에서 띄웁니다.
-3. 개발 전용 라우트 [`app/qa/ui/page.tsx`](../app/qa/ui/page.tsx)의 시나리오 목록을 읽습니다.
-4. 각 시나리오를 모바일 뷰포트 `384x698` 기준으로 캡처합니다.
-5. 수평 오버플로우, 잘림, 형제 요소 겹침을 검사합니다.
-6. 결과를 `.qa-artifacts/ui/report.json`과 PNG 파일로 저장합니다.
+포트 오즈 문제는 `pot` 의미를 하나로 고정합니다.
 
-시나리오 정의는 [`app/_components/qa-ui-scenarios.ts`](../app/_components/qa-ui-scenarios.ts)에 있습니다.
-
-대표 시나리오:
-
-- `home-default`
-- `home-progress`
-- `wrongs-list`
-- `records-populated`
-- `live-tips`
-- `quiz-preflop`
-- `quiz-postflop`
-- `quiz-feedback-sheet`
-- `quiz-summary`
-- `settings-modal`
-
-주의:
-
-- `/qa/ui`는 개발 환경에서만 열립니다.
-- Chromium이 없으면 먼저 `npm run qa:ui:install`을 한 번 실행해야 합니다.
-
-## 문제 데이터 테스트 구조
-
-핵심 데이터 검증은 [`lib/holdem/question-bank.test.ts`](../lib/holdem/question-bank.test.ts)에서 수행합니다.
-
-### 8-A. 공통 검증
-
-모든 문제를 순회하며 아래를 확인합니다.
-
-- ID 유일성
-- `pre-001`, `post-001`, `odds-001` 형식
-- `pitfall`이 `실수`로 끝나는지
-- `tags` 길이 2개인지
-- `correct`가 유효한 선택지인지
-- 카드가 있으면 유효한 `CardCode`인지
-
-### 8-B. Postflop 정합성
-
-포스트플랍 문제는 추가로 아래를 확인합니다.
-
-- `holeCards`와 `board` 사이 카드 중복 없음
-- 모든 카드 코드 유효
-- `board` 길이 3~5장
-
-### 8-C. Odds 수학 검증
-
-확률 문제는 두 부류로 검증합니다.
-
-1. 포트 오즈 문제
-
-- `pot`, `villainBet`, `correct`를 읽어 필요 승률이 맞는지 계산합니다.
-- `pot` 필드가 "상대 베팅 포함 팟"인지 "기존 팟"인지 문제별 표현이 섞여 있어, 현재 테스트는 가능한 두 해석 중 하나와 맞으면 통과하도록 되어 있습니다.
-
-2. 카드 기반 아웃 문제
-
-- `mathFocus`에서 `10 Outs`, `15 Outs` 같은 숫자를 파싱합니다.
-- 각 문제의 `outsSpec`을 기반으로 실제 아웃 카드를 계산합니다.
-- 계산된 고유 아웃 수가 `mathFocus`와 같은지 확인합니다.
-- 계산된 확률이 `correct`와 1%p 이내인지 확인합니다.
-
-## 아웃 계산 알고리즘
-
-카드 기반 아웃 검증은 [`lib/holdem/outs.ts`](../lib/holdem/outs.ts)에서 담당합니다.
-
-### 1. 입력
-
-- `holeCards`
-- `board`
-- `outsSpec`
-
-`outsSpec`은 문제 작성자가 "이 문제에서 어떤 종류의 아웃을 세는가"를 명시하는 구조입니다.
+- `pot`: 상대 베팅이 이미 포함된 현재 팟
+- `villainBet`: 지금 내가 콜해야 하는 금액
 
 예:
 
 ```ts
-outsSpec: {
-  components: ["overcardPair", "straightDraw"];
-}
+pot: "60bb"
+villainBet: "30bb"
+correct: "33"
 ```
 
-### 2. 지원하는 아웃 컴포넌트
-
-- `straightDraw`
-- `flushDraw`
-- `overcardPair`
-- `holePairImprove`
-- `currentPairTrips`
-- `pocketPairSet`
-
-### 3. 컴포넌트별 계산 방식
-
-#### `straightDraw`
-
-- 현재 `holeCards + board`로 이미 스트레이트면 추가 아웃은 `0`
-- 그렇지 않으면 남은 모든 카드 47장 또는 46장을 하나씩 대입
-- 대입 후 스트레이트가 완성되는 카드만 아웃으로 채택
-- 스트레이트 판정은 중복 랭크를 제거한 뒤 연속 5장 이상인지 검사
-- A는 `A-2-3-4-5` 휠도 허용하도록 `14`와 `1`을 함께 취급
-
-#### `flushDraw`
-
-- 현재 카드 중 같은 수트가 정확히 4장인 경우만 플러시 드로우로 간주
-- 그 수트의 남은 카드 전부를 아웃으로 계산
-
-#### `overcardPair`
-
-- 홀카드 랭크 중 보드 최고 랭크보다 높은 랭크만 고릅니다.
-- 그 랭크와 같은 남은 카드들을 아웃으로 계산합니다.
-- 예: `AK` on `QJ72`면 `A 3장 + K 3장`
-
-#### `holePairImprove`
-
-- 홀카드 두 랭크의 남은 카드 전부를 계산합니다.
-- 이미 원페어를 가진 핸드가 투페어/트립스로 좋아지는 교육용 문제에 사용합니다.
-
-#### `currentPairTrips`
-
-- 이미 보드와 맞아 있는 홀카드 랭크만 골라, 그 랭크의 남은 카드만 계산합니다.
-- 예: `98` on `T79`에서 `9`만 트립스 아웃으로 계산
-
-#### `pocketPairSet`
-
-- 포켓페어이고 아직 보드에 같은 랭크가 없을 때만 적용
-- 남은 같은 랭크 2장을 셋 아웃으로 계산
-
-### 4. 중복 제거
-
-여러 컴포넌트를 함께 쓰면 같은 카드가 둘 이상의 이유로 잡힐 수 있습니다.
-테스트에서는 각 컴포넌트 결과를 합친 뒤 `Set`으로 중복을 제거합니다.
-
-예:
-
-- 플러시 아웃과 스트레이트 아웃이 같은 카드인 경우
-- 오버카드 페어 아웃과 다른 개선 아웃이 겹치는 경우
-
-최종 아웃 수는 항상 **고유 카드 기준**입니다.
-
-### 5. 확률 계산 방식
-
-#### Turn to River
-
-턴 문제는 남은 카드가 46장입니다.
+검산:
 
 ```text
-hit% = outs / 46
+30 / (60 + 30) = 33.3%
 ```
 
-예:
+## Batch Report
 
-- 10아웃이면 `10 / 46 = 21.74%`
-- 문제에서는 반올림해 `22%`
+batch report는 [`question-batch-report.ts`](../lib/holdem/question-batch-report.ts)가 생성합니다.
 
-#### Flop to River
+산출물:
 
-플랍 문제는 턴과 리버 두 장을 모두 봅니다.
-적중 확률은 "두 번 다 못 맞을 확률"의 여집합으로 계산합니다.
+- `.qa-artifacts/questions/batch-report.json`
+- `.qa-artifacts/questions/batch-report.md`
 
-```text
-hit% = 1 - ((47 - outs) / 47) * ((46 - outs) / 46)
-```
+포함 내용:
 
-예:
+- 변경 question ID 목록
+- 카테고리별 변경 개수
+- exact duplicate / near duplicate
+- 새 태그
+- whole-bank / batch-only 난이도 비율
+- 변경 문제 기준 validation warning / error
+- 필수 샘플 검수 ID
 
-- 8아웃이면 약 `31.45%`
-- 15아웃이면 약 `54.12%`
+샘플 검수 규칙:
 
-테스트는 계산값과 `correct` 차이가 `1%p` 이내면 통과로 봅니다.
-즉 표기용 반올림은 허용하지만, 잘못된 스팟 설계는 통과하지 못하게 하는 의도입니다.
+- 변경 문제가 12개 이하이면 전수 검수
+- 13개 이상이면 warning/error 전수 검수 + 카테고리별 clean question 15% 추가
+- 카테고리별 샘플은 최소 1개, 최대 5개
+- 샘플 선택은 deterministic ordering
 
-## 새 odds 문제를 추가할 때
+## UI QA
 
-카드가 있는 아웃 문제라면 아래를 같이 넣어야 합니다.
+### 1. `qa:questions`
 
-1. `holeCards`
-2. `board`
-3. `mathFocus`의 아웃 수 표기
-4. `correct`의 반올림 확률
-5. `outsSpec`
+변경된 question만 모바일 뷰포트에서 렌더링합니다.
 
-예:
+- 기준 뷰포트: `384x698`
+- 상태: 각 문제를 `quiz`, `feedback` 두 상태로 검사
+- 검사 항목:
+  - horizontal overflow
+  - clipped elements
+  - sibling overlap
 
-```ts
-{
-  id: "odds-999",
-  category: "odds",
-  title: "Turn 10 Outs",
-  holeCards: ["Ah", "Kd"],
-  board: ["Qc", "Js", "7h", "2d"],
-  outsSpec: { components: ["overcardPair", "straightDraw"] },
-  mathFocus: "10 Outs / Turn to River",
-  correct: "22",
-}
-```
+산출물:
 
-이렇게 하면 `question-bank.test.ts`가 문구와 숫자를 같이 검증합니다.
+- `.qa-artifacts/questions/qa-report.json`
+- 변경 문제별 PNG 스크린샷
 
-## 한계
+개발 서버는 다음 규칙으로 처리합니다.
 
-이 테스트는 "포커 엔진 전체"가 아니라 "문제 작성자가 의도한 교육용 아웃 계산"을 검증합니다.
-즉 모든 문제를 GTO/에퀴티 계산기로 재해석하지는 않습니다.
+1. `QA_UI_BASE_URL`이 있으면 그 서버 사용
+2. 없고 `http://127.0.0.1:3000`이 살아 있으면 재사용
+3. 둘 다 아니면 `http://127.0.0.1:3301`에서 개발 서버를 띄움
 
-예를 들어:
+### 2. `qa:ui`
 
-- 더 약한 페어 메이드까지 모두 포함할지
-- 이미 쇼다운 가치가 있는 핸드의 추가 개선만 셀지
-- 백도어를 교육 목적상 제외할지
+[`app/_components/qa-ui-scenarios.ts`](../app/_components/qa-ui-scenarios.ts)의 고정 fixture를 이용한 앱 셸 smoke test입니다.
+새 문제 콘텐츠 레이아웃 검증은 `qa:questions`가 담당하고, `qa:ui`는 홈/요약/설정 같은 화면 회귀 확인 용도로 유지합니다.
 
-이런 부분은 `outsSpec`으로 명시적으로 고정합니다.
-즉 테스트는 자연어를 추측하지 않고, 문제 작성 의도를 구조화해서 검증합니다.
+## 관련 파일
+
+- [`lib/holdem/question-bank-validator.ts`](../lib/holdem/question-bank-validator.ts)
+- [`lib/holdem/question-batch-report.ts`](../lib/holdem/question-batch-report.ts)
+- [`lib/holdem/question-bank.test.ts`](../lib/holdem/question-bank.test.ts)
+- [`lib/holdem/question-bank-validator.test.ts`](../lib/holdem/question-bank-validator.test.ts)
+- [`scripts/questions-validate.ts`](../scripts/questions-validate.ts)
+- [`scripts/questions-catalog.ts`](../scripts/questions-catalog.ts)
+- [`scripts/questions-batch-report.ts`](../scripts/questions-batch-report.ts)
+- [`scripts/qa-questions.mjs`](../scripts/qa-questions.mjs)
+- [`scripts/verify-content.mjs`](../scripts/verify-content.mjs)
+- [`docs/question-pipeline.md`](question-pipeline.md)

@@ -6,6 +6,7 @@ import { HoldemReadyAppView } from "@/app/_components/holdem-ready-view";
 import { HOLDEM_READY_NOOP_ACTIONS } from "@/app/_components/holdem-ready-model";
 import {
   DEFAULT_HOLDEM_READY_QA_SCENARIO_ID,
+  buildQuestionQAScenario,
   getHoldemReadyQAScenario,
   holdemReadyQAScenarios,
 } from "@/app/_components/qa-ui-scenarios";
@@ -13,9 +14,13 @@ import {
 export function QAUIPreview() {
   const searchParams = useSearchParams();
   const scenarioId = searchParams.get("scenario") ?? DEFAULT_HOLDEM_READY_QA_SCENARIO_ID;
+  const questionId = searchParams.get("question");
+  const questionMode = searchParams.get("mode") === "feedback" ? "feedback" : "quiz";
   const showChrome = searchParams.get("chrome") !== "0";
-  const scenario = getHoldemReadyQAScenario(scenarioId)
-    ?? getHoldemReadyQAScenario(DEFAULT_HOLDEM_READY_QA_SCENARIO_ID);
+  const scenario = questionId
+    ? buildQuestionQAScenario(questionId, questionMode)
+    : getHoldemReadyQAScenario(scenarioId)
+      ?? getHoldemReadyQAScenario(DEFAULT_HOLDEM_READY_QA_SCENARIO_ID);
 
   if (!scenario) {
     return null;
@@ -29,23 +34,25 @@ export function QAUIPreview() {
             <p className="text-[11px] uppercase tracking-[0.24em] text-[#8ecdf7]">UI QA Preview</p>
             <h1 className="mt-2 font-serif text-3xl text-[#e7f6ff]">{scenario.label}</h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-[#d9ecfa]/78">{scenario.description}</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {holdemReadyQAScenarios.map((item) => (
-                <Link
-                  key={item.id}
-                  href={`/qa/ui?scenario=${item.id}`}
-                  data-qa-scenario-link={item.id}
-                  className={[
-                    "rounded-full border px-3 py-2 text-xs uppercase tracking-[0.16em] transition",
-                    item.id === scenario.id
-                      ? "border-[#8ecdf7]/40 bg-[#123140] text-[#e7f6ff]"
-                      : "border-white/10 bg-white/6 text-[#d9ecfa]/72 hover:bg-white/10",
-                  ].join(" ")}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
+            {!questionId && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {holdemReadyQAScenarios.map((item) => (
+                  <Link
+                    key={item.id}
+                    href={`/qa/ui?scenario=${item.id}`}
+                    data-qa-scenario-link={item.id}
+                    className={[
+                      "rounded-full border px-3 py-2 text-xs uppercase tracking-[0.16em] transition",
+                      item.id === scenario.id
+                        ? "border-[#8ecdf7]/40 bg-[#123140] text-[#e7f6ff]"
+                        : "border-white/10 bg-white/6 text-[#d9ecfa]/72 hover:bg-white/10",
+                    ].join(" ")}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -105,6 +105,9 @@ npm run dev
 npm run build
 npm run lint
 npm test
+npm run verify:content -- --base origin/main
+npm run questions:catalog
+npm run qa:questions -- --base origin/main
 ```
 
 정적 결과물은 `npm run build` 후 `out/` 디렉터리에 생성됩니다.
@@ -204,3 +207,5 @@ scripts/
 
 - [앱 개요 문서](docs/app-overview.md)
 - [테스트 가이드](docs/testing.md)
+- [문제 작성 파이프라인](docs/question-pipeline.md)
+- [문제 카탈로그](docs/question-catalog.md)

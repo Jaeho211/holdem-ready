@@ -3,12 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prepare": "node scripts/install-hooks.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "verify:content": "node scripts/verify-content.mjs",
+    "questions:validate": "node --import tsx scripts/questions-validate.ts",
+    "questions:catalog": "node --import tsx scripts/questions-catalog.ts",
+    "questions:batch-report": "node --import tsx scripts/questions-batch-report.ts",
     "qa:ui": "node scripts/qa-ui.mjs",
+    "qa:questions": "node --import tsx scripts/qa-questions.mjs",
     "qa:ui:install": "playwright install chromium"
   },
   "dependencies": {
@@ -25,6 +31,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "typescript": "^5",
     "vitest": "^4.1.1"
   }

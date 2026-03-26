@@ -200,13 +200,13 @@ export const oddsQuestions: OddsQuestion[] = [
     category: "odds",
     difficulty: "기초",
     title: "풀팟 베팅의 필요 승률",
-    prompt: "현재 팟과 상대 베팅이 같은 크기라, 콜에 필요한 최소 승률을 빠르게 떠올려야 하는 상황입니다.",
+    prompt: "기존 팟 30bb에 상대가 30bb를 베팅해, 풀팟 콜에 필요한 최소 승률을 빠르게 떠올려야 하는 상황입니다.",
     explanation: "팟 사이즈 베팅에는 약 33%의 승률이 필요합니다. 하프 팟(25%)과 함께 가장 자주 나오는 기준이므로 몸에 배게 외우면 좋습니다.",
     pitfall: "풀팟 베팅과 하프 팟 베팅의 필요 승률을 혼동하는 실수",
     tags: ["포트 오즈", "필요 승률"],
-    pot: "30bb",
+    pot: "60bb",
     villainBet: "30bb",
-    actionBefore: "상대가 팟 사이즈 베팅을 한 일반 상황",
+    actionBefore: "기존 팟 30bb에 상대가 30bb(풀팟) 베팅해 현재 팟이 60bb인 상황",
     mathFocus: "상대가 풀팟 베팅",
     options: [
       {

@@ -11,6 +11,34 @@ export type ChoiceOption = {
   label: string;
 };
 
+export type PostflopStreet = "flop" | "turn" | "river";
+export type PostflopMadeHand =
+  | "topPair"
+  | "middlePair"
+  | "bottomPair"
+  | "overpair"
+  | "twoPair"
+  | "set"
+  | "trips"
+  | "straight"
+  | "flush"
+  | "fullHouse";
+export type PostflopDraw =
+  | "flushDraw"
+  | "nutFlushDraw"
+  | "oesd"
+  | "gutshot"
+  | "comboDraw";
+export type PostflopBoardTexture = "dry" | "wet";
+export type PostflopSuitTexture = "rainbow" | "twoTone" | "mono";
+export type PostflopReviewSpec = {
+  street: PostflopStreet;
+  madeHand?: PostflopMadeHand;
+  draws?: readonly PostflopDraw[];
+  boardTexture?: PostflopBoardTexture;
+  suitTexture?: PostflopSuitTexture;
+};
+
 type QuestionBase = {
   id: string;
   category: TrainingCategory;
@@ -43,6 +71,7 @@ export type PostflopQuestion = QuestionBase & {
   villainBet: string;
   actionBefore: string;
   stack: string;
+  reviewSpec: PostflopReviewSpec;
   correct: DecisionChoice;
 };
 

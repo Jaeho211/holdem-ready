@@ -1,0 +1,78 @@
+name: content-quality
+
+on:
+  pull_request:
+    paths:
+      - "lib/training-data/**"
+      - "lib/holdem/question-bank*"
+      - "lib/holdem/question-batch-report.ts"
+      - "lib/holdem/question-bank-validator.ts"
+      - "lib/holdem/postflop-review.ts"
+      - "app/_components/qa-ui-*"
+      - "app/qa/ui/**"
+      - "scripts/qa-*"
+      - "scripts/question-*"
+      - "scripts/verify-content.mjs"
+      - "docs/question-pipeline.md"
+      - "docs/question-catalog.md"
+      - "docs/testing.md"
+      - "docs/skills/question-generator.md"
+      - "package.json"
+      - "package-lock.json"
+  push:
+    branches:
+      - main
+    paths:
+      - "lib/training-data/**"
+      - "lib/holdem/question-bank*"
+      - "lib/holdem/question-batch-report.ts"
+      - "lib/holdem/question-bank-validator.ts"
+      - "lib/holdem/postflop-review.ts"
+      - "app/_components/qa-ui-*"
+      - "app/qa/ui/**"
+      - "scripts/qa-*"
+      - "scripts/question-*"
+      - "scripts/verify-content.mjs"
+      - "docs/question-pipeline.md"
+      - "docs/question-catalog.md"
+      - "docs/testing.md"
+      - "docs/skills/question-generator.md"
+      - "package.json"
+      - "package-lock.json"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Verify Content
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            npm run verify:content -- --base "${{ github.event.pull_request.base.sha }}"
+          else
+            npm run verify:content
+          fi
+
+      - name: Ensure Generated Catalog Is Committed
+        run: git diff --exit-code -- docs/question-catalog.md
+
+      - name: Install Playwright Chromium
+        run: npm run qa:ui:install
+
+      - name: QA Changed Questions
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            npm run qa:questions -- --base "${{ github.event.pull_request.base.sha }}"
+          else
+            npm run qa:questions
+          fi

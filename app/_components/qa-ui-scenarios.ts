@@ -13,6 +13,8 @@ export type HoldemReadyQAScenario = {
   state: HoldemReadyAppState;
 };
 
+export type QuestionQAMode = "quiz" | "feedback";
+
 const FIXED_NOW = "2026-03-25T12:00:00+09:00";
 const FIXED_NOW_DATE = new Date(FIXED_NOW);
 
@@ -24,6 +26,16 @@ const getQuestion = (questionId: string) => {
   }
 
   return question;
+};
+
+const getIncorrectChoice = (questionId: string): AnswerChoice => {
+  const question = getQuestion(questionId);
+
+  if (question.category === "odds") {
+    return question.options.find((option) => option.value !== question.correct)?.value ?? question.correct;
+  }
+
+  return ["fold", "call", "raise"].find((choice) => choice !== question.correct) ?? question.correct;
 };
 
 const buildTimestamp = (daysAgo: number, hour: number) => {
@@ -372,3 +384,69 @@ export const HOLDEM_READY_QA_SCENARIOS_BY_ID = Object.fromEntries(
 
 export const getHoldemReadyQAScenario = (scenarioId: string) =>
   HOLDEM_READY_QA_SCENARIOS_BY_ID[scenarioId];
+
+export const buildQuestionQAScenario = (
+  questionId: string,
+  mode: QuestionQAMode,
+): HoldemReadyQAScenario | null => {
+  const question = QUESTIONS_BY_ID[questionId];
+
+  if (!question) {
+    return null;
+  }
+
+  if (mode === "feedback") {
+    const wrongChoice = getIncorrectChoice(questionId);
+
+    return {
+      id: `question-${questionId}-feedback`,
+      label: `${questionId} Feedback`,
+      description: `${questionId} 문제의 피드백 시트 상태입니다.`,
+      state: {
+        store: buildStore({
+          responses: [buildResponse(questionId, wrongChoice, 0, 12)],
+        }),
+        view: "quiz",
+        tab: "home",
+        session: {
+          ...createSession(`qa:question:${questionId}:feedback`, `QA ${questionId}`, [questionId]),
+          index: 1,
+          results: [
+            {
+              questionId,
+              choice: wrongChoice,
+              correct: false,
+            },
+          ],
+        },
+        feedback: {
+          questionId,
+          choice: wrongChoice,
+          correct: false,
+          questionNumber: 1,
+        },
+        summary: null,
+        settingsOpen: false,
+        wrongFilter: "all",
+        nowIso: FIXED_NOW,
+      },
+    };
+  }
+
+  return {
+    id: `question-${questionId}-quiz`,
+    label: `${questionId} Quiz`,
+    description: `${questionId} 문제의 기본 퀴즈 상태입니다.`,
+    state: {
+      store: buildStore(),
+      view: "quiz",
+      tab: "home",
+      session: createSession(`qa:question:${questionId}:quiz`, `QA ${questionId}`, [questionId]),
+      feedback: null,
+      summary: null,
+      settingsOpen: false,
+      wrongFilter: "all",
+      nowIso: FIXED_NOW,
+    },
+  };
+};
