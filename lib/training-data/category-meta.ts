@@ -41,6 +41,6 @@ export const categoryMeta: Record<
     description: "라스베가스 테이블에서 당황하지 않게 체크리스트로 정리합니다.",
     difficulty: "현장 적응",
     accent: "from-rose-300/25 via-orange-200/10 to-transparent",
-    emphasis: "액션 순서와 매너",
+    emphasis: "블라인드 구조와 초보 실수",
   },
 };
