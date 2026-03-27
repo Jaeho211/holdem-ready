@@ -37,6 +37,7 @@ export type HoldemReadyAppActions = {
   exitQuiz: () => void;
   setWrongFilter: (filter: WrongFilter) => void;
   reviewWrong: (questionId: string) => void;
+  reviewQuestion: (questionId: string) => void;
 };
 
 const noop = () => undefined;
@@ -56,4 +57,5 @@ export const HOLDEM_READY_NOOP_ACTIONS: HoldemReadyAppActions = {
   exitQuiz: noop,
   setWrongFilter: noop,
   reviewWrong: noop,
+  reviewQuestion: noop,
 };

@@ -157,6 +157,7 @@ export function HomeScreen({
   onStartDaily,
   onStartWrongs,
   onOpenLiveTips,
+  onStartWeakness,
 }: {
   todayCount: number;
   dailyGoal: Settings["dailyGoal"];
@@ -169,6 +170,7 @@ export function HomeScreen({
   onStartDaily: () => void;
   onStartWrongs: () => void;
   onOpenLiveTips: () => void;
+  onStartWeakness: (tag: string) => void;
 }) {
   return (
     <section data-qa-screen="home" className="space-y-4">
@@ -219,6 +221,26 @@ export function HomeScreen({
           </Secondary>
         </div>
       </Surface>
+      {hasWeaknessHistory && weakTags.length > 0 && (
+        <Surface>
+          <CardEyebrow>추천 학습</CardEyebrow>
+          <h3 className="mt-2 font-serif text-2xl text-[#f6efe0]">지금 바로 붙들 약점 3개</h3>
+          <div className="mt-4 space-y-3">
+            {weakTags.map((tag) => (
+              <div
+                key={tag}
+                className="flex items-center justify-between gap-3 rounded-[20px] border border-[#d7b977]/18 bg-[#0a241c] px-4 py-3"
+              >
+                <div>
+                  <p className="text-sm uppercase tracking-[0.18em] text-[#d7b977]">Weak Spot</p>
+                  <p className="mt-1 text-lg font-medium text-[#f8f1de]">{tag}</p>
+                </div>
+                <Secondary onClick={() => onStartWeakness(tag)}>지금 5문제</Secondary>
+              </div>
+            ))}
+          </div>
+        </Surface>
+      )}
       <Surface>
         <CardEyebrow>빠른 메모</CardEyebrow>
         <h3 className="mt-2 font-serif text-2xl text-[#f6efe0]">Live Tips Progress</h3>
@@ -350,16 +372,16 @@ export function RecordsScreen({
   totalResponses,
   categoryAccuracies,
   trend,
-  weakTags,
-  onStartWeakness,
+  responses,
+  onReviewQuestion,
 }: {
   overallAccuracy: number;
   streakDays: number;
   totalResponses: number;
   categoryAccuracies: Record<TrainingCategory, number | null>;
   trend: TrendPoint[];
-  weakTags: string[];
-  onStartWeakness: (tag: string) => void;
+  responses: ResponseEntry[];
+  onReviewQuestion: (questionId: string) => void;
 }) {
   return (
     <section data-qa-screen="records" className="space-y-4">
@@ -410,24 +432,46 @@ export function RecordsScreen({
           ))}
         </div>
       </Surface>
-      <Surface>
-        <CardEyebrow>추천 학습</CardEyebrow>
-        <h2 className="mt-2 font-serif text-2xl text-[#f6efe0]">지금 바로 붙들 약점 3개</h2>
-        <div className="mt-4 space-y-3">
-          {weakTags.map((tag) => (
-            <div
-              key={tag}
-              className="flex items-center justify-between gap-3 rounded-[20px] border border-[#d7b977]/18 bg-[#0a241c] px-4 py-3"
-            >
-              <div>
-                <p className="text-sm uppercase tracking-[0.18em] text-[#d7b977]">Weak Spot</p>
-                <p className="mt-1 text-lg font-medium text-[#f8f1de]">{tag}</p>
-              </div>
-              <Secondary onClick={() => onStartWeakness(tag)}>지금 5문제</Secondary>
-            </div>
-          ))}
-        </div>
-      </Surface>
+      {responses.length > 0 && (
+        <Surface>
+          <CardEyebrow>전체 기록</CardEyebrow>
+          <h2 className="mt-2 font-serif text-2xl text-[#f6efe0]">풀었던 문제</h2>
+          <div className="mt-4 space-y-3">
+            {responses.slice(0, 50).map((entry, i) => {
+              const question = QUESTIONS_BY_ID[entry.questionId];
+              if (!question) return null;
+              return (
+                <div
+                  key={`${entry.questionId}-${entry.answeredAt}-${i}`}
+                  className="flex items-center gap-3 rounded-[20px] border border-[#d7b977]/18 bg-[#0a241c] px-4 py-3"
+                >
+                  <span
+                    className={cn(
+                      "shrink-0 text-base font-semibold",
+                      entry.correct ? "text-[#2f9f6b]" : "text-[#d56262]",
+                    )}
+                  >
+                    {entry.correct ? "✓" : "✗"}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-[#d7b977]">
+                      {categoryMeta[entry.category].label}
+                    </p>
+                    <p className="mt-0.5 truncate text-sm text-[#f8f1de]">{question.title}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onReviewQuestion(entry.questionId)}
+                    className="shrink-0 rounded-full border border-[#d7b977]/40 bg-[#d7b977]/10 px-4 py-2 text-xs text-[#d7b977] transition hover:bg-[#d7b977]/20"
+                  >
+                    다시 풀기
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </Surface>
+      )}
     </section>
   );
 }

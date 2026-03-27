@@ -218,6 +218,9 @@ export function HoldemReadyApp() {
     reviewWrong: (questionId: string) => {
       beginSession(buildSingleQuestionSession(questionId));
     },
+    reviewQuestion: (questionId: string) => {
+      beginSession(buildSingleQuestionSession(questionId));
+    },
   };
 
   return <HoldemReadyAppView state={state} actions={actions} />;

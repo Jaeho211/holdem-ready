@@ -81,6 +81,7 @@ export function HoldemReadyAppView({
             onStartDaily={actions.startDaily}
             onStartWrongs={() => actions.startWrongs()}
             onOpenLiveTips={actions.openLiveTips}
+            onStartWeakness={actions.startWeakness}
           />
         )}
 
@@ -102,8 +103,8 @@ export function HoldemReadyAppView({
             totalResponses={state.store.responses.length}
             categoryAccuracies={categoryAccuracies}
             trend={getTrend(state.store.responses, now)}
-            weakTags={weakTags}
-            onStartWeakness={actions.startWeakness}
+            responses={state.store.responses}
+            onReviewQuestion={actions.reviewQuestion}
           />
         )}
 
