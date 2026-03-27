@@ -157,6 +157,7 @@ export function HomeScreen({
   onStartDaily,
   onStartWrongs,
   onOpenLiveTips,
+  onStartWeakness,
 }: {
   todayCount: number;
   dailyGoal: Settings["dailyGoal"];
@@ -169,6 +170,7 @@ export function HomeScreen({
   onStartDaily: () => void;
   onStartWrongs: () => void;
   onOpenLiveTips: () => void;
+  onStartWeakness: (tag: string) => void;
 }) {
   return (
     <section data-qa-screen="home" className="space-y-4">
@@ -219,6 +221,26 @@ export function HomeScreen({
           </Secondary>
         </div>
       </Surface>
+      {hasWeaknessHistory && weakTags.length > 0 && (
+        <Surface>
+          <CardEyebrow>추천 학습</CardEyebrow>
+          <h3 className="mt-2 font-serif text-2xl text-[#f6efe0]">지금 바로 붙들 약점 3개</h3>
+          <div className="mt-4 space-y-3">
+            {weakTags.map((tag) => (
+              <div
+                key={tag}
+                className="flex items-center justify-between gap-3 rounded-[20px] border border-[#d7b977]/18 bg-[#0a241c] px-4 py-3"
+              >
+                <div>
+                  <p className="text-sm uppercase tracking-[0.18em] text-[#d7b977]">Weak Spot</p>
+                  <p className="mt-1 text-lg font-medium text-[#f8f1de]">{tag}</p>
+                </div>
+                <Secondary onClick={() => onStartWeakness(tag)}>지금 5문제</Secondary>
+              </div>
+            ))}
+          </div>
+        </Surface>
+      )}
       <Surface>
         <CardEyebrow>빠른 메모</CardEyebrow>
         <h3 className="mt-2 font-serif text-2xl text-[#f6efe0]">Live Tips Progress</h3>
@@ -350,9 +372,7 @@ export function RecordsScreen({
   totalResponses,
   categoryAccuracies,
   trend,
-  weakTags,
   responses,
-  onStartWeakness,
   onReviewQuestion,
 }: {
   overallAccuracy: number;
@@ -360,9 +380,7 @@ export function RecordsScreen({
   totalResponses: number;
   categoryAccuracies: Record<TrainingCategory, number | null>;
   trend: TrendPoint[];
-  weakTags: string[];
   responses: ResponseEntry[];
-  onStartWeakness: (tag: string) => void;
   onReviewQuestion: (questionId: string) => void;
 }) {
   return (
@@ -410,24 +428,6 @@ export function RecordsScreen({
                 style={{ height: Math.max(entry.count * 16, 14) }}
               />
               <p className="mt-2 text-[11px] text-[#efe2be]/70">{entry.label}</p>
-            </div>
-          ))}
-        </div>
-      </Surface>
-      <Surface>
-        <CardEyebrow>추천 학습</CardEyebrow>
-        <h2 className="mt-2 font-serif text-2xl text-[#f6efe0]">지금 바로 붙들 약점 3개</h2>
-        <div className="mt-4 space-y-3">
-          {weakTags.map((tag) => (
-            <div
-              key={tag}
-              className="flex items-center justify-between gap-3 rounded-[20px] border border-[#d7b977]/18 bg-[#0a241c] px-4 py-3"
-            >
-              <div>
-                <p className="text-sm uppercase tracking-[0.18em] text-[#d7b977]">Weak Spot</p>
-                <p className="mt-1 text-lg font-medium text-[#f8f1de]">{tag}</p>
-              </div>
-              <Secondary onClick={() => onStartWeakness(tag)}>지금 5문제</Secondary>
             </div>
           ))}
         </div>
