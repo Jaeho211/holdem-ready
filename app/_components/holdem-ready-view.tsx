@@ -124,7 +124,6 @@ export function HoldemReadyAppView({
             feedback={state.feedback}
             onExit={actions.exitQuiz}
             onAnswer={actions.answer}
-            onStartWeakness={actions.startWeakness}
             onNext={actions.next}
             onOpenHome={() => actions.openTab("home")}
             onOpenRecords={() => actions.openTab("records")}

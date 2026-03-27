@@ -853,7 +853,6 @@ export function QuizScreen({
   feedback,
   onExit,
   onAnswer,
-  onStartWeakness,
   onNext,
   onOpenHome,
   onOpenRecords,
@@ -864,7 +863,6 @@ export function QuizScreen({
   feedback: Feedback | null;
   onExit: () => void;
   onAnswer: (choice: AnswerChoice) => void;
-  onStartWeakness: (tag: string) => void;
   onNext: () => void;
   onOpenHome: () => void;
   onOpenRecords: () => void;
@@ -1041,13 +1039,7 @@ export function QuizScreen({
                   <p className="text-[11px] uppercase tracking-[0.22em] text-[#d7b977]">Beginner Leak</p>
                   <p className="mt-2 text-sm leading-6 text-[#efe2be]/78">{currentQuestion.pitfall}</p>
                 </div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <Secondary
-                    onClick={() => onStartWeakness(currentQuestion.tags[0])}
-                    className="w-full justify-center"
-                  >
-                    비슷한 문제 더 풀기
-                  </Secondary>
+                <div className="mt-4">
                   <Primary onClick={onNext} className="w-full justify-center">
                     {session.index >= session.questionIds.length ? "세션 결과 보기" : "다음 문제"}
                   </Primary>
