@@ -103,7 +103,9 @@ export function HoldemReadyAppView({
             categoryAccuracies={categoryAccuracies}
             trend={getTrend(state.store.responses, now)}
             weakTags={weakTags}
+            responses={state.store.responses}
             onStartWeakness={actions.startWeakness}
+            onReviewQuestion={actions.reviewQuestion}
           />
         )}
 
