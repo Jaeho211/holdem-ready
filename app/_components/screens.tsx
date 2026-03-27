@@ -437,7 +437,7 @@ export function RecordsScreen({
           <CardEyebrow>전체 기록</CardEyebrow>
           <h2 className="mt-2 font-serif text-2xl text-[#f6efe0]">풀었던 문제</h2>
           <div className="mt-4 space-y-3">
-            {responses.slice(0, 50).map((entry, i) => {
+            {responses.slice(0, 20).map((entry, i) => {
               const question = QUESTIONS_BY_ID[entry.questionId];
               if (!question) return null;
               return (
