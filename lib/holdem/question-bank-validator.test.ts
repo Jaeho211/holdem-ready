@@ -82,6 +82,45 @@ describe("question bank validator", () => {
     expect(getIssueCodes(result, "pre-001")).toContain("exact-duplicate");
   });
 
+  it("does not flag preflop spot variants when only the hand differs", () => {
+    const assembly = cloneAssembly();
+    assembly.preflopQuestions[1].position = assembly.preflopQuestions[0].position;
+    assembly.preflopQuestions[1].actionBefore = assembly.preflopQuestions[0].actionBefore;
+    assembly.preflopQuestions[1].correct = assembly.preflopQuestions[0].correct;
+    rebuildQuestionBank(assembly);
+
+    const result = validateQuestionBank(assembly);
+
+    expect(getIssueCodes(result, "pre-001")).not.toContain("near-duplicate");
+  });
+
+  it("still flags near duplicates outside preflop hand-only variants", () => {
+    const assembly = cloneAssembly();
+    const left = assembly.oddsQuestions.find((question) => question.id === "odds-006");
+    const right = assembly.oddsQuestions.find((question) => question.id === "odds-016");
+
+    if (!left || !right) {
+      throw new Error("expected odds-006 and odds-016 fixtures");
+    }
+
+    right.pot = left.pot;
+    right.villainBet = left.villainBet;
+    right.correct = left.correct;
+    right.mathFocus = "different math label";
+    rebuildQuestionBank(assembly);
+
+    const result = validateQuestionBank(assembly);
+
+    expect(
+      result.nearDuplicateGroups.some(
+        (group) =>
+          group.questionIds.includes("odds-006") &&
+          group.questionIds.includes("odds-016") &&
+          group.differingFields?.join(",") === "mathFocus",
+      ),
+    ).toBe(true);
+  });
+
   it("flags preflop hand notation mismatches", () => {
     const assembly = cloneAssembly();
     assembly.preflopQuestions[0].hand = "AQo";

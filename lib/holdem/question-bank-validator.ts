@@ -847,6 +847,10 @@ const analyzeDuplicateGroups = (questionBank: HoldemQuestion[]) => {
           .filter((part, partIndex) => part.value !== rightParts[partIndex]?.value)
           .map((part) => part.field);
 
+        if (category === "preflop" && differingFields.length === 1 && differingFields[0] === "hand") {
+          continue;
+        }
+
         if (differingFields.length === 1) {
           nearDuplicateGroups.push({
             category,
