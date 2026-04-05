@@ -4,10 +4,10 @@
 
 ## Totals
 
-- 전체: 88
-- preflop: 31
-- postflop: 29
-- odds: 28
+- 전체: 112
+- preflop: 34
+- postflop: 45
+- odds: 33
 
 ## preflop
 
@@ -44,6 +44,9 @@
 | pre-029 | 실전 | BB / ATo / SB 1bb 완료 / raise | 림퍼 아이솔레이트, BB 디펜스 | raise |
 | pre-030 | 기초 | MP / QJs / 모두 폴드 / raise | 수딧 브로드웨이, 미들 포지션 | raise |
 | pre-031 | 응용 | HJ / QQ / UTG 3bb 오픈, MP 폴드 / raise | 3벳 팟, 포켓페어 오픈 | raise |
+| pre-032 | 기초 | CO / 77 / UTG/MP/HJ 폴드 / raise | 포켓페어 오픈, 컷오프 오픈 | raise |
+| pre-033 | 실전 | BTN / AJo / HJ 림프, CO 폴드 / raise | 림퍼 아이솔레이트, 오프수트 브로드웨이 | raise |
+| pre-034 | 응용 | SB / KQs / CO 2.5bb 오픈, BTN 폴드 / call | SB 디펜스, 수딧 브로드웨이 | call |
 
 ## postflop
 
@@ -78,6 +81,22 @@
 | post-027 | 실전 | Qd/Jd / Jc/7s/3h/7d / BTN 오픈에 BB 콜, 플랍 체크콜 후 턴에서 BB 소형 리드 / call | 강한 메이드 핸드, 드라이 보드 | call |
 | post-028 | 응용 | Ah/Qh / Jd/Th/4c/2h / BTN 콜 vs CO 오픈, 플랍 체크콜 후 턴에서 CO 세컨드 배럴 / call | 강한 드로우, 턴 더블배럴 | call |
 | post-029 | 실전 | Ac/9c / As/9d/4h/4s/2c / BTN 오픈에 BB 콜, 플랍 체크콜, 턴 체크체크, 리버 체크 / raise | 리버 밸류벳, 강한 메이드 핸드 | raise |
+| post-030 | 기초 | Kd/Jc / Kh/7s/3d / BB 콜 vs BTN 오픈, 플랍 체크 후 BTN 하프팟 c-bet / call | 탑페어 운영, 플랍 콜다운 | call |
+| post-031 | 실전 | Kh/Qh / Qs/Jd/Tc / BB 콜 vs CO 오픈, 플랍 체크 후 CO 소형 c-bet / call | 탑페어 운영, 젖은 보드 | call |
+| post-032 | 기초 | Qd/Js / Kh/Jc/4s / BTN 오픈에 BB 콜, 플랍에서 BB 소형 돈크벳 / call | 미들페어, 돈크벳 대응 | call |
+| post-033 | 실전 | 9h/8h / Kh/9d/4h / BB 콜 vs BTN 오픈, 플랍 체크 후 BTN 소형 c-bet / call | 미들페어, 젖은 보드 | call |
+| post-034 | 기초 | Qc/Qd / Jc/7c/4h / HJ 오픈에 BB 콜, 플랍 c-bet 후 BB 체크레이즈 / call | 오버페어 운영, 체크레이즈 | call |
+| post-035 | 실전 | Qd/9d / Qs/9h/6h / BTN 오픈에 BB 콜, 플랍에서 BB 소형 돈크벳 / raise | 강한 메이드 핸드, 돈크벳 대응 | raise |
+| post-036 | 기초 | 8c/8d / As/8h/2c / BB 콜 vs BTN 오픈, 플랍 체크 후 BTN 소형 c-bet / call | 셋 슬로우플레이, 드라이 보드 | call |
+| post-037 | 응용 | Kd/Tc / Ts/Th/8h / BB 콜 vs BTN 오픈, 플랍 체크 후 BTN 소형 c-bet / raise | 강한 메이드 핸드, 젖은 보드 | raise |
+| post-038 | 기초 | Ad/5c / Qh/9s/5d/Kc / BTN 콜 vs CO 오픈, 플랍 콜 후 CO 턴 세컨드 배럴 / fold | 보텀페어, 턴 폴드 | fold |
+| post-039 | 기초 | Qh/Qc / Jd/7s/3h/2c / BB 콜 vs CO 오픈, 플랍 체크콜 후 CO 턴 세컨드 배럴 / call | 오버페어 운영, 턴 더블배럴 | call |
+| post-040 | 실전 | Kc/Qd / Qs/8h/2d/Ks / BTN 오픈에 BB 콜, 플랍 체크체크 후 턴에서 BB 소형 리드 / raise | 돈크벳 대응, 젖은 보드 | raise |
+| post-041 | 실전 | 9c/9s / Ah/4c/2d/9d / BB 콜 vs CO 오픈, 플랍 체크콜 후 CO 턴 세컨드 배럴 / raise | 강한 메이드 핸드, 체크레이즈 | raise |
+| post-042 | 실전 | Ac/7c / Kh/7s/2d/7d / CO 오픈, 플랍 체크체크 후 BTN이 턴 큰 배팅 / call | 강한 메이드 핸드, 멀티웨이 | call |
+| post-043 | 기초 | Ah/Jc / Jd/7s/4c/2h/9d / BB 콜 vs BTN 오픈, 플랍 체크콜, 턴 체크체크, 리버 큰 베팅 / call | 탑페어 운영, 리버 블러프 캐치 | call |
+| post-044 | 실전 | Kc/Qd / Ks/Qh/7d/4c/2s / BTN 오픈에 BB 콜, 플랍 체크콜, 턴 체크체크, 리버 체크 / raise | 리버 밸류벳, 강한 메이드 핸드 | raise |
+| post-045 | 응용 | Ac/7d / Kh/7s/2c/Qd/7h / BB 콜 vs BTN 오픈, 플랍 체크콜, 턴 체크체크, 리버 큰 베팅 / call | 리버 블러프 캐치, 강한 메이드 핸드 | call |
 
 ## odds
 
@@ -111,4 +130,9 @@
 | odds-026 | 기초 | Kd/9c / Qs/Jh/5d/2c / 7 Outs / Turn to River / 15 | 아웃 계산, 턴 확률 | 15 |
 | odds-027 | 응용 | Jd/Tc / Qh/9s/Jh / 13 Outs / Flop to River / 48 | 아웃 계산, 플랍 확률 | 48 |
 | odds-028 | 응용 | 9h/8h / Ah/Td/7h / 15 Outs / Flop to River / 54 | 아웃 계산, 플랍 확률 | 54 |
+| odds-029 | 기초 | 7c/7d / Ah/Ks/2c / 2 Outs / Flop to River / 8 | 아웃 계산, 플랍 확률 | 8 |
+| odds-030 | 기초 | Ah/Kc / Qd/7s/2h/4c / 6 Outs / Turn to River / 13 | 아웃 계산, 턴 확률 | 13 |
+| odds-031 | 실전 | Ad/9c / As/7h/2d/Kc / 2 Outs / Turn to River / 4 | 아웃 계산, 턴 확률 | 4 |
+| odds-032 | 실전 | 5c/5s / Qh/9d/2c/Jd / 2 Outs / Turn to River / 4 | 아웃 계산, 턴 확률 | 4 |
+| odds-033 | 응용 | Qd/Js / Kh/Jc/4s / 5 Outs / Flop to River / 20 | 아웃 계산, 플랍 확률 | 20 |
 
