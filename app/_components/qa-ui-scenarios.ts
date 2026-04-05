@@ -4,13 +4,13 @@ import { createSession, getDailySessionKey } from "@/lib/holdem/sessions";
 import { liveTipSections } from "@/lib/training-data";
 import type { AnswerChoice } from "@/lib/training-data";
 import type { ResponseEntry, Session, Store } from "@/lib/holdem/types";
-import type { HoldemReadyAppState } from "./holdem-ready-model";
+import type { HoldemQuizAppState } from "./holdem-quiz-model";
 
-export type HoldemReadyQAScenario = {
+export type HoldemQuizQAScenario = {
   id: string;
   label: string;
   description: string;
-  state: HoldemReadyAppState;
+  state: HoldemQuizAppState;
 };
 
 export type QuestionQAMode = "quiz" | "feedback";
@@ -148,9 +148,9 @@ const quizSummarySession: Session = {
   ],
 };
 
-export const DEFAULT_HOLDEM_READY_QA_SCENARIO_ID = "home-default";
+export const DEFAULT_HOLDEM_QUIZ_QA_SCENARIO_ID = "home-default";
 
-export const holdemReadyQAScenarios: HoldemReadyQAScenario[] = [
+export const holdemQuizQAScenarios: HoldemQuizQAScenario[] = [
   {
     id: "home-default",
     label: "Home Default",
@@ -378,17 +378,17 @@ export const holdemReadyQAScenarios: HoldemReadyQAScenario[] = [
   },
 ];
 
-export const HOLDEM_READY_QA_SCENARIOS_BY_ID = Object.fromEntries(
-  holdemReadyQAScenarios.map((scenario) => [scenario.id, scenario]),
-) as Record<string, HoldemReadyQAScenario>;
+export const HOLDEM_QUIZ_QA_SCENARIOS_BY_ID = Object.fromEntries(
+  holdemQuizQAScenarios.map((scenario) => [scenario.id, scenario]),
+) as Record<string, HoldemQuizQAScenario>;
 
-export const getHoldemReadyQAScenario = (scenarioId: string) =>
-  HOLDEM_READY_QA_SCENARIOS_BY_ID[scenarioId];
+export const getHoldemQuizQAScenario = (scenarioId: string) =>
+  HOLDEM_QUIZ_QA_SCENARIOS_BY_ID[scenarioId];
 
 export const buildQuestionQAScenario = (
   questionId: string,
   mode: QuestionQAMode,
-): HoldemReadyQAScenario | null => {
+): HoldemQuizQAScenario | null => {
   const question = QUESTIONS_BY_ID[questionId];
 
   if (!question) {

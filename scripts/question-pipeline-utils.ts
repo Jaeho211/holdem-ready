@@ -106,7 +106,7 @@ const writeSnapshotFile = async (baseRef: string, tempDir: string, relativePath:
 };
 
 export const loadQuestionBankFromRef = async (baseRef: string) => {
-  const tempDir = await mkdtemp(path.join(os.tmpdir(), "holdem-ready-questions-"));
+  const tempDir = await mkdtemp(path.join(os.tmpdir(), "holdem-quiz-questions-"));
 
   for (const relativePath of SNAPSHOT_FILES) {
     await writeSnapshotFile(baseRef, tempDir, relativePath);

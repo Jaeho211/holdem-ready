@@ -2,25 +2,25 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { HoldemReadyAppView } from "@/app/_components/holdem-ready-view";
-import { HOLDEM_READY_NOOP_ACTIONS } from "@/app/_components/holdem-ready-model";
+import { HoldemQuizAppView } from "@/app/_components/holdem-quiz-view";
+import { HOLDEM_QUIZ_NOOP_ACTIONS } from "@/app/_components/holdem-quiz-model";
 import {
-  DEFAULT_HOLDEM_READY_QA_SCENARIO_ID,
+  DEFAULT_HOLDEM_QUIZ_QA_SCENARIO_ID,
   buildQuestionQAScenario,
-  getHoldemReadyQAScenario,
-  holdemReadyQAScenarios,
+  getHoldemQuizQAScenario,
+  holdemQuizQAScenarios,
 } from "@/app/_components/qa-ui-scenarios";
 
 export function QAUIPreview() {
   const searchParams = useSearchParams();
-  const scenarioId = searchParams.get("scenario") ?? DEFAULT_HOLDEM_READY_QA_SCENARIO_ID;
+  const scenarioId = searchParams.get("scenario") ?? DEFAULT_HOLDEM_QUIZ_QA_SCENARIO_ID;
   const questionId = searchParams.get("question");
   const questionMode = searchParams.get("mode") === "feedback" ? "feedback" : "quiz";
   const showChrome = searchParams.get("chrome") !== "0";
   const scenario = questionId
     ? buildQuestionQAScenario(questionId, questionMode)
-    : getHoldemReadyQAScenario(scenarioId)
-      ?? getHoldemReadyQAScenario(DEFAULT_HOLDEM_READY_QA_SCENARIO_ID);
+    : getHoldemQuizQAScenario(scenarioId)
+      ?? getHoldemQuizQAScenario(DEFAULT_HOLDEM_QUIZ_QA_SCENARIO_ID);
 
   if (!scenario) {
     return null;
@@ -36,7 +36,7 @@ export function QAUIPreview() {
             <p className="mt-2 max-w-2xl text-sm leading-6 text-[#d9ecfa]/78">{scenario.description}</p>
             {!questionId && (
               <div className="mt-4 flex flex-wrap gap-2">
-                {holdemReadyQAScenarios.map((item) => (
+                {holdemQuizQAScenarios.map((item) => (
                   <Link
                     key={item.id}
                     href={`/qa/ui?scenario=${item.id}`}
@@ -58,7 +58,7 @@ export function QAUIPreview() {
       )}
 
       <div className={showChrome ? "px-0 pb-10" : ""}>
-        <HoldemReadyAppView state={scenario.state} actions={HOLDEM_READY_NOOP_ACTIONS} />
+        <HoldemQuizAppView state={scenario.state} actions={HOLDEM_QUIZ_NOOP_ACTIONS} />
       </div>
     </div>
   );

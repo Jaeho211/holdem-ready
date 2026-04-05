@@ -11,8 +11,8 @@ import {
   getWrongEntries,
 } from "@/lib/holdem/selectors";
 import { getDailySessionKey } from "@/lib/holdem/sessions";
-import type { HoldemReadyAppActions, HoldemReadyAppState } from "./holdem-ready-model";
-import { HOLDEM_READY_NOOP_ACTIONS } from "./holdem-ready-model";
+import type { HoldemQuizAppActions, HoldemQuizAppState } from "./holdem-quiz-model";
+import { HOLDEM_QUIZ_NOOP_ACTIONS } from "./holdem-quiz-model";
 import {
   AppHeader,
   BottomNav,
@@ -25,12 +25,12 @@ import {
 } from "./screens";
 import { cn } from "./ui";
 
-export function HoldemReadyAppView({
+export function HoldemQuizAppView({
   state,
-  actions = HOLDEM_READY_NOOP_ACTIONS,
+  actions = HOLDEM_QUIZ_NOOP_ACTIONS,
 }: {
-  state: HoldemReadyAppState;
-  actions?: HoldemReadyAppActions;
+  state: HoldemQuizAppState;
+  actions?: HoldemQuizAppActions;
 }) {
   const now = state.nowIso ? new Date(state.nowIso) : new Date();
   const dailySessionKey = getDailySessionKey(now);

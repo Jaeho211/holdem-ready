@@ -1,4 +1,4 @@
-const CACHE_NAME = "holdem-ready-v1";
+const CACHE_NAME = "holdem-quiz-v1";
 const APP_SHELL = ["/", "/manifest.webmanifest", "/icon.svg"];
 
 self.addEventListener("install", (event) => {
