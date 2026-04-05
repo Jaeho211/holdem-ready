@@ -34,6 +34,8 @@ export type HoldemQuizAppActions = {
   toggleTip: (tipId: string) => void;
   updateSettings: (partial: Partial<Settings>) => void;
   resetAll: () => void;
+  exportBackup: () => void;
+  importBackup: (file: File) => void | Promise<void>;
   exitQuiz: () => void;
   setWrongFilter: (filter: WrongFilter) => void;
   reviewWrong: (questionId: string) => void;
@@ -54,6 +56,8 @@ export const HOLDEM_QUIZ_NOOP_ACTIONS: HoldemQuizAppActions = {
   toggleTip: noop,
   updateSettings: noop,
   resetAll: noop,
+  exportBackup: noop,
+  importBackup: noop,
   exitQuiz: noop,
   setWrongFilter: noop,
   reviewWrong: noop,

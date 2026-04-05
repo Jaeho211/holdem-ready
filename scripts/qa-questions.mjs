@@ -17,7 +17,7 @@ import {
   EXISTING_DEV_BASE_URL,
   isServerAvailable,
   QA_ROUTE,
-  SCREENSHOT_VIEWPORT,
+  SCREENSHOT_VIEWPORTS,
   startDevServer,
   stopDevServer,
   waitForServer,
@@ -256,57 +256,60 @@ try {
   try {
     const results = [];
 
-    for (const target of targets) {
-      const page = await browser.newPage({
-        viewport: {
-          width: SCREENSHOT_VIEWPORT.width,
-          height: SCREENSHOT_VIEWPORT.height,
-        },
-        deviceScaleFactor: 1,
-      });
-
-      try {
-        await page.goto(
-          buildQAUrl(baseUrl, {
-            question: target.questionId,
-            mode: target.mode,
-            chrome: "0",
-          }),
-          {
-            waitUntil: "networkidle",
+    for (const viewport of SCREENSHOT_VIEWPORTS) {
+      for (const target of targets) {
+        const page = await browser.newPage({
+          viewport: {
+            width: viewport.width,
+            height: viewport.height,
           },
-        );
-        await page.waitForSelector('[data-qa-root="app"]');
-        await page.evaluate(async () => {
-          if ("fonts" in document) {
-            await document.fonts.ready;
-          }
+          deviceScaleFactor: 1,
         });
 
-        const screenshotPath = path.join(
-          outputDir,
-          `${target.questionId}-${target.mode}-${SCREENSHOT_VIEWPORT.width}x${SCREENSHOT_VIEWPORT.height}.png`,
-        );
-        await page.screenshot({
-          path: screenshotPath,
-          fullPage: false,
-        });
+        try {
+          await page.goto(
+            buildQAUrl(baseUrl, {
+              question: target.questionId,
+              mode: target.mode,
+              chrome: "0",
+            }),
+            {
+              waitUntil: "networkidle",
+            },
+          );
+          await page.waitForSelector('[data-qa-root="app"]');
+          await page.evaluate(async () => {
+            if ("fonts" in document) {
+              await document.fonts.ready;
+            }
+          });
 
-        const result = await page.evaluate(evaluateLayoutInPage, {
-          scenarioId: `${target.questionId}-${target.mode}`,
-          viewportWidth: SCREENSHOT_VIEWPORT.width,
-          viewportHeight: SCREENSHOT_VIEWPORT.height,
-          viewportDevice: SCREENSHOT_VIEWPORT.device,
-        });
+          const screenshotPath = path.join(
+            outputDir,
+            `${target.questionId}-${target.mode}-${viewport.id}-${viewport.width}x${viewport.height}.png`,
+          );
+          await page.screenshot({
+            path: screenshotPath,
+            fullPage: false,
+          });
 
-        results.push({
-          ...result,
-          questionId: target.questionId,
-          mode: target.mode,
-          screenshotPath: path.relative(process.cwd(), screenshotPath),
-        });
-      } finally {
-        await page.close();
+          const result = await page.evaluate(evaluateLayoutInPage, {
+            scenarioId: `${target.questionId}-${target.mode}`,
+            viewportWidth: viewport.width,
+            viewportHeight: viewport.height,
+            viewportDevice: viewport.device,
+          });
+
+          results.push({
+            ...result,
+            viewportId: viewport.id,
+            questionId: target.questionId,
+            mode: target.mode,
+            screenshotPath: path.relative(process.cwd(), screenshotPath),
+          });
+        } finally {
+          await page.close();
+        }
       }
     }
 

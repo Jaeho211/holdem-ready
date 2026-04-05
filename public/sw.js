@@ -1,9 +1,70 @@
-const CACHE_NAME = "holdem-quiz-v1";
-const APP_SHELL = ["/", "/manifest.webmanifest", "/icon.svg"];
+const CACHE_VERSION = "v3";
+const STATIC_CACHE_NAME = `holdem-ready-static-${CACHE_VERSION}`;
+const RUNTIME_CACHE_NAME = `holdem-ready-runtime-${CACHE_VERSION}`;
+const PRECACHE_URLS = [
+  "/",
+  "/manifest.webmanifest",
+  "/favicon.ico",
+  "/icon.svg",
+  "/icons/icon-192.png",
+  "/icons/icon-512.png",
+  "/icons/icon-maskable-192.png",
+  "/icons/icon-maskable-512.png",
+  "/cards/back.svg",
+  "/privacy",
+  "/support",
+];
+
+const putIfSuccessful = async (cacheName, request, response) => {
+  if (!response || !response.ok) {
+    return response;
+  }
+
+  const cache = await caches.open(cacheName);
+  await cache.put(request, response.clone());
+  return response;
+};
+
+const cacheFirst = async (request) => {
+  const cached = await caches.match(request);
+  if (cached) {
+    return cached;
+  }
+
+  const response = await fetch(request);
+  return putIfSuccessful(RUNTIME_CACHE_NAME, request, response);
+};
+
+const networkFirst = async (request) => {
+  try {
+    const response = await fetch(request);
+    return await putIfSuccessful(RUNTIME_CACHE_NAME, request, response);
+  } catch {
+    const cached = await caches.match(request);
+    return cached || Response.error();
+  }
+};
+
+const handleNavigation = async (request) => {
+  try {
+    const response = await fetch(request);
+    return await putIfSuccessful(RUNTIME_CACHE_NAME, request, response);
+  } catch {
+    const cached = await caches.match(request);
+    if (cached) {
+      return cached;
+    }
+
+    const home = await caches.match("/");
+    return home || Response.error();
+  }
+};
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
+  event.waitUntil(
+    caches.open(STATIC_CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)),
+  );
 });
 
 self.addEventListener("activate", (event) => {
@@ -11,7 +72,7 @@ self.addEventListener("activate", (event) => {
     caches.keys().then((keys) =>
       Promise.all(
         keys
-          .filter((key) => key !== CACHE_NAME)
+          .filter((key) => key !== STATIC_CACHE_NAME && key !== RUNTIME_CACHE_NAME)
           .map((key) => caches.delete(key)),
       ),
     ),
@@ -29,21 +90,21 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-        return response;
-      })
-      .catch(async () => {
-        const cached = await caches.match(event.request);
-        if (cached) {
-          return cached;
-        }
+  if (event.request.mode === "navigate") {
+    event.respondWith(handleNavigation(event.request));
+    return;
+  }
 
-        const shell = await caches.match("/");
-        return shell || Response.error();
-      }),
-  );
+  if (
+    url.pathname.startsWith("/_next/static/") ||
+    event.request.destination === "script" ||
+    event.request.destination === "style" ||
+    event.request.destination === "font" ||
+    event.request.destination === "image"
+  ) {
+    event.respondWith(cacheFirst(event.request));
+    return;
+  }
+
+  event.respondWith(networkFirst(event.request));
 });

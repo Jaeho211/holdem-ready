@@ -5,7 +5,7 @@
   "scripts": {
     "prepare": "node scripts/install-hooks.mjs",
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/postbuild-release.mjs",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
@@ -15,7 +15,8 @@
     "questions:batch-report": "node --import tsx scripts/questions-batch-report.ts",
     "qa:ui": "node scripts/qa-ui.mjs",
     "qa:questions": "node --import tsx scripts/qa-questions.mjs",
-    "qa:ui:install": "playwright install chromium"
+    "qa:ui:install": "playwright install chromium",
+    "release:assets": "node scripts/generate-release-assets.mjs"
   },
   "dependencies": {
     "next": "16.2.1",

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#082118" />
+      <stop offset="55%" stop-color="#0d3629" />
+      <stop offset="100%" stop-color="#04140f" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="rgba(234,196,120,0.38)" />
+      <stop offset="100%" stop-color="rgba(234,196,120,0)" />
+    </radialGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f6dfad" />
+      <stop offset="100%" stop-color="#c89a49" />
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="500" rx="32" fill="url(#bg)" />
+  <rect width="1024" height="500" rx="32" fill="url(#glow)" />
+  <ellipse cx="744" cy="310" rx="208" ry="122" fill="rgba(255,255,255,0.06)" />
+  <ellipse cx="744" cy="310" rx="188" ry="108" fill="rgba(0,0,0,0.1)" stroke="rgba(255,232,193,0.18)" stroke-width="10" />
+  <g transform="translate(744 188)">
+    <rect x="-152" y="-92" width="150" height="214" rx="20" fill="#f7f0dd" transform="rotate(-8)" />
+    <rect x="-56" y="-74" width="150" height="214" rx="20" fill="#ffffff" transform="rotate(10)" />
+    <path d="M6 12c0-48 44-86 98-86 53 0 98 38 98 86 0 48-44 74-98 132C50 86 6 60 6 12Z" fill="url(#gold)" transform="scale(.68) translate(-36 -10)" />
+  </g>
+  <g font-family="'Noto Sans KR', sans-serif">
+    <text x="92" y="126" fill="#d7b977" font-size="24" letter-spacing="8">POKER STUDY APP</text>
+    <text x="92" y="208" fill="#f8f1de" font-size="76" font-weight="700">Holdem Ready</text>
+    <text x="92" y="270" fill="#efe2be" font-size="28">짧은 문제, 오답 복습, 라이브 팁으로</text>
+    <text x="92" y="314" fill="#efe2be" font-size="28">라스베가스 라이브 홀덤 감각을 정리합니다.</text>
+    <g transform="translate(92 362)">
+      <rect width="168" height="48" rx="24" fill="rgba(255,255,255,0.08)" stroke="rgba(255,235,189,0.18)" />
+      <text x="84" y="31" fill="#f8f1de" font-size="22" font-weight="600" text-anchor="middle">오늘의 10문제</text>
+    </g>
+    <g transform="translate(276 362)">
+      <rect width="138" height="48" rx="24" fill="rgba(255,255,255,0.08)" stroke="rgba(255,235,189,0.18)" />
+      <text x="69" y="31" fill="#f8f1de" font-size="22" font-weight="600" text-anchor="middle">오답노트</text>
+    </g>
+    <g transform="translate(430 362)">
+      <rect width="126" height="48" rx="24" fill="rgba(255,255,255,0.08)" stroke="rgba(255,235,189,0.18)" />
+      <text x="63" y="31" fill="#f8f1de" font-size="22" font-weight="600" text-anchor="middle">Live Tips</text>
+    </g>
+  </g>
+</svg>

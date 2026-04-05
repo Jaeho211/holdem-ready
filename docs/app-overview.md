@@ -38,6 +38,11 @@
 - 퀴즈 피드백 시트
 - 용어 설명 모달
 
+정적 안내 페이지:
+
+- `privacy`
+- `support`
+
 참고:
 
 - 현재 UI에는 `training` 뷰가 없습니다.
@@ -129,6 +134,7 @@
 - 진동 여부
 - 사운드 여부
 - 하루 목표 문제 수
+- JSON 백업 내보내기 / 불러오기 진입
 
 ### responses
 
@@ -223,6 +229,11 @@
 - [`public/sw.js`](../public/sw.js)
 
 서비스 워커는 앱 셸에 가까운 리소스를 캐시하고, 네트워크 실패 시 캐시를 우선 사용합니다.
+
+추가 정적 페이지:
+
+- [`app/privacy/page.tsx`](../app/privacy/page.tsx)
+- [`app/support/page.tsx`](../app/support/page.tsx)
 
 ## 스타일과 UI 방향
 

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="felt" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a6d54" />
+      <stop offset="100%" stop-color="#051a14" />
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5dcaa" />
+      <stop offset="100%" stop-color="#be8f3d" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#felt)" />
+  <ellipse cx="256" cy="300" rx="186" ry="126" fill="rgba(255,255,255,0.08)" />
+  <ellipse cx="256" cy="300" rx="170" ry="112" fill="rgba(0,0,0,0.08)" stroke="rgba(255,232,193,0.22)" stroke-width="10" />
+  <g transform="translate(256 220)">
+    <rect x="-130" y="-112" width="138" height="200" rx="18" fill="#f5ecda" transform="rotate(-10)" />
+    <rect x="-18" y="-92" width="138" height="200" rx="18" fill="#ffffff" transform="rotate(10)" />
+    <path d="M-8 0c0-48 44-86 98-86 53 0 98 38 98 86 0 48-44 74-98 132C36 74-8 48-8 0Z" fill="url(#gold)" transform="scale(.68) translate(-36 -8)" />
+    <path d="M-8 102 18 34h38l26 68H48L36 72h-2l-12 30Z" fill="#16231d" transform="scale(.78) translate(16 0)" />
+  </g>
+</svg>

@@ -1,6 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 import { createDefaultStore } from "./constants";
-import { loadStore, parseStore } from "./store";
+import {
+  createStoreBackupPayload,
+  loadStore,
+  parseStore,
+  parseStoreBackup,
+  serializeStoreBackup,
+} from "./store";
 import { liveTipSections, questionBank } from "../training-data";
 
 describe("store normalization", () => {
@@ -98,5 +104,35 @@ describe("store normalization", () => {
 
   it("returns defaults when storage is unavailable", () => {
     expect(loadStore(null)).toEqual(createDefaultStore());
+  });
+
+  it("serializes and restores backup payloads", () => {
+    const store = createDefaultStore();
+    store.settings.vibration = false;
+    store.tipChecks[liveTipSections[0].items[0].id] = true;
+
+    const raw = serializeStoreBackup(store);
+    const restored = parseStoreBackup(raw);
+    const payload = createStoreBackupPayload(store);
+
+    expect(restored).toEqual(store);
+    expect(payload).toMatchObject({
+      schema: "holdem-ready-backup",
+      version: 1,
+      store,
+    });
+  });
+
+  it("supports importing raw store JSON backups", () => {
+    const store = createDefaultStore();
+    store.settings.dailyGoal = 20;
+
+    expect(parseStoreBackup(JSON.stringify(store))).toEqual(store);
+  });
+
+  it("rejects unsupported backup payloads", () => {
+    expect(() => parseStoreBackup(JSON.stringify({ schema: "other" }))).toThrow(
+      "Backup file is not a supported Holdem Ready backup.",
+    );
   });
 });
