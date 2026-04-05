@@ -5,6 +5,7 @@
 - `questions:validate`: 문제 데이터 규칙 검증
 - `Vitest`: 로직 및 통합 테스트
 - `Playwright`: 모바일 UI 레이아웃 QA
+- `icons:preview`: 아이콘 시안 PNG 비교본 생성
 - `release:assets`: Play 스토어용 그래픽 / 스크린샷 생성
 
 문제 데이터 작업은 이제 수동 확인만으로 끝내지 않습니다. 관련 파일이 바뀌면 로컬 `pre-push`와 GitHub Actions가 자동 게이트를 겁니다.
@@ -240,6 +241,17 @@ npm run qa:ui -- --viewport large-phone
 
 즉, 출시 전에는 단일 모바일 폭만 보는 대신 작은 폰, 큰 폰, 대화면 세로 레이아웃까지 함께 점검합니다.
 
+## 아이콘 미리보기
+
+```bash
+npm run icons:preview
+```
+
+산출물:
+
+- `.release-artifacts/icon-previews/` `16 / 32 / 48 / 192 / 512` PNG 미리보기
+- `.release-artifacts/icon-previews/index.html` 정적 미리보기 페이지
+
 ## 릴리스 자산 생성
 
 ```bash
@@ -248,6 +260,7 @@ npm run release:assets
 
 산출물:
 
+- `public/icons/icon.svg` 브라우저 탭 아이콘 SVG
 - `public/icons/` PWA / Android 아이콘 PNG
 - `.release-artifacts/play-store/` feature graphic, 스토어용 폰 스크린샷
 

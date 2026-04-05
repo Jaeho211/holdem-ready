@@ -14,7 +14,7 @@
 루트의 `.env.example`를 복사해 최소 아래 값을 채웁니다.
 
 ```bash
-NEXT_PUBLIC_APP_SITE_URL=https://your-site.netlify.app
+NEXT_PUBLIC_APP_SITE_URL=https://holdem-quiz.netlify.app
 NEXT_PUBLIC_SUPPORT_EMAIL=your-support@example.com
 ANDROID_PACKAGE_NAME=com.jaeho211.holdemquiz
 ANDROID_SHA256_CERT_FINGERPRINTS=AA:BB:CC:...
@@ -50,6 +50,7 @@ npm run release:assets
 
 생성 위치:
 
+- 브라우저 아이콘 SVG: `public/icons/icon.svg`
 - 앱 아이콘 PNG: `public/icons/`
 - Play 스토어용 그래픽: `.release-artifacts/play-store/`
 
@@ -69,20 +70,20 @@ Netlify에 배포한 뒤 아래 순서로 진행합니다.
 1. PWA manifest가 배포 URL에서 열리는지 확인합니다.
 
 ```bash
-https://your-site.netlify.app/manifest.webmanifest
+https://holdem-quiz.netlify.app/manifest.webmanifest
 ```
 
 2. Bubblewrap 초기화:
 
 ```bash
-npx @bubblewrap/cli@latest init --manifest https://your-site.netlify.app/manifest.webmanifest
+npx @bubblewrap/cli@latest init --manifest https://holdem-quiz.netlify.app/manifest.webmanifest
 ```
 
 3. Android 프로젝트 생성 후 서명 설정, `bundletool` 또는 Android Studio로 AAB를 만듭니다.
 
 4. 생성된 SHA-256 지문을 `.env`에 넣고 다시 `npm run build`를 실행해 `assetlinks.json`을 최신 값으로 갱신합니다.
 
-5. 배포된 `https://your-site.netlify.app/.well-known/assetlinks.json`이 올바른지 확인합니다.
+5. 배포된 `https://holdem-quiz.netlify.app/.well-known/assetlinks.json`이 올바른지 확인합니다.
 
 ## 출시 전 확인
 

@@ -16,6 +16,7 @@
     "qa:ui": "node scripts/qa-ui.mjs",
     "qa:questions": "node --import tsx scripts/qa-questions.mjs",
     "qa:ui:install": "playwright install chromium",
+    "icons:preview": "node scripts/generate-icon-previews.mjs",
     "release:assets": "node scripts/generate-release-assets.mjs"
   },
   "dependencies": {

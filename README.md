@@ -112,6 +112,7 @@ npm test
 npm run verify:content -- --base origin/main
 npm run questions:catalog
 npm run qa:questions -- --base origin/main
+npm run icons:preview
 npm run release:assets
 ```
 
@@ -209,12 +210,16 @@ lib/
     defaults.ts             기본 약점 프롬프트
 public/
   cards/                    카드 뒷면 SVG
-  icons/                    PWA / Android 아이콘 PNG
-  icon.svg                  앱 아이콘
-  icon-maskable.svg         마스커블 아이콘 원본
+  icons/
+    source/                 아이콘 원본 PNG
+    icon.svg                앱 아이콘 원본 wrapper
+    icon-maskable.svg       마스커블 아이콘 원본 wrapper
+    icon-*.png              PWA / Android 아이콘 PNG
   play-store-feature.svg    스토어 피처 그래픽 원본
   sw.js                     서비스 워커
 scripts/
+  generate-icon-previews.mjs  아이콘 PNG 미리보기 생성
+  icon-assets.mjs           아이콘 PNG / favicon 생성 유틸
   qa-ui.mjs                 Playwright 기반 UI QA 스크립트
   generate-release-assets.mjs  아이콘 / 스토어 자산 생성
   postbuild-release.mjs     Netlify/TWA 릴리스 산출물 정리

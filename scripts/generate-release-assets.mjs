@@ -1,7 +1,12 @@
-import { mkdir, readFile, rm } from "node:fs/promises";
+import { mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { chromium } from "@playwright/test";
+import {
+  ICONS_DIR,
+  generateFinalIconAssets,
+  writeSvgPng,
+} from "./icon-assets.mjs";
 import {
   buildQAUrl,
   DEFAULT_BASE_URL,
@@ -14,10 +19,7 @@ import {
 } from "./qa-ui-core.mjs";
 
 const OUTPUT_DIR = path.resolve(".release-artifacts/play-store");
-const ICONS_DIR = path.resolve("public/icons");
 const FEATURE_SVG_PATH = path.resolve("public/play-store-feature.svg");
-const APP_ICON_SVG_PATH = path.resolve("public/icon.svg");
-const APP_ICON_MASKABLE_SVG_PATH = path.resolve("public/icon-maskable.svg");
 const SCREENSHOT_VIEWPORT = {
   width: 412,
   height: 915,
@@ -38,31 +40,6 @@ const waitForFonts = async (page) => {
       await document.fonts.ready;
     }
   });
-};
-
-const writeSvgPng = async ({
-  browser,
-  inputPath,
-  outputPath,
-  width,
-  height,
-}) => {
-  const svg = await readFile(inputPath, "utf8");
-  const page = await browser.newPage({
-    viewport: { width, height },
-    deviceScaleFactor: 1,
-  });
-
-  try {
-    await page.setContent(
-      `<html><body style="margin:0;background:transparent;overflow:hidden">${svg}</body></html>`,
-      { waitUntil: "load" },
-    );
-    await waitForFonts(page);
-    await page.screenshot({ path: outputPath, omitBackground: true });
-  } finally {
-    await page.close();
-  }
 };
 
 const captureScenario = async ({ browser, baseUrl, scenario, outputPath }) => {
@@ -106,34 +83,7 @@ try {
 
   const browser = await chromium.launch({ headless: true });
   try {
-    await writeSvgPng({
-      browser,
-      inputPath: APP_ICON_SVG_PATH,
-      outputPath: path.join(ICONS_DIR, "icon-192.png"),
-      width: 192,
-      height: 192,
-    });
-    await writeSvgPng({
-      browser,
-      inputPath: APP_ICON_SVG_PATH,
-      outputPath: path.join(ICONS_DIR, "icon-512.png"),
-      width: 512,
-      height: 512,
-    });
-    await writeSvgPng({
-      browser,
-      inputPath: APP_ICON_MASKABLE_SVG_PATH,
-      outputPath: path.join(ICONS_DIR, "icon-maskable-192.png"),
-      width: 192,
-      height: 192,
-    });
-    await writeSvgPng({
-      browser,
-      inputPath: APP_ICON_MASKABLE_SVG_PATH,
-      outputPath: path.join(ICONS_DIR, "icon-maskable-512.png"),
-      width: 512,
-      height: 512,
-    });
+    await generateFinalIconAssets({ browser });
 
     await writeSvgPng({
       browser,

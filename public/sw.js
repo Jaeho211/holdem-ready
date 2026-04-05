@@ -1,11 +1,11 @@
-const CACHE_VERSION = "v3";
+const CACHE_VERSION = "v4";
 const STATIC_CACHE_NAME = `holdem-quiz-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE_NAME = `holdem-quiz-runtime-${CACHE_VERSION}`;
 const PRECACHE_URLS = [
   "/",
   "/manifest.webmanifest",
-  "/favicon.ico",
-  "/icon.svg",
+  "/icons/icon.svg",
+  "/icons/icon-maskable.svg",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/icons/icon-maskable-192.png",
