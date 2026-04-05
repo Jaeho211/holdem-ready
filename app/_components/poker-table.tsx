@@ -346,9 +346,9 @@ export function PokerTableVisual({
       </div>
 
       {/* Stack & table info */}
-      {(stack || table) && (
+      {stack && (
         <p className="text-[10px] leading-none text-[#efe2be]/50">
-          {[stack, table].filter(Boolean).join(" · ")}
+          {stack}
         </p>
       )}
     </div>
