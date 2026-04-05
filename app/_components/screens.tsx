@@ -103,7 +103,7 @@ export function LoadingScreen() {
       className="relative z-10 mx-auto flex min-h-screen w-full max-w-[520px] items-center justify-center px-5 py-10"
     >
       <Surface>
-        <p className="text-xs uppercase tracking-[0.28em] text-[#d7b977]">Holdem Ready</p>
+        <p className="text-xs uppercase tracking-[0.28em] text-[#d7b977]">Holdem Quiz</p>
         <h1 className="mt-3 font-serif text-3xl text-[#f6efe0]">모바일 학습 테이블 준비 중</h1>
       </Surface>
     </main>
@@ -123,7 +123,7 @@ export function AppHeader({
     <header data-qa-region="app-header" className="mb-5 animate-rise">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.28em] text-[#d7b977]">Holdem Ready</p>
+          <p className="text-[11px] uppercase tracking-[0.28em] text-[#d7b977]">Holdem Quiz</p>
           <h1 className="mt-2 font-serif text-[2rem] leading-none text-[#f8f1de]">
             {copy.title}
           </h1>
