@@ -10,7 +10,7 @@ import type {
   WrongFilter,
 } from "@/lib/holdem/types";
 
-export type HoldemReadyAppState = {
+export type HoldemQuizAppState = {
   store: Store;
   view: AppView;
   tab: AppTab;
@@ -22,7 +22,7 @@ export type HoldemReadyAppState = {
   nowIso?: string;
 };
 
-export type HoldemReadyAppActions = {
+export type HoldemQuizAppActions = {
   openTab: (next: AppTab) => void;
   setSettingsOpen: (open: boolean) => void;
   startDaily: () => void;
@@ -42,7 +42,7 @@ export type HoldemReadyAppActions = {
 
 const noop = () => undefined;
 
-export const HOLDEM_READY_NOOP_ACTIONS: HoldemReadyAppActions = {
+export const HOLDEM_QUIZ_NOOP_ACTIONS: HoldemQuizAppActions = {
   openTab: noop,
   setSettingsOpen: noop,
   startDaily: noop,

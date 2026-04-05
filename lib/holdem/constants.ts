@@ -2,7 +2,7 @@ import type { AnswerChoice, TrainingCategory } from "../training-data";
 import { liveTipSections } from "../training-data";
 import type { Settings, Store } from "./types";
 
-export const STORAGE_KEY = "holdem-ready:v1";
+export const STORAGE_KEY = "holdem-quiz:v1";
 export const DAILY_SESSION_SIZE = 10;
 export const WRONGS_SESSION_SIZE = 10;
 export const WEAKNESS_SESSION_SIZE = 5;

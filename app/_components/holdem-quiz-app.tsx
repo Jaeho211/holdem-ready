@@ -26,15 +26,15 @@ import type {
   WrongFilter,
 } from "@/lib/holdem/types";
 import { registerServiceWorker, triggerFeedback } from "./browser";
-import type { HoldemReadyAppActions, HoldemReadyAppState } from "./holdem-ready-model";
-import { HoldemReadyAppView } from "./holdem-ready-view";
+import type { HoldemQuizAppActions, HoldemQuizAppState } from "./holdem-quiz-model";
+import { HoldemQuizAppView } from "./holdem-quiz-view";
 import { LoadingScreen } from "./screens";
 
-export function HoldemReadyApp() {
+export function HoldemQuizApp() {
   const [ready, setReady] = useState(false);
   const [store, setStore] = useState<Store>(createDefaultStore);
-  const [view, setView] = useState<HoldemReadyAppState["view"]>("home");
-  const [tab, setTab] = useState<HoldemReadyAppState["tab"]>("home");
+  const [view, setView] = useState<HoldemQuizAppState["view"]>("home");
+  const [tab, setTab] = useState<HoldemQuizAppState["tab"]>("home");
   const [session, setSession] = useState<Session | null>(null);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [summary, setSummary] = useState<Summary | null>(null);
@@ -61,7 +61,7 @@ export function HoldemReadyApp() {
     setStore((current) => updater(current));
   };
 
-  const openTab: HoldemReadyAppActions["openTab"] = (next) => {
+  const openTab: HoldemQuizAppActions["openTab"] = (next) => {
     setTab(next);
     setView(next);
     setSession(null);
@@ -109,7 +109,7 @@ export function HoldemReadyApp() {
     beginSession(buildWeaknessSession(tag));
   };
 
-  const answer: HoldemReadyAppActions["answer"] = (choice) => {
+  const answer: HoldemQuizAppActions["answer"] = (choice) => {
     const currentQuestion = session && session.index < session.questionIds.length
       ? QUESTIONS_BY_ID[session.questionIds[session.index]]
       : null;
@@ -185,7 +185,7 @@ export function HoldemReadyApp() {
     return <LoadingScreen />;
   }
 
-  const state: HoldemReadyAppState = {
+  const state: HoldemQuizAppState = {
     store,
     view,
     tab,
@@ -196,7 +196,7 @@ export function HoldemReadyApp() {
     wrongFilter,
   };
 
-  const actions: HoldemReadyAppActions = {
+  const actions: HoldemQuizAppActions = {
     openTab,
     setSettingsOpen,
     startDaily,
@@ -223,5 +223,5 @@ export function HoldemReadyApp() {
     },
   };
 
-  return <HoldemReadyAppView state={state} actions={actions} />;
+  return <HoldemQuizAppView state={state} actions={actions} />;
 }

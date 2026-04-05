@@ -18,7 +18,7 @@
 - 모바일 화면 폭에 맞춘 단일 페이지 앱
 - App Router 기반 정적 export 배포
 
-앱 엔트리는 [`app/page.tsx`](../app/page.tsx)이고, 상태 로직은 [`app/_components/holdem-ready-app.tsx`](../app/_components/holdem-ready-app.tsx), 상태/액션 타입은 [`app/_components/holdem-ready-model.ts`](../app/_components/holdem-ready-model.ts), 파생 데이터 조합과 화면 분기는 [`app/_components/holdem-ready-view.tsx`](../app/_components/holdem-ready-view.tsx), 실제 화면 컴포넌트는 [`app/_components/screens.tsx`](../app/_components/screens.tsx)에 있습니다.
+앱 엔트리는 [`app/page.tsx`](../app/page.tsx)이고, 상태 로직은 [`app/_components/holdem-quiz-app.tsx`](../app/_components/holdem-quiz-app.tsx), 상태/액션 타입은 [`app/_components/holdem-quiz-model.ts`](../app/_components/holdem-quiz-model.ts), 파생 데이터 조합과 화면 분기는 [`app/_components/holdem-quiz-view.tsx`](../app/_components/holdem-quiz-view.tsx), 실제 화면 컴포넌트는 [`app/_components/screens.tsx`](../app/_components/screens.tsx)에 있습니다.
 
 ## 주요 뷰와 오버레이
 
@@ -114,7 +114,7 @@
 
 ## 상태 구조
 
-앱은 [`lib/holdem/types.ts`](../lib/holdem/types.ts)의 `Store`를 중심으로 동작합니다. 저장 키는 `holdem-ready:v1`입니다.
+앱은 [`lib/holdem/types.ts`](../lib/holdem/types.ts)의 `Store`를 중심으로 동작합니다. 저장 키는 `holdem-quiz:v1`입니다.
 
 저장되는 주요 상태:
 
@@ -197,8 +197,8 @@
 
 컴포넌트 역할은 대략 이렇게 나뉩니다.
 
-- [`app/_components/holdem-ready-app.tsx`](../app/_components/holdem-ready-app.tsx): 저장소 로드/저장, 세션 시작, 답안 처리, 설정 변경
-- [`app/_components/holdem-ready-view.tsx`](../app/_components/holdem-ready-view.tsx): 파생 데이터 계산 후 각 화면에 주입
+- [`app/_components/holdem-quiz-app.tsx`](../app/_components/holdem-quiz-app.tsx): 저장소 로드/저장, 세션 시작, 답안 처리, 설정 변경
+- [`app/_components/holdem-quiz-view.tsx`](../app/_components/holdem-quiz-view.tsx): 파생 데이터 계산 후 각 화면에 주입
 - [`app/_components/screens.tsx`](../app/_components/screens.tsx): 화면, 모달, 피드백 시트 렌더링
 - [`app/_components/poker-table.tsx`](../app/_components/poker-table.tsx): 포지션/액션 테이블 비주얼
 - [`app/_components/browser.ts`](../app/_components/browser.ts): 서비스 워커 등록, 진동/사운드 피드백

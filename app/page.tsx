@@ -1,7 +1,7 @@
-import { HoldemReadyApp } from "./_components/holdem-ready-app";
+import { HoldemQuizApp } from "./_components/holdem-quiz-app";
 
 export default function Page() {
-  return <HoldemReadyApp />;
+  return <HoldemQuizApp />;
 }
 
 
