@@ -1,11 +1,27 @@
 import { spawn } from "node:child_process";
 import process from "node:process";
 
-export const SCREENSHOT_VIEWPORT = {
-  width: 384,
-  height: 698,
-  device: "galaxy-s24",
-};
+export const SCREENSHOT_VIEWPORTS = [
+  {
+    id: "small-phone",
+    width: 360,
+    height: 780,
+    device: "pixel-5",
+  },
+  {
+    id: "large-phone",
+    width: 412,
+    height: 915,
+    device: "pixel-8-pro",
+  },
+  {
+    id: "tablet-portrait",
+    width: 800,
+    height: 1280,
+    device: "pixel-tablet",
+  },
+];
+export const SCREENSHOT_VIEWPORT = SCREENSHOT_VIEWPORTS[0];
 
 export const DEFAULT_BASE_URL = "http://127.0.0.1:3301";
 export const EXISTING_DEV_BASE_URL = "http://127.0.0.1:3000";

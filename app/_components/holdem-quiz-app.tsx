@@ -16,7 +16,12 @@ import {
   removeSession,
   upsertSession,
 } from "@/lib/holdem/sessions";
-import { loadStore, saveStore } from "@/lib/holdem/store";
+import {
+  loadStore,
+  parseStoreBackup,
+  saveStore,
+  serializeStoreBackup,
+} from "@/lib/holdem/store";
 import type {
   Feedback,
   Session,
@@ -25,7 +30,7 @@ import type {
   Summary,
   WrongFilter,
 } from "@/lib/holdem/types";
-import { registerServiceWorker, triggerFeedback } from "./browser";
+import { downloadTextFile, registerServiceWorker, triggerFeedback } from "./browser";
 import type { HoldemQuizAppActions, HoldemQuizAppState } from "./holdem-quiz-model";
 import { HoldemQuizAppView } from "./holdem-quiz-view";
 import { LoadingScreen } from "./screens";
@@ -181,6 +186,36 @@ export function HoldemQuizApp() {
     setView("home");
   };
 
+  const exportBackup = () => {
+    const dateLabel = new Date().toISOString().slice(0, 10);
+    downloadTextFile({
+      content: serializeStoreBackup(store),
+      fileName: `holdem-ready-backup-${dateLabel}.json`,
+    });
+  };
+
+  const importBackup = async (file: File) => {
+    try {
+      const raw = await file.text();
+      const importedStore = parseStoreBackup(raw);
+      setStore(importedStore);
+      setSession(null);
+      setFeedback(null);
+      setSummary(null);
+      setSettingsOpen(false);
+      setWrongFilter("all");
+      setTab("home");
+      setView("home");
+      if (typeof window !== "undefined") {
+        window.alert("백업 파일을 불러왔습니다.");
+      }
+    } catch {
+      if (typeof window !== "undefined") {
+        window.alert("백업 파일을 읽지 못했습니다. Holdem Ready 백업 JSON인지 확인해주세요.");
+      }
+    }
+  };
+
   if (!ready) {
     return <LoadingScreen />;
   }
@@ -208,6 +243,8 @@ export function HoldemQuizApp() {
     toggleTip,
     updateSettings,
     resetAll,
+    exportBackup,
+    importBackup,
     exitQuiz: () => {
       setSession(null);
       setFeedback(null);

@@ -39,6 +39,12 @@ import {
   Toggle,
   cn,
 } from "./ui";
+import {
+  APP_FEEDBACK_URL,
+  APP_PRIVACY_PATH,
+  APP_SUPPORT_EMAIL,
+  APP_SUPPORT_PATH,
+} from "@/lib/app-config";
 
 const VIEW_COPY: Record<
   Exclude<AppView, "quiz">,
@@ -1126,12 +1132,18 @@ export function SettingsModal({
   onClose,
   onUpdateSettings,
   onReset,
+  onExportBackup,
+  onImportBackup,
 }: {
   settings: Settings;
   onClose: () => void;
   onUpdateSettings: (partial: Partial<Settings>) => void;
   onReset: () => void;
+  onExportBackup: () => void;
+  onImportBackup: (file: File) => void | Promise<void>;
 }) {
+  const backupInputRef = useRef<HTMLInputElement | null>(null);
+
   const handleLanguageChange = (event: ChangeEvent<HTMLSelectElement>) => {
     onUpdateSettings({ language: event.target.value as Settings["language"] });
   };
@@ -1140,11 +1152,19 @@ export function SettingsModal({
     onUpdateSettings({ dailyGoal: Number(event.target.value) as Settings["dailyGoal"] });
   };
 
+  const handleImportBackup = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    void onImportBackup(file);
+    event.target.value = "";
+  };
+
   return (
-    <div className="fixed inset-0 z-[60] bg-[#020c09]/72 px-4 py-6 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[60] overflow-y-auto bg-[#020c09]/72 px-4 py-4 backdrop-blur-sm sm:py-6">
       <div
         data-qa-overlay="modal-settings"
-        className="mx-auto mt-8 max-w-[520px] rounded-[32px] border border-[#d7b977]/18 bg-[#071d16]/95 p-5 shadow-[0_24px_90px_rgba(0,0,0,0.5)]"
+        className="mx-auto mt-2 max-h-[calc(100svh-2rem)] max-w-[520px] overflow-y-auto rounded-[32px] border border-[#d7b977]/18 bg-[#071d16]/95 p-5 shadow-[0_24px_90px_rgba(0,0,0,0.5)] sm:mt-8 sm:max-h-[calc(100svh-4rem)]"
       >
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -1189,11 +1209,69 @@ export function SettingsModal({
               <option value={20}>20문제</option>
             </select>
           </SettingRow>
+          <SettingRow label="학습 백업" description="기기 로컬 기록을 JSON 파일로 내보내거나 다시 불러옵니다.">
+            <div className="flex flex-wrap justify-end gap-2">
+              <Secondary onClick={onExportBackup} className="px-4 py-2.5">
+                내보내기
+              </Secondary>
+              <Secondary
+                onClick={() => backupInputRef.current?.click()}
+                className="px-4 py-2.5"
+              >
+                불러오기
+              </Secondary>
+              <input
+                ref={backupInputRef}
+                type="file"
+                accept="application/json,.json"
+                onChange={handleImportBackup}
+                className="hidden"
+              />
+            </div>
+          </SettingRow>
+        </div>
+        <div className="mt-6 rounded-[24px] border border-[#d7b977]/18 bg-[#0a241c] p-4">
+          <p className="text-sm font-medium text-[#f8f1de]">출시 및 데이터 안내</p>
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-[#efe2be]/80">
+            <li>학습 기록과 설정은 이 기기의 로컬 저장소에만 보관됩니다.</li>
+            <li>서버 계정이나 클라우드 동기화는 아직 제공하지 않습니다.</li>
+            <li>데이터 초기화 후에는 복구할 수 없으니 먼저 백업 파일을 저장하세요.</li>
+          </ul>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <a
+              href={APP_PRIVACY_PATH}
+              className="inline-flex items-center justify-center rounded-full border border-[#d7b977]/18 bg-white/6 px-4 py-2.5 text-sm font-medium text-[#f6efe0] transition hover:bg-white/10"
+            >
+              개인정보처리방침
+            </a>
+            <a
+              href={APP_SUPPORT_PATH}
+              className="inline-flex items-center justify-center rounded-full border border-[#d7b977]/18 bg-white/6 px-4 py-2.5 text-sm font-medium text-[#f6efe0] transition hover:bg-white/10"
+            >
+              지원 안내
+            </a>
+            <a
+              href={APP_FEEDBACK_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center rounded-full border border-[#d7b977]/18 bg-white/6 px-4 py-2.5 text-sm font-medium text-[#f6efe0] transition hover:bg-white/10"
+            >
+              피드백 보내기
+            </a>
+          </div>
+          {APP_SUPPORT_EMAIL && (
+            <p className="mt-3 text-xs text-[#efe2be]/65">
+              지원 이메일:{" "}
+              <a href={`mailto:${APP_SUPPORT_EMAIL}`} className="text-[#f6efe0] underline underline-offset-4">
+                {APP_SUPPORT_EMAIL}
+              </a>
+            </p>
+          )}
         </div>
         <div className="mt-6 rounded-[24px] border border-[#d56262]/22 bg-[#241315] p-4">
           <p className="text-sm font-medium text-[#f7d0d0]">학습 데이터 초기화</p>
           <p className="mt-2 text-sm leading-6 text-[#f0d0d0]/78">
-            오답노트, 기록, 세션, 체크리스트가 모두 지워집니다.
+            오답노트, 기록, 세션, 체크리스트가 모두 지워지며 백업 없이 복구할 수 없습니다.
           </p>
           <div className="mt-4">
             <button

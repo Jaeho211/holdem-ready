@@ -9,6 +9,9 @@ import type {
 } from "./types";
 import { clamp } from "./utils";
 
+export const STORE_BACKUP_SCHEMA = "holdem-ready-backup";
+export const STORE_BACKUP_VERSION = 1;
+
 type StorageReader = {
   getItem(key: string): string | null;
 };
@@ -162,6 +165,43 @@ export const parseStore = (raw: string | null | undefined): Store => {
   } catch {
     return createDefaultStore();
   }
+};
+
+export const createStoreBackupPayload = (store: Store) => ({
+  schema: STORE_BACKUP_SCHEMA,
+  version: STORE_BACKUP_VERSION,
+  exportedAt: new Date().toISOString(),
+  store: normalizeStore(store),
+});
+
+export const serializeStoreBackup = (store: Store) =>
+  JSON.stringify(createStoreBackupPayload(store), null, 2);
+
+export const parseStoreBackup = (raw: string | null | undefined): Store => {
+  if (!raw) {
+    throw new Error("Backup file is empty.");
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new Error("Backup file is not valid JSON.");
+  }
+
+  if (
+    isRecord(parsed) &&
+    parsed.schema === STORE_BACKUP_SCHEMA &&
+    parsed.version === STORE_BACKUP_VERSION
+  ) {
+    return normalizeStore(parsed.store);
+  }
+
+  if (isRecord(parsed) && "settings" in parsed) {
+    return normalizeStore(parsed);
+  }
+
+  throw new Error("Backup file is not a supported Holdem Ready backup.");
 };
 
 export const loadStore = (storage: StorageReader | null = getBrowserStorage()) => {

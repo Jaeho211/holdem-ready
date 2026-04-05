@@ -8,7 +8,7 @@ import {
   EXISTING_DEV_BASE_URL,
   isServerAvailable,
   QA_ROUTE,
-  SCREENSHOT_VIEWPORT,
+  SCREENSHOT_VIEWPORTS,
   startDevServer,
   stopDevServer,
   waitForServer,
@@ -19,11 +19,15 @@ const OUTPUT_DIR = path.resolve(".qa-artifacts/ui");
 const parseArgs = (argv) => {
   const parsed = {
     scenario: null,
+    viewport: null,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
     if (argv[index] === "--scenario") {
       parsed.scenario = argv[index + 1] ?? null;
+      index += 1;
+    } else if (argv[index] === "--viewport") {
+      parsed.viewport = argv[index + 1] ?? null;
       index += 1;
     }
   }
@@ -72,16 +76,24 @@ const main = async () => {
   try {
     await waitForServer(new URL(QA_ROUTE, baseUrl).toString(), server);
 
-    const browser = await chromium.launch({ headless: true });
-    try {
-      const manifestPage = await browser.newPage({
-        viewport: {
-          width: SCREENSHOT_VIEWPORT.width,
-          height: SCREENSHOT_VIEWPORT.height,
-        },
-      });
-      const scenarioIds = args.scenario ? [args.scenario] : await getScenarioIds(manifestPage, baseUrl);
-      await manifestPage.close();
+      const browser = await chromium.launch({ headless: true });
+      try {
+      const targetViewports = args.viewport
+        ? SCREENSHOT_VIEWPORTS.filter((viewport) => viewport.id === args.viewport)
+        : SCREENSHOT_VIEWPORTS;
+
+      if (!targetViewports.length) {
+        throw new Error(`Unknown viewport: ${args.viewport}`);
+      }
+
+        const manifestPage = await browser.newPage({
+          viewport: {
+            width: targetViewports[0].width,
+            height: targetViewports[0].height,
+          },
+        });
+        const scenarioIds = args.scenario ? [args.scenario] : await getScenarioIds(manifestPage, baseUrl);
+        await manifestPage.close();
 
       if (!scenarioIds.length) {
         throw new Error("No QA scenarios were discovered.");
@@ -89,44 +101,45 @@ const main = async () => {
 
       const results = [];
 
-      for (const scenarioId of scenarioIds) {
-        const page = await browser.newPage({
-          viewport: {
-            width: SCREENSHOT_VIEWPORT.width,
-            height: SCREENSHOT_VIEWPORT.height,
-          },
-          deviceScaleFactor: 1,
-        });
-
-        try {
-          await page.goto(buildQAUrl(baseUrl, {
-            scenario: scenarioId,
-            chrome: "0",
-          }), {
-            waitUntil: "networkidle",
-          });
-          await page.waitForSelector('[data-qa-root="app"]');
-          await page.evaluate(async () => {
-            if ("fonts" in document) {
-              await document.fonts.ready;
-            }
+      for (const viewport of targetViewports) {
+        for (const scenarioId of scenarioIds) {
+          const page = await browser.newPage({
+            viewport: {
+              width: viewport.width,
+              height: viewport.height,
+            },
+            deviceScaleFactor: 1,
           });
 
-          const screenshotPath = path.join(
-            OUTPUT_DIR,
-            `${scenarioId}-${SCREENSHOT_VIEWPORT.width}x${SCREENSHOT_VIEWPORT.height}.png`,
-          );
-          await page.screenshot({
-            path: screenshotPath,
-            fullPage: false,
-          });
+          try {
+            await page.goto(buildQAUrl(baseUrl, {
+              scenario: scenarioId,
+              chrome: "0",
+            }), {
+              waitUntil: "networkidle",
+            });
+            await page.waitForSelector('[data-qa-root="app"]');
+            await page.evaluate(async () => {
+              if ("fonts" in document) {
+                await document.fonts.ready;
+              }
+            });
 
-          const result = await page.evaluate(({
-            scenarioId,
-            viewportWidth,
-            viewportHeight,
-            viewportDevice,
-          }) => {
+            const screenshotPath = path.join(
+              OUTPUT_DIR,
+              `${scenarioId}-${viewport.id}-${viewport.width}x${viewport.height}.png`,
+            );
+            await page.screenshot({
+              path: screenshotPath,
+              fullPage: false,
+            });
+
+            const result = await page.evaluate(({
+              scenarioId,
+              viewportWidth,
+              viewportHeight,
+              viewportDevice,
+            }) => {
             const round = (value) => Math.round(value * 100) / 100;
             const isVisible = (element) => {
               const style = window.getComputedStyle(element);
@@ -296,19 +309,21 @@ const main = async () => {
               overlaps,
               minGapPx: gapValues.length ? round(Math.min(...gapValues)) : null,
             };
-          }, {
-            scenarioId,
-            viewportWidth: SCREENSHOT_VIEWPORT.width,
-            viewportHeight: SCREENSHOT_VIEWPORT.height,
-            viewportDevice: SCREENSHOT_VIEWPORT.device,
-          });
+            }, {
+              scenarioId,
+              viewportWidth: viewport.width,
+              viewportHeight: viewport.height,
+              viewportDevice: viewport.device,
+            });
 
-          results.push({
-            ...result,
-            screenshotPath: path.relative(process.cwd(), screenshotPath),
-          });
-        } finally {
-          await page.close();
+            results.push({
+              ...result,
+              viewportId: viewport.id,
+              screenshotPath: path.relative(process.cwd(), screenshotPath),
+            });
+          } finally {
+            await page.close();
+          }
         }
       }
 

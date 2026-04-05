@@ -1,24 +1,47 @@
 ﻿import type { MetadataRoute } from "next";
+import {
+  APP_BACKGROUND_COLOR,
+  APP_DESCRIPTION,
+  APP_NAME,
+  APP_THEME_COLOR,
+} from "@/lib/app-config";
 
 export const dynamic = "force-static";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Holdem Ready",
-    short_name: "Holdem Ready",
-    description:
-      "라스베가스 라이브 홀덤을 준비하는 사람을 위한 모바일 우선 학습 앱",
+    name: APP_NAME,
+    short_name: APP_NAME,
+    description: APP_DESCRIPTION,
+    id: "/",
     start_url: "/",
     display: "standalone",
-    background_color: "#041711",
-    theme_color: "#0b3b2e",
+    background_color: APP_BACKGROUND_COLOR,
+    theme_color: APP_THEME_COLOR,
     orientation: "portrait",
     lang: "ko",
+    categories: ["education"],
     icons: [
       {
-        src: "/icon.svg",
-        sizes: "any",
-        type: "image/svg+xml",
+        src: "/icons/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        src: "/icons/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+      {
+        src: "/icons/icon-maskable-192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: "/icons/icon-maskable-512.png",
+        sizes: "512x512",
+        type: "image/png",
         purpose: "maskable",
       },
     ],

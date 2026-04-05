@@ -1,5 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_KR, Noto_Serif_KR } from "next/font/google";
+import {
+  APP_BACKGROUND_COLOR,
+  APP_DESCRIPTION,
+  APP_NAME,
+  APP_THEME_COLOR,
+  getAppMetadataBase,
+} from "@/lib/app-config";
 import "./globals.css";
 
 const appSans = Noto_Sans_KR({
@@ -16,19 +23,29 @@ const appSerif = Noto_Serif_KR({
   fallback: ["serif"],
 });
 
+const metadataBase = getAppMetadataBase();
+
 export const metadata: Metadata = {
-  applicationName: "Holdem Ready",
+  ...(metadataBase ? { metadataBase } : {}),
+  applicationName: APP_NAME,
   title: {
-    default: "Holdem Ready",
-    template: "%s | Holdem Ready",
+    default: APP_NAME,
+    template: `%s | ${APP_NAME}`,
   },
-  description:
-    "라스베가스 라이브 홀덤을 준비하는 사람을 위한 모바일 우선 학습 웹앱",
+  description: APP_DESCRIPTION,
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Holdem Ready",
+    title: APP_NAME,
   },
   formatDetection: {
     telephone: false,
@@ -36,7 +53,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b3b2e",
+  themeColor: APP_THEME_COLOR,
 };
 
 export default function RootLayout({
@@ -46,7 +63,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${appSans.variable} ${appSerif.variable} h-full`}>
-      <body className={`${appSans.className} min-h-full bg-[#041711] text-[#f6efe0] antialiased`}>
+      <body
+        className={`${appSans.className} min-h-full text-[#f6efe0] antialiased`}
+        style={{ backgroundColor: APP_BACKGROUND_COLOR }}
+      >
         {children}
       </body>
     </html>

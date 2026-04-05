@@ -139,6 +139,8 @@ export function HoldemQuizAppView({
           onClose={() => actions.setSettingsOpen(false)}
           onUpdateSettings={actions.updateSettings}
           onReset={actions.resetAll}
+          onExportBackup={actions.exportBackup}
+          onImportBackup={actions.importBackup}
         />
       )}
     </main>

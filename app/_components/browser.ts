@@ -5,6 +5,7 @@ import type { Settings } from "@/lib/holdem/types";
 let audioContext: AudioContext | null = null;
 
 export const registerServiceWorker = () => {
+  if (process.env.NODE_ENV !== "production") return;
   if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return;
   navigator.serviceWorker.register("/sw.js").catch(() => undefined);
 };
@@ -38,4 +39,29 @@ export const triggerFeedback = (settings: Settings, correct: boolean) => {
   }
 
   if (settings.sound) playTone(correct);
+};
+
+export const downloadTextFile = ({
+  content,
+  fileName,
+  contentType = "application/json",
+}: {
+  content: string;
+  fileName: string;
+  contentType?: string;
+}) => {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+
+  const blob = new Blob([content], { type: contentType });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  link.style.display = "none";
+  document.body.append(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => {
+    window.URL.revokeObjectURL(url);
+  }, 0);
 };

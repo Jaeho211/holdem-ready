@@ -5,6 +5,7 @@
 - `questions:validate`: 문제 데이터 규칙 검증
 - `Vitest`: 로직 및 통합 테스트
 - `Playwright`: 모바일 UI 레이아웃 QA
+- `release:assets`: Play 스토어용 그래픽 / 스크린샷 생성
 
 문제 데이터 작업은 이제 수동 확인만으로 끝내지 않습니다. 관련 파일이 바뀌면 로컬 `pre-push`와 GitHub Actions가 자동 게이트를 겁니다.
 
@@ -224,6 +225,31 @@ batch report는 [`question-batch-report.ts`](../lib/holdem/question-batch-report
 
 [`app/_components/qa-ui-scenarios.ts`](../app/_components/qa-ui-scenarios.ts)의 고정 fixture를 이용한 앱 셸 smoke test입니다.
 새 문제 콘텐츠 레이아웃 검증은 `qa:questions`가 담당하고, `qa:ui`는 홈/요약/설정 같은 화면 회귀 확인 용도로 유지합니다.
+
+기본 뷰포트:
+
+- `360x780` small phone
+- `412x915` large phone
+- `800x1280` tablet portrait
+
+옵션:
+
+```bash
+npm run qa:ui -- --viewport large-phone
+```
+
+즉, 출시 전에는 단일 모바일 폭만 보는 대신 작은 폰, 큰 폰, 대화면 세로 레이아웃까지 함께 점검합니다.
+
+## 릴리스 자산 생성
+
+```bash
+npm run release:assets
+```
+
+산출물:
+
+- `public/icons/` PWA / Android 아이콘 PNG
+- `.release-artifacts/play-store/` feature graphic, 스토어용 폰 스크린샷
 
 ## 관련 파일
 
