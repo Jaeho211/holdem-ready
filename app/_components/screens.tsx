@@ -775,7 +775,6 @@ function TableScene({
               position={question.position}
               actionBefore={question.actionBefore}
               stack={question.stack}
-              table={question.table}
             />
           ) : question.category === "postflop" ? (
             <>

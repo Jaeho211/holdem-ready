@@ -302,14 +302,12 @@ export function PokerTableVisual({
   position,
   actionBefore,
   stack,
-  table,
   postflopAction,
   currentBet,
 }: {
   position: string;
   actionBefore: string;
   stack?: string;
-  table?: string;
   postflopAction?: string;
   currentBet?: string;
 }) {
