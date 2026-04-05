@@ -107,7 +107,7 @@
 | odds-003 | 기초 | Qh/9s / Kd/Jc/5h/2d / 4 Outs / Turn to River / 9 | 아웃 계산, 턴 확률 | 9 |
 | odds-004 | 실전 | 60bb / 20bb / Half Pot Bet / 25 | 포트 오즈, 필요 승률 | 25 |
 | odds-005 | 응용 | Ah/Jh / Qh/Th/2c / 15 Outs / Flop to River / 54 | 아웃 계산, 콤보 드로우 | 54 |
-| odds-006 | 실전 | 80bb / 20bb / 20 call to win 100 / 20 | 포트 오즈, 필요 승률 | 20 |
+| odds-006 | 실전 | 70bb / 15bb / 15 call to win 85 / 18 | 포트 오즈, 필요 승률 | 18 |
 | odds-007 | 기초 | 60bb / 30bb / 상대가 풀팟 베팅 / 33 | 포트 오즈, 필요 승률 | 33 |
 | odds-008 | 기초 | Ac/Jc / Qc/7c/2d / 9 Outs / Flop to River / 35 | 아웃 계산, 플랍 확률 | 35 |
 | odds-009 | 기초 | 9c/9d / As/7h/2c / 2 Outs / Flop to River / 8 | 아웃 계산, 플랍 확률 | 8 |
