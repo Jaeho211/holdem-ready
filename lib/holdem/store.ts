@@ -9,7 +9,7 @@ import type {
 } from "./types";
 import { clamp } from "./utils";
 
-export const STORE_BACKUP_SCHEMA = "holdem-ready-backup";
+export const STORE_BACKUP_SCHEMA = "holdem-quiz-backup";
 export const STORE_BACKUP_VERSION = 1;
 
 type StorageReader = {
@@ -201,7 +201,7 @@ export const parseStoreBackup = (raw: string | null | undefined): Store => {
     return normalizeStore(parsed);
   }
 
-  throw new Error("Backup file is not a supported Holdem Ready backup.");
+  throw new Error("Backup file is not a supported Holdem Quiz backup.");
 };
 
 export const loadStore = (storage: StorageReader | null = getBrowserStorage()) => {

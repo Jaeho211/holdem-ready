@@ -903,7 +903,7 @@ export function QuizScreen({
                 ? "Session Complete"
                 : currentQuestion
                   ? categoryMeta[currentQuestion.category].label
-                  : "Holdem Ready"}
+                  : "Holdem Quiz"}
             </p>
             <p className="mt-1 text-xs text-[#f6efe0]">
               {summary

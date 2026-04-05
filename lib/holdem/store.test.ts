@@ -117,7 +117,7 @@ describe("store normalization", () => {
 
     expect(restored).toEqual(store);
     expect(payload).toMatchObject({
-      schema: "holdem-ready-backup",
+      schema: "holdem-quiz-backup",
       version: 1,
       store,
     });
@@ -132,7 +132,7 @@ describe("store normalization", () => {
 
   it("rejects unsupported backup payloads", () => {
     expect(() => parseStoreBackup(JSON.stringify({ schema: "other" }))).toThrow(
-      "Backup file is not a supported Holdem Ready backup.",
+      "Backup file is not a supported Holdem Quiz backup.",
     );
   });
 });

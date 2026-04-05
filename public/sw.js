@@ -1,6 +1,6 @@
 const CACHE_VERSION = "v3";
-const STATIC_CACHE_NAME = `holdem-ready-static-${CACHE_VERSION}`;
-const RUNTIME_CACHE_NAME = `holdem-ready-runtime-${CACHE_VERSION}`;
+const STATIC_CACHE_NAME = `holdem-quiz-static-${CACHE_VERSION}`;
+const RUNTIME_CACHE_NAME = `holdem-quiz-runtime-${CACHE_VERSION}`;
 const PRECACHE_URLS = [
   "/",
   "/manifest.webmanifest",

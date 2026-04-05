@@ -22,7 +22,7 @@ export default function SupportPage() {
       <section>
         <h2 className="font-serif text-2xl text-[#f8f1de]">1. 앱 성격</h2>
         <p className="mt-3">
-          Holdem Ready는 실전 홀덤 의사결정 훈련을 위한 학습 앱입니다. 실제 현금성 베팅, 토너먼트 운영, 칩 구매 기능은 제공하지 않습니다.
+          Holdem Quiz는 실전 홀덤 의사결정 훈련을 위한 학습 앱입니다. 실제 현금성 베팅, 토너먼트 운영, 칩 구매 기능은 제공하지 않습니다.
         </p>
       </section>
 

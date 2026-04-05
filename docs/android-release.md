@@ -16,7 +16,7 @@
 ```bash
 NEXT_PUBLIC_APP_SITE_URL=https://your-site.netlify.app
 NEXT_PUBLIC_SUPPORT_EMAIL=your-support@example.com
-ANDROID_PACKAGE_NAME=com.jaeho211.holdemready
+ANDROID_PACKAGE_NAME=com.jaeho211.holdemquiz
 ANDROID_SHA256_CERT_FINGERPRINTS=AA:BB:CC:...
 ```
 

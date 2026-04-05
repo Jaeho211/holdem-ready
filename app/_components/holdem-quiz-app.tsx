@@ -190,7 +190,7 @@ export function HoldemQuizApp() {
     const dateLabel = new Date().toISOString().slice(0, 10);
     downloadTextFile({
       content: serializeStoreBackup(store),
-      fileName: `holdem-ready-backup-${dateLabel}.json`,
+      fileName: `holdem-quiz-backup-${dateLabel}.json`,
     });
   };
 
@@ -211,7 +211,7 @@ export function HoldemQuizApp() {
       }
     } catch {
       if (typeof window !== "undefined") {
-        window.alert("백업 파일을 읽지 못했습니다. Holdem Ready 백업 JSON인지 확인해주세요.");
+        window.alert("백업 파일을 읽지 못했습니다. Holdem Quiz 백업 JSON인지 확인해주세요.");
       }
     }
   };

@@ -42,10 +42,10 @@
   <ellipse cx="120" cy="138" rx="30" ry="14" fill="#ffffff" fill-opacity="0.05" />
   <text x="120" y="176" text-anchor="middle"
         fill="#f0d28f" font-size="46" font-weight="700"
-        font-family="Trebuchet MS, Segoe UI, sans-serif" letter-spacing="-1">HR</text>
+        font-family="Trebuchet MS, Segoe UI, sans-serif" letter-spacing="-1">HQ</text>
   <line x1="90" y1="188" x2="150" y2="188"
         stroke="#d7b977" stroke-opacity="0.45" stroke-width="0.75" />
   <text x="120" y="204" text-anchor="middle"
         fill="#f8edd1" fill-opacity="0.80" font-size="11" letter-spacing="3.5"
-        font-family="Trebuchet MS, Segoe UI, sans-serif">HOLDEM READY</text>
+        font-family="Trebuchet MS, Segoe UI, sans-serif">HOLDEM QUIZ</text>
 </svg>
