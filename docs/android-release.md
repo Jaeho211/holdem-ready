@@ -79,11 +79,69 @@ https://holdem-quiz.netlify.app/manifest.webmanifest
 npx @bubblewrap/cli@latest init --manifest https://holdem-quiz.netlify.app/manifest.webmanifest
 ```
 
-3. Android 프로젝트 생성 후 서명 설정, `bundletool` 또는 Android Studio로 AAB를 만듭니다.
+`applicationId` 기본값은 manifest URL의 host를 뒤집고 마지막에 `.twa`를 붙여 정합니다.
+예: `https://holdem-quiz.netlify.app/manifest.webmanifest` -> `app.netlify.holdem_quiz.twa`
+실제 출시용 패키지명은 `init` 중간의 `Package ID` 입력에서 직접 원하는 값으로 고정하는 편이 낫습니다.
 
-4. 생성된 SHA-256 지문을 `.env`에 넣고 다시 `npm run build`를 실행해 `assetlinks.json`을 최신 값으로 갱신합니다.
+3. Android 프로젝트 생성 후 APK/AAB 빌드:
 
-5. 배포된 `https://holdem-quiz.netlify.app/.well-known/assetlinks.json`이 올바른지 확인합니다.
+```bash
+export ANDROID_HOME=$HOME/.bubblewrap/android_sdk
+unset ANDROID_SDK_ROOT
+npx @bubblewrap/cli@latest build
+```
+
+기본 산출물:
+
+- `app-release-signed.apk`: 실기기 테스트 설치용
+- `app-release-bundle.aab`: Play Console 업로드용
+
+4. 연결된 기기에 테스트 설치:
+
+```bash
+npx @bubblewrap/cli@latest install
+```
+
+또는 직접 설치:
+
+```bash
+adb install ./app-release-signed.apk
+```
+
+5. 생성된 SHA-256 지문을 `.env`에 넣고 다시 `npm run build`를 실행해 `assetlinks.json`을 최신 값으로 갱신합니다.
+
+6. 배포된 `https://holdem-quiz.netlify.app/.well-known/assetlinks.json`이 올바른지 확인합니다.
+
+### Bubblewrap 빌드 문제 해결
+
+`cli ERROR Command failed: ./gradlew assembleRelease --stacktrace` 와 함께 아래 메시지가 나오면 SDK 경로 충돌입니다.
+
+```text
+Several environment variables and/or system properties contain different paths to the SDK.
+ANDROID_HOME: /some/path
+ANDROID_SDK_ROOT: /other/path
+```
+
+원인:
+
+- 셸 환경변수의 Android SDK 경로와
+- `~/.bubblewrap/config.json`의 `androidSdkPath`
+
+가 서로 다를 때 Gradle이 실패합니다.
+
+권장 정리:
+
+```bash
+npx @bubblewrap/cli@latest updateConfig --androidSdkPath /home/jaeho/Android/sdk
+unset ANDROID_SDK_ROOT
+npx @bubblewrap/cli@latest build
+```
+
+지속 설정:
+
+- `ANDROID_HOME`만 사용합니다.
+- `ANDROID_SDK_ROOT`는 가능하면 제거합니다.
+- Bubblewrap 설정 경로와 셸의 `ANDROID_HOME`을 같은 값으로 맞춥니다.
 
 ## 출시 전 확인
 
