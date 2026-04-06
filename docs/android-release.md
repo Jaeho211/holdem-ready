@@ -112,31 +112,6 @@ adb install ./app-release-signed.apk
 
 6. 배포된 `https://holdem-quiz.netlify.app/.well-known/assetlinks.json`이 올바른지 확인합니다.
 
-### Bubblewrap 빌드 문제 해결
-
-`cli ERROR Command failed: ./gradlew assembleRelease --stacktrace` 와 함께 아래 메시지가 나오면 SDK 경로 충돌입니다.
-
-```text
-Several environment variables and/or system properties contain different paths to the SDK.
-ANDROID_HOME: /some/path
-ANDROID_SDK_ROOT: /other/path
-```
-
-원인:
-
-- 셸 환경변수의 Android SDK 경로와
-- `~/.bubblewrap/config.json`의 `androidSdkPath`
-
-가 서로 다를 때 Gradle이 실패합니다.
-
-권장 정리:
-
-```bash
-npx @bubblewrap/cli@latest updateConfig --androidSdkPath /home/jaeho/Android/sdk
-unset ANDROID_SDK_ROOT
-npx @bubblewrap/cli@latest build
-```
-
 지속 설정:
 
 - `ANDROID_HOME`만 사용합니다.
